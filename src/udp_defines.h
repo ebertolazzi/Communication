@@ -46,11 +46,11 @@
 #endif
 
 typedef struct {
-  uint32_t server_run;                // 1: run server, 0: stop server
+  int32_t  server_run;                // 1: run server, 0: stop server
   uint32_t total_packet_size;         // total length of the packet
   uint32_t sub_packet_position;       // sub packet position in the message
   uint32_t sub_packet_size;           // sub packet size
-  uint32_t datagram_id;               // message ID
+  int32_t  datagram_id;               // message ID
   char     datagram_part[SUB_PACKET_SIZE]; // part of datagram message
 } datagram_part_t;
 
@@ -61,8 +61,8 @@ typedef union {
 } packet_t;
 
 typedef struct {
-  uint32_t server_run;
-  uint32_t datagram_id;
+  int32_t  server_run;
+  int32_t  datagram_id;
   uint32_t total_packet_size;
   uint32_t sub_packet_size;
   uint32_t received_packets;
@@ -89,8 +89,8 @@ Packet_Build_from_buffer(
   uint8_t const buffer[],
   uint32_t      packet_size,
   uint32_t      pos,
-  uint32_t      datagram_id,
-  uint32_t      run,
+  int32_t       datagram_id,
+  int32_t       run,
   packet_t    * pk
 );
 

@@ -88,7 +88,7 @@ extern
 int
 Socket_send(
   SocketData * pS,
-  uint32_t     message_id,
+  int32_t      message_id,
   uint8_t      message[],
   uint32_t     message_size
 );
@@ -97,7 +97,7 @@ extern
 int
 Socket_receive(
   SocketData * pS,
-  uint32_t   * message_id,
+  int32_t    * message_id,
   uint8_t      message[],
   uint32_t     message_size,
   uint64_t     start_time

@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET Alglin )
+SET( TARGET Serialize )
 
 PROJECT( ${TARGET} CXX C )
 
@@ -44,6 +44,11 @@ SET( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
 SET( CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG} )
 
 SET( SOURCES )
+FILE( GLOB S ./src/*.c )
+FOREACH (F ${S})
+  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  LIST( APPEND SOURCES ${RF} )
+ENDFOREACH (F ${S})
 FILE( GLOB S ./src/*.cc )
 FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
@@ -59,53 +64,13 @@ ENDFOREACH (F ${S})
 
 add_library( ${TARGET} STATIC ${SOURCES} ${HEADERS} )
 
-SET( EXELISTCPP
-  Simplex-Test1
-  Simplex-Test2
-  Simplex-Test3
-  Simplex-Test4
-  SimplexTest1
-  SimplexTest2
-  SimplexTest3
-  SimplexTest4
-  test0-FD
-  test1-small-factorization
-  test12-BandedMatrix
-  test13-BFGS
-  test2-Threads
-  test3-Timing
-  test4-KKT
-  test5-ABD-Diaz
-  test6-ABD-Block
-  test7-BorderedCR
-)
-
-SET(EXELISTC test8-Cinterface test9-Cinterface )
+SET( EXELISTCPP test/client_c.c test/server_c.c )
+SET( EXELISTC test/client_cpp.cc test/server_cpp.cc )
 
 MESSAGE( STATUS "YEAR = ${YEAR}" )
 MESSAGE( STATUS "BITS = ${BITS}" )
 
-#SET( SUPERLU_NAME "superlu_vs${YEAR}_${BITS}" )
-#SET( OPENBLAS_NAME "libopenblas_${BITS}" )
-#SET( LAPACK_NAME "lapack_${BITS}" )
-#SET( BLAS_NAME "blas_${BITS}" )
-
-SET(LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
-
-#
-# setup search path for DLL 
-#
-# openblas linked with #pragma
-set(CMAKE_MSVCIDE_RUN_PATH ${LLPATH}/dll/openblas)
-SET(LOCLIBS openblas superlu lapack )
-FOREACH( S ${LOCLIBS} )
-	FILE( GLOB SS ${LLPATH}/lib/${S} )
-	LINK_DIRECTORIES( ${SS} )
-	FILE( GLOB SS ${LLPATH}/dll/${S} )
-	LINK_DIRECTORIES( ${SS} )
-ENDFOREACH( S ${LOCLIBS} )
-
-INCLUDE_DIRECTORIES( src ${LLPATH}/include ${LLPATH}/include/eigen3 )
+INCLUDE_DIRECTORIES( src )
 
 IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
   INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
@@ -124,17 +89,6 @@ IF( BUILD_EXECUTABLE )
   ##                    POST_BUILD
   ##                    COMMAND ctest --output-on-failure)
   ##
-
-  LINK_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll )
-
-  #ENABLE_TESTING()
-
-  FIND_PACKAGE(BLAS)
-  FIND_PACKAGE(LAPACK)
-
-  if(LAPACK_FOUND AND BLAS_FOUND)
-    SET(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
-  endif()
 
   ADD_CUSTOM_TARGET( all_tests ALL )
 

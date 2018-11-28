@@ -47,16 +47,17 @@ Packet_Add_to_buffer(
   uint32_t         buffer_size
 ) {
 
-  int32_t pos,
-          datagram_id,
-          total_packet_size,
-          sub_packet_size,
-          true_sub_packet_size;
+  int32_t datagram_id;
+
+  uint32_t pos,
+           total_packet_size,
+           sub_packet_size,
+           true_sub_packet_size;
 
   datagram_part_t const * ds = &pk->data_struct;
 
   int32_t ok = TRUE;
-  datagram_id       = ntohl( ds->datagram_id );
+  datagram_id       = (int32_t)ntohl( (uint32_t)ds->datagram_id );
   total_packet_size = ntohl( ds->total_packet_size );
   sub_packet_size   = ntohl( ds->sub_packet_size);
   if ( pi->received_packets > 0 ) {
@@ -74,7 +75,7 @@ Packet_Add_to_buffer(
     if ( (total_packet_size % sub_packet_size) != 0 ) ++pi->n_packets;
   }
 
-  pi->server_run = ntohl( ds->server_run );
+  pi->server_run = (int32_t)ntohl( (uint32_t)ds->server_run );
 
   pos = ntohl( ds->sub_packet_position );
   true_sub_packet_size = sub_packet_size;
@@ -89,7 +90,7 @@ Packet_Add_to_buffer(
   } else if ( datagram_id > pi->datagram_id ) {
     printf("------- Packet lost! --------\n");
     printf("------- message id %6d ---------\n",pi->datagram_id);
-    pi->datagram_id = ntohl(ds->datagram_id);
+    pi->datagram_id = (int32_t)ntohl((uint32_t)ds->datagram_id);
     memset( buffer, '0', buffer_size );
     memcpy( buffer + pos * sub_packet_size,
             &ds->datagram_part,
@@ -116,8 +117,8 @@ Packet_Build_from_buffer(
   uint8_t const buffer[],
   uint32_t      packet_size,
   uint32_t      pos,
-  uint32_t      datagram_id,
-  uint32_t      run,
+  int32_t       datagram_id,
+  int32_t       run,
   packet_t    * pk
 ) {
   uint32_t true_sub_packet_size = SUB_PACKET_SIZE;
@@ -125,11 +126,11 @@ Packet_Build_from_buffer(
   memcpy( &ds->datagram_part,
           buffer + pos * SUB_PACKET_SIZE,
           true_sub_packet_size );
-  ds->server_run          = htonl(run);
+  ds->server_run          = (int32_t)htonl((uint32_t)run);
   ds->total_packet_size   = htonl(packet_size);
   ds->sub_packet_position = htonl(pos);
   ds->sub_packet_size     = htonl(SUB_PACKET_SIZE);
-  ds->datagram_id         = htonl(datagram_id);
+  ds->datagram_id         = (int32_t)htonl((uint32_t)datagram_id);
 }
 
 extern

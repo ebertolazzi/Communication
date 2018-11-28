@@ -57,8 +57,8 @@ Socket::Socket()
   sigIntHandler.sa_handler = sig_to_exception;
   sigemptyset(&sigIntHandler.sa_mask);
   sigIntHandler.sa_flags = 0;
-  sigaction(SIGINT,&sigIntHandler, NULL);
-  //sigaction(SIGABRT,&sigIntHandler, NULL);
-  sigaction(SIGTERM,&sigIntHandler, NULL);
+  sigaction(SIGINT,&sigIntHandler, nullptr );
+  //sigaction(SIGABRT,&sigIntHandler, nullptr );
+  sigaction(SIGTERM,&sigIntHandler, nullptr );
   #endif
 }

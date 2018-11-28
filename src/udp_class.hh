@@ -19,11 +19,16 @@
 #include <iostream>
 #include <exception>
 
+#if __cplusplus >= 201103L
+  #define NORETURN [[ noreturn ]]
+#else
+  #define NORETURN
+#endif
+
 class InterruptException : public std::exception {
 public:
   InterruptException( char const s[] ) : S(s) {}
   InterruptException( std::string const & s ) : S(s) {}
-  virtual ~InterruptException() throw() {}
   std::string S;
 };
 
@@ -32,6 +37,7 @@ class Socket {
   SocketData data;
 
   #ifndef _MSC_VER
+  NORETURN
   static
   void
   sig_to_exception( int s ) {
@@ -88,7 +94,7 @@ public:
 
   // Send message function
   int
-  send( uint32_t buffer_id,
+  send( int32_t  buffer_id,
         uint8_t  buffer[],
         uint32_t buffer_size ) {
     return Socket_send( &data, buffer_id, buffer, buffer_size );
@@ -96,10 +102,10 @@ public:
 
   // Receive message function
   int
-  receive( uint32_t & buffer_id,
-           uint8_t    buffer[],
-           uint32_t   buffer_size,
-           uint64_t   start_time ) {
+  receive( int32_t & buffer_id,
+           uint8_t   buffer[],
+           uint32_t  buffer_size,
+           uint64_t  start_time ) {
     return Socket_receive( &data,
                            &buffer_id,
                            buffer,

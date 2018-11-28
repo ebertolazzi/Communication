@@ -77,7 +77,7 @@ Socket_open_addr(
 int
 Socket_send(
   SocketData * pS,
-  uint32_t     message_id,
+  int32_t      message_id,
   uint8_t      message[],
   uint32_t     message_size
 ) {
@@ -160,7 +160,7 @@ Socket_send(
 int
 Socket_receive(
   SocketData * pS,
-  uint32_t   * p_message_id,
+  int32_t    * p_message_id,
   uint8_t      message[],
   uint32_t     message_size,
   uint64_t     start_time_ms

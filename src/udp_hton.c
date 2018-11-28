@@ -23,40 +23,46 @@ htonll_local( uint64_t n ) {
 
 // --------------------------------------------------
 
-void
-uint16_to_buffer( uint16_t in, uint8_t buffer[2] ) {
-  uint16_t tmp = htons( in );
-  memcpy( buffer, &tmp, 2 );
-}
-
-void
+uint32_t
 int16_to_buffer( int16_t in, uint8_t buffer[2] ) {
   uint16_t tmp = htons( (uint16_t) in );
-  memcpy( buffer, &tmp, 2 );
+  memcpy( buffer, &tmp, sizeof(int16_t) );
+  return sizeof(int16_t) ;
 }
 
-void
+uint32_t
+uint16_to_buffer( uint16_t in, uint8_t buffer[2] ) {
+  uint16_t tmp = htons( in );
+  memcpy( buffer, &tmp, sizeof(uint16_t)  );
+  return sizeof(uint16_t) ;
+}
+
+uint32_t
 int32_to_buffer( int32_t in, uint8_t buffer[4] ) {
   uint32_t tmp = htonl( (uint32_t) in );
-  memcpy( buffer, &tmp, 4 );
+  memcpy( buffer, &tmp, sizeof(int32_t) );
+  return sizeof(int32_t) ;
 }
 
-void
+uint32_t
 uint32_to_buffer( uint32_t in, uint8_t buffer[4] ) {
   uint32_t tmp = htonl( in );
-  memcpy( buffer, &tmp, 4 );
+  memcpy( buffer, &tmp, sizeof(uint32_t) );
+  return sizeof(uint32_t) ;
 }
 
-void
+uint32_t
 int64_to_buffer( int64_t in, uint8_t buffer[8] ) {
   uint64_t tmp = htonll_local( (uint64_t) in );
-  memcpy( buffer, &tmp, 8 );
+  memcpy( buffer, &tmp, sizeof(int64_t) );
+  return sizeof(int64_t);
 }
 
-void
+uint32_t
 uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
   uint64_t tmp = htonll_local( in );
-  memcpy( buffer, &tmp, 8 );
+  memcpy( buffer, &tmp, sizeof(uint64_t)  );
+  return sizeof(uint64_t);
 }
 
 #ifdef PACK_FLOAT
@@ -113,24 +119,24 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
 
 #else
 
-  void
+  uint32_t
   float_to_buffer( float in, uint8_t buffer[4] ) {
     union FloatInt {
       float    f;
       uint32_t i;
     } tmp;
     tmp.f = in;
-    uint32_to_buffer( tmp.i, buffer );
+    return uint32_to_buffer( tmp.i, buffer );
   }
 
-  void
+  uint32_t
   double_to_buffer( double in, uint8_t buffer[8] ) {
     union DoubleInt {
       double   d;
       uint64_t i;
     } tmp;
     tmp.d = in;
-    uint64_to_buffer( tmp.i, buffer );
+    return uint64_to_buffer( tmp.i, buffer );
   }
 
 #endif
