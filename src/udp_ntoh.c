@@ -1,0 +1,131 @@
+#include "buffer_defines.h"
+#include <string.h>
+
+#if defined(_WIN32)
+#include <Ws2tcpip.h>
+#elif defined(__MACH__) || defined(__linux__)
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#endif
+
+static
+uint64_t
+ntohll_local( uint64_t n ) {
+  uint64_t lo, hi;
+  if ( 1 == ntohl(1) ) return n;
+  hi = (uint64_t)ntohl( *((uint32_t*)&n) );
+  n = n>>32;
+  lo = (uint64_t)ntohl( *((uint32_t*)&n) );
+  return (hi << 32) + lo;
+}
+
+// ----------------------------------------------------------------------------
+
+void
+buffer_to_uint16( uint8_t const buffer[2], uint16_t * out ) {
+  uint16_t tmp;
+  memcpy( &tmp, buffer, 2 );
+  *out = ntohs( tmp );
+}
+
+void
+buffer_to_int16( uint8_t const buffer[2], int16_t * out ) {
+  uint16_t tmp;
+  memcpy( &tmp, buffer, 2 );
+  *((uint16_t*)out) = ntohs( tmp );
+}
+
+void
+buffer_to_uint32( uint8_t const buffer[4], uint32_t * out ) {
+  uint32_t tmp;
+  memcpy( &tmp, buffer, 4 );
+  *out = ntohl( tmp );
+}
+
+void
+buffer_to_int32( uint8_t const buffer[4], int32_t * out ) {
+  uint32_t tmp;
+  memcpy( &tmp, buffer, 4 );
+  *((uint32_t*)out) = ntohl( tmp );
+}
+
+void
+buffer_to_uint64( uint8_t const buffer[8], uint64_t * out ) {
+  uint64_t tmp;
+  memcpy( &tmp, buffer, 8 );
+  *out = ntohll_local( tmp );
+}
+
+void
+buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
+  uint64_t tmp;
+  memcpy( &tmp, buffer, 8 );
+  *((uint64_t*)out) = ntohll_local( tmp );
+}
+
+#ifdef PACK_FLOAT
+
+  #ifndef maskOfBits
+    #define maskOfBits(NBITS) ((uint64_t(1)<<NBITS)-uint64_t(1))
+  #endif
+
+  static
+  double
+  unpack754( uint64_t i, uint32_t bits, uint32_t expbits ) {
+    double res;
+    uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
+    if ( i == 0 ) return 0;
+    /* pull the significand */
+    res = (double)(i & maskOfBits(bits-expbits-1);
+    res /= (double)(1<<significandbits); /* mask */
+    res += 1.0 ; /* add the one back on */
+    /* deal with the exponent */
+    uint64_t bias  = maskOfBits(expbits-1);
+    uint64_t shift = (i>>significandbits) & maskOfBits(expbits);
+    while ( shift > bias ) { res *= 2.0; --shift; }
+    while ( shift < bias ) { res /= 2.0; ++shift; }
+    // sign it
+    if ( i & (uint64_t(1)<<(bits-1)) ) res = -res ;
+  }
+
+  void
+  buffer_to_float( uint8_t const buffer[8], float *out) {
+    uint32_t tmp32;
+    buffer_to_uint32( buffer, &tmp32 );
+    uint64_t tmp64 = (uint64_t)tmp32;
+    double tmpd = unpack754( tmp64, 32, 8 );
+    *out = (float)tmpd;
+  }
+
+  void
+  buffer_to_double( uint8_t const buffer[8], double *out ) {
+    uint64_t tmp64;
+    buffer_to_uint64( buffer, &tmp64 );
+    *out = unpack754( tmp64, 32, 8 );
+  }
+
+#else
+
+  void
+  buffer_to_float( uint8_t const buffer[8], float *out) {
+    union FloatInt {
+      float    f;
+      uint32_t i;
+    } tmp;
+    buffer_to_uint32( buffer, &tmp.i );
+    *out = tmp.f;
+  }
+
+  void
+  buffer_to_double( uint8_t const buffer[8], double *out ) {
+    union DoubleInt {
+      double   d;
+      uint64_t i;
+    } tmp;
+    buffer_to_uint64( buffer, &tmp.i );
+    *out = tmp.d;
+  }
+
+#endif
