@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET Serialize )
+SET( TARGET Communication )
 
 PROJECT( ${TARGET} CXX C )
 
