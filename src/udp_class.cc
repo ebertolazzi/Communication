@@ -35,7 +35,7 @@
       throw InterruptException("User is logging off!");
       break;
     }
-    return TRUE;
+    return UDP_TRUE;
   }
 #else
   #include <signal.h>
@@ -46,7 +46,10 @@ Socket::Socket()
   Socket_new( &data );
   // Taken from answer to "How can I catch a ctrl-c event? (C++)"
   #ifdef _MSC_VER
-  if ( SetConsoleCtrlHandler( (PHANDLER_ROUTINE)ConsoleHandler,TRUE) == FALSE ) {
+  if ( SetConsoleCtrlHandler(
+         (PHANDLER_ROUTINE)ConsoleHandler,
+         UDP_TRUE
+       ) == UDP_FALSE ) {
     // unable to install handler...
     // display message to the user
     std::cerr << "Unable to install handler!\n";

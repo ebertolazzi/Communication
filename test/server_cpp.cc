@@ -30,7 +30,7 @@ main(void) {
   // Create and set UDP
 
   Socket socket;
-  socket.open_as_server( SERVER_PORT );
+  socket.open_as_server( UDP_SERVER_PORT );
   socket.check();
   
   // Start server
@@ -47,9 +47,11 @@ main(void) {
     if ( socket.receive( message_id,
                          input_data_buffer,
                          input_data_struct_size,
-                         0 ) == TRUE ) {
+                         0 ) == UDP_TRUE ) {
 
-      if ( socket.send( message_id, buffer, buffer_size ) == FALSE ) {
+      if ( socket.send( message_id,
+                        buffer,
+                        buffer_size ) == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
         return -1;

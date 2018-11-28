@@ -4,12 +4,12 @@
   extern "C" {
 #endif
 
-#ifndef TRUE
-  #define TRUE 1
+#ifndef UDP_TRUE
+  #define UDP_TRUE 1
 #endif
 
-#ifndef FALSE
-  #define FALSE -1
+#ifndef UDP_FALSE
+  #define UDP_FALSE -1
 #endif
 
 #include <string.h>
@@ -30,7 +30,7 @@
 
 void
 Packet_Init( packet_info_t * pi, uint64_t start_time_ms ) {
-  pi->server_run        = FALSE;
+  pi->server_run        = UDP_FALSE;
   pi->datagram_id       = -1;
   pi->total_packet_size = 0;
   pi->sub_packet_size   = 0;
@@ -56,7 +56,7 @@ Packet_Add_to_buffer(
 
   datagram_part_t const * ds = &pk->data_struct;
 
-  int32_t ok = TRUE;
+  int32_t ok = UDP_TRUE;
   datagram_id       = (int32_t)ntohl( (uint32_t)ds->datagram_id );
   total_packet_size = ntohl( ds->total_packet_size );
   sub_packet_size   = ntohl( ds->sub_packet_size);
@@ -65,7 +65,7 @@ Packet_Add_to_buffer(
     if ( pi->datagram_id       != datagram_id ||
          pi->total_packet_size != total_packet_size ||
          pi->sub_packet_size   != sub_packet_size ) {
-      ok = FALSE;
+      ok = UDP_FALSE;
     }
   } else {
     pi->datagram_id       = datagram_id;
@@ -82,7 +82,7 @@ Packet_Add_to_buffer(
   if ( pos+1 == pi->n_packets ) /* ultimo pacchetto */
     true_sub_packet_size = total_packet_size - pos * sub_packet_size;
 
-  if ( ok == TRUE ) {
+  if ( ok == UDP_TRUE ) {
     memcpy( buffer + pos * pi->sub_packet_size,
             &ds->datagram_part,
             true_sub_packet_size );
@@ -103,7 +103,7 @@ Packet_Add_to_buffer(
 
   #ifdef DEBUG_UDP
   printf("Packet received!\n");
-  printf("server_run            = %s\n", ( pi->server_run == TRUE ?"TRUE":"FALSE" ) );
+  printf("server_run            = %s\n", ( pi->server_run == UDP_TRUE ?"TRUE":"FALSE" ) );
   printf("sub_packet_position   = %d\n", pos);
   printf("sub_packet_size       = %d\n", sub_packet_size);
   printf("n_packets             = %d\n", pi->n_packets);
@@ -121,23 +121,23 @@ Packet_Build_from_buffer(
   int32_t       run,
   packet_t    * pk
 ) {
-  uint32_t true_sub_packet_size = SUB_PACKET_SIZE;
+  uint32_t true_sub_packet_size = UDP_SUB_PACKET_SIZE;
   datagram_part_t * ds = &pk->data_struct;
   memcpy( &ds->datagram_part,
-          buffer + pos * SUB_PACKET_SIZE,
+          buffer + pos * UDP_SUB_PACKET_SIZE,
           true_sub_packet_size );
   ds->server_run          = (int32_t)htonl((uint32_t)run);
   ds->total_packet_size   = htonl(packet_size);
   ds->sub_packet_position = htonl(pos);
-  ds->sub_packet_size     = htonl(SUB_PACKET_SIZE);
+  ds->sub_packet_size     = htonl(UDP_SUB_PACKET_SIZE);
   ds->datagram_id         = (int32_t)htonl((uint32_t)datagram_id);
 }
 
 extern
 uint32_t
 Packet_Number( uint32_t message_size ) {
-  uint32_t n_packets = message_size / SUB_PACKET_SIZE;
-  if ( (message_size % SUB_PACKET_SIZE) != 0 ) ++n_packets;
+  uint32_t n_packets = message_size / UDP_SUB_PACKET_SIZE;
+  if ( (message_size % UDP_SUB_PACKET_SIZE) != 0 ) ++n_packets;
   return n_packets;
 }
 

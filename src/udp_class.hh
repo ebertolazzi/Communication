@@ -52,26 +52,24 @@ public:
   Socket();
 
   void
-  open_as_client( char const addr[], uint16_t port ) {
-    Socket_open_as_client( &data, addr, port );
-  }
+  open_as_client( char const addr[], uint16_t port )
+  { Socket_open_as_client( &data, addr, port ); }
 
   void
-  open_as_server( uint16_t port ) {
-    Socket_open_as_server( &data, port );
-  }
+  open_as_server( uint16_t port )
+  { Socket_open_as_server( &data, port ); }
 
   void
   server_start()
-  { data.server_run = TRUE; }
+  { data.server_run = UDP_TRUE; }
 
   void
   server_stop()
-  { data.server_run = FALSE; }
+  { data.server_run = UDP_FALSE; }
 
   bool
   server_running() const
-  { return data.server_run == TRUE; }
+  { return data.server_run == UDP_TRUE; }
 
   void
   set_timeout_ms( uint64_t tout_ms )
@@ -80,7 +78,7 @@ public:
   bool
   close() {
     int ok = Socket_close( &data );
-    return ok == TRUE;
+    return ok == UDP_TRUE;
   }
 
   void

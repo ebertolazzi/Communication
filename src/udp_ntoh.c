@@ -73,9 +73,12 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
 
 #ifdef PACK_FLOAT
 
-  #ifndef maskOfBits
-    #define maskOfBits(NBITS) ((uint64_t(1)<<(NBITS))-uint64_t(1))
-  #endif
+  static
+  uint64_t
+  maskOfBits( uint32_t NBITS ) {
+    uint64_t one = 1;
+    return (one<<NBITS)-one;
+  }
 
   static
   double
@@ -84,7 +87,7 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
     if ( i == 0 ) return 0;
     /* pull the significand */
-    res = (double)(i & maskOfBits(bits-expbits-1);
+    res = (double)(i & maskOfBits(bits-expbits-1));
     res /= (double)(1<<significandbits); /* mask */
     res += 1.0 ; /* add the one back on */
     /* deal with the exponent */
@@ -93,23 +96,26 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     while ( shift > bias ) { res *= 2.0; --shift; }
     while ( shift < bias ) { res /= 2.0; ++shift; }
     // sign it
-    if ( i & (uint64_t(1)<<(bits-1)) ) res = -res ;
+    if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res ;
+    return res;
   }
 
-  void
-  buffer_to_float( uint8_t const buffer[8], float *out) {
+  uint32_t
+  buffer_to_float( uint8_t const buffer[4], float *out) {
     uint32_t tmp32;
     buffer_to_uint32( buffer, &tmp32 );
     uint64_t tmp64 = (uint64_t)tmp32;
     double tmpd = unpack754( tmp64, 32, 8 );
     *out = (float)tmpd;
+    return sizeof(float);
   }
 
-  void
+  uint32_t
   buffer_to_double( uint8_t const buffer[8], double *out ) {
     uint64_t tmp64;
     buffer_to_uint64( buffer, &tmp64 );
     *out = unpack754( tmp64, 32, 8 );
+    return sizeof(double);
   }
 
 #else

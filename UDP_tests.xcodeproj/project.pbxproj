@@ -21,7 +21,6 @@
 		D933D44C21AE93950060EA19 /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D41621AE89D30060EA19 /* udp_defines.c */; };
 		D933D44D21AE93980060EA19 /* udp_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D41721AE89D30060EA19 /* udp_hton.c */; };
 		D933D44E21AE93D10060EA19 /* codriver_interfaces_data_structs.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D43A21AE92D80060EA19 /* codriver_interfaces_data_structs.c */; };
-		D933D46121AE96260060EA19 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D933D46021AE96260060EA19 /* main.cpp */; };
 		D933D46521AE96380060EA19 /* server_c.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D43521AE928C0060EA19 /* server_c.c */; };
 		D933D46621AE963B0060EA19 /* server_cpp.cc in Sources */ = {isa = PBXBuildFile; fileRef = D933D43221AE928C0060EA19 /* server_cpp.cc */; };
 		D933D46721AE963F0060EA19 /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D41121AE89D30060EA19 /* udp_C_class.c */; };
@@ -101,7 +100,6 @@
 		D933D44121AE93710060EA19 /* client_cpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = client_cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		D933D45321AE96090060EA19 /* server_c */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = server_c; sourceTree = BUILT_PRODUCTS_DIR; };
 		D933D45E21AE96260060EA19 /* server_cpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = server_cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		D933D46021AE96260060EA19 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,8 +137,8 @@
 		D933D3FB21AE89BE0060EA19 = {
 			isa = PBXGroup;
 			children = (
-				D933D45F21AE96260060EA19 /* server_cpp */,
 				D933D40521AE89BF0060EA19 /* Products */,
+				D933D43121AE928C0060EA19 /* test */,
 				D933D40E21AE89D30060EA19 /* src */,
 			);
 			sourceTree = "<group>";
@@ -172,7 +170,6 @@
 				D933D41921AE89D30060EA19 /* udp_C_win.hxx */,
 				D933D41A21AE89D30060EA19 /* udp_C_unix.hxx */,
 				D933D41B21AE89D30060EA19 /* udp_defines_win.hxx */,
-				D933D43121AE928C0060EA19 /* test */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -189,14 +186,6 @@
 			);
 			path = test;
 			sourceTree = SOURCE_ROOT;
-		};
-		D933D45F21AE96260060EA19 /* server_cpp */ = {
-			isa = PBXGroup;
-			children = (
-				D933D46021AE96260060EA19 /* main.cpp */,
-			);
-			path = server_cpp;
-			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -364,7 +353,6 @@
 				D933D46E21AE964A0060EA19 /* udp_defines.c in Sources */,
 				D933D46821AE963F0060EA19 /* udp_C_class.c in Sources */,
 				D933D47221AE96890060EA19 /* codriver_interfaces_data_structs.c in Sources */,
-				D933D46121AE96260060EA19 /* main.cpp in Sources */,
 				D933D47021AE964E0060EA19 /* udp_hton.c in Sources */,
 				D933D46C21AE96470060EA19 /* udp_class.cc in Sources */,
 			);
@@ -417,6 +405,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
+					PACK_FLOAT,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

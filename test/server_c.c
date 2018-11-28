@@ -19,13 +19,13 @@ main() {
 
   SocketData socket;
   Socket_new( &socket );
-  Socket_open_as_server( &socket, SERVER_PORT );
+  Socket_open_as_server( &socket, UDP_SERVER_PORT );
 
   // Start server
   printf("Server ready\n");
 
   socket.server_run = 1;
-  while( socket.server_run == TRUE ) {
+  while( socket.server_run == UDP_TRUE ) {
     
     // Clear the buffer
     memset(buffer, '\0', buffer_size);
@@ -34,9 +34,12 @@ main() {
                          &message_id,
                          input_data_buffer,
                          input_data_struct_size,
-                         0 ) == TRUE ) {
+                         0 ) == UDP_TRUE ) {
 
-      if ( Socket_send( &socket, message_id, buffer, buffer_size ) == FALSE ) {
+      if ( Socket_send( &socket,
+                        message_id,
+                        buffer,
+                        buffer_size ) == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
         return -1;

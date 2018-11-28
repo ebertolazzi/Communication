@@ -25,12 +25,12 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef TRUE
-  #define TRUE 1
+#ifndef UDP_TRUE
+  #define UDP_TRUE 1
 #endif
 
-#ifndef FALSE
-  #define FALSE -1
+#ifndef UDP_FALSE
+  #define UDP_FALSE -1
 #endif
 
 #ifndef __cplusplus

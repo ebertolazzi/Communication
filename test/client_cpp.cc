@@ -49,7 +49,7 @@ main() {
   
   // Create and set UDP
   Socket socket;
-  socket.open_as_client( DEFAULT_SERVER_IP, SERVER_PORT );
+  socket.open_as_client( UDP_DEFAULT_SERVER_IP, UDP_SERVER_PORT );
   socket.check();
 
   start_time = get_time_ms();

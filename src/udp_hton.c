@@ -67,54 +67,57 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
 
 #ifdef PACK_FLOAT
 
-  #ifndef maskOfBits
-    #define maskOfBits(NBITS) ((uint64_t(1)<<NBITS)-uint64_t(1))
-  #endif
+  static
+  uint64_t
+  maskOfBits( uint32_t NBITS ) {
+    uint64_t one = 1;
+    return (one<<NBITS)-one;
+  }
 
   static
   uint64_t
   pack754( double f, uint32_t bits, uint32_t expbits ) {
     double   fnorm;
-    uint64_t sign;
+    uint64_t sign, exp, significand, res, zero, one;
     uint32_t significandbits = bits - expbits - 1 ; /* -1 for sign bit */
+    zero = 0;
+    one  = 1;
     /* special case NaN and INF */
-    if ( f != f ) { // NaN
-      return ~uint64_t(0);
-      return ;
-    }
-    if ( f*0.0 != 0.0 ) { // INF
-      return maskOfBits(expbits)<<significandbits;
-    }
-    if ( f == 0.0 ) return uint64_t(0); /* get this special case out of the way */
+    if ( f != f ) return ~zero; /* NaN */
+    if ( f*0.0 != 0.0 ) return maskOfBits(expbits)<<significandbits; /* INF */
+    if ( f == 0.0 ) return zero; /* get this special case out of the way */
     /* check sign and begin normalization */
     fnorm = f ;
     sign  = 0 ;
-    if ( f < 0 ) { sign = uint64_t(1)<<(bits-1); fnorm = -f; }
+    if ( f < 0 ) { sign = one<<(bits-1); fnorm = -f; }
 
     /* get the normalized form of f and track the exponent
        get the biased exponent */
-    uint64_t exp = maskOfBits(expbits-1); /* bias */
+    exp = maskOfBits(expbits-1); /* bias */
     while ( fnorm >= 2.0 ) { fnorm /= 2.0; ++exp; }
     while ( fnorm <  1.0 ) { fnorm *= 2.0; --exp; }
     fnorm -= 1.0 ;
     /* calculate the binary form (non-float) of the significand data */
-    uint64_t significand = fnorm * ((uint64_t(1)<<significandbits) + 0.5f);
+    significand = fnorm * ((one<<significandbits) + 0.5);
     /* return the final answer */
-    return sign | (exp<<significandbits) | significand ;
+    res = sign | (exp<<significandbits) | significand ;
+    return res;
   }
 
-  void
+  uint32_t
   float_to_buffer( float in, uint8_t buffer[4] ) {
-    uint64_t res64 = pack754( f, 32, 8 );
+    uint64_t res64 = pack754( in, 32, 8 );
     uint32_t res32 = (uint32_t)res64;
     uint32_to_buffer( res32, buffer );
+    return sizeof(float);
   }
 
-  void
+  uint32_t
   double_to_buffer( double in, uint8_t buffer[8] ) {
-    uint64_t res64 = pack754( f, 64, 11 );
+    uint64_t res64 = pack754( in, 64, 11 );
     uint32_t res32 = (uint32_t)res64;
     uint32_to_buffer( res32, buffer );
+    return sizeof(double);
   }
 
 #else

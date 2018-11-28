@@ -20,7 +20,7 @@ main() {
 
   uint8_t  buffer[10];
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
-  uint32_t partSize    = SUB_PACKET_SIZE;
+  uint32_t partSize    = UDP_SUB_PACKET_SIZE;
   uint32_t n_packets;
   uint32_t remaining_bytes;
   uint64_t start_time;
@@ -72,7 +72,7 @@ main() {
   // Create and set UDP
   SocketData socket;
   Socket_new( &socket );
-  Socket_open_as_client( &socket, DEFAULT_SERVER_IP, SERVER_PORT );
+  Socket_open_as_client( &socket, UDP_DEFAULT_SERVER_IP, UDP_SERVER_PORT );
   //Socket_check( &socket );
 
   start_time = get_time_ms();
@@ -82,11 +82,11 @@ main() {
 
   // First message --------------------------
   printf("\n\nSocket_send ...\n");
-  socket.server_run = TRUE;
+  socket.server_run = UDP_TRUE;
   if ( Socket_send( &socket,
                     message_id,
                     input_data_buffer,
-                    input_data_struct_size ) == FALSE ) {
+                    input_data_struct_size ) == UDP_FALSE ) {
     printf( "Warning! Couldn't send the message with ID %d\n", message_id );
     printf( "Output message: manoeuvre not calculated\n");
   } else {
@@ -98,13 +98,13 @@ main() {
                          &message_id,
                          buffer,
                          buffer_size,
-                         start_time ) == FALSE ) {
+                         start_time ) == UDP_FALSE ) {
       printf("Output message: manoeuvre not calculated\n");
     }
   }
 
   // Close socket
-  if ( Socket_close(&socket) == FALSE ) {
+  if ( Socket_close(&socket) == UDP_FALSE ) {
     printf("Socket_close, failed\n");
     return -1;
   }
