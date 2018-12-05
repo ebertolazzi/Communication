@@ -15,13 +15,13 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include <Winsock2.h>
 #else
   #include <arpa/inet.h>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include "udp_defines_win.hxx"
   typedef int ssize_t;
 #else

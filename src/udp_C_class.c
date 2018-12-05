@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include "udp_C_win.hxx"
   #include <Ws2tcpip.h>
   typedef int ssize_t;
@@ -68,7 +68,7 @@ Socket_open_addr(
   if ( addr == nullptr )
     pS->target_addr.sin_addr.s_addr = INADDR_ANY;
   else
-    #ifdef _WIN32
+    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
     InetPton(AF_INET, addr, &pS->target_addr.sin_addr.s_addr);
     #else
     pS->target_addr.sin_addr.s_addr = inet_addr(addr);
@@ -127,7 +127,7 @@ Socket_send(
 			  break;
       }
     }
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 	  if ( sendto( socket_id,
                  packet.data_buffer,
                  (size_t) UDP_PACKET_BYTES,
@@ -209,7 +209,7 @@ Socket_receive(
         break;
       }
     }
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
     recv_bytes = recvfrom( pS->socket_id,
                            packet.data_buffer,
                            (size_t) UDP_PACKET_BYTES,
@@ -227,7 +227,7 @@ Socket_receive(
 
     #if defined(WIN_NONBLOCK)
     if ( recv_bytes != SOCKET_ERROR )
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
     if ( recv_bytes != SOCKET_ERROR)
     #elif defined(__MACH__) || defined(__linux__)
     if ( recv_bytes > 0 )

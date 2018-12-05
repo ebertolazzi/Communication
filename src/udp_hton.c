@@ -1,13 +1,13 @@
 #include "buffer_defines.h"
 #include <string.h>
 
-#if defined(_WIN32)
-#include <Ws2tcpip.h>
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  #include <Ws2tcpip.h>
 #elif defined(__MACH__) || defined(__linux__)
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
+  #include <string.h>
+  #include <unistd.h>
+  #include <arpa/inet.h>
+  #include <sys/socket.h>
 #endif
 
 static

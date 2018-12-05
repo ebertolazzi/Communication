@@ -46,7 +46,7 @@
 #define UDP_RECV_SND_TIMEOUT_MS  5  // Warning: windows has an undocumented minimum limit of about 500 ms
 
 // If the timeout is less than 400 ms it creates a non-blocking socket
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #pragma warning (disable : 4820)
   #if UDP_RECV_SND_TIMEOUT_MS <= 400
     #define WIN_NONBLOCK
@@ -106,7 +106,7 @@ extern
 uint32_t
 Packet_Number( uint32_t packet_size );
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include <Winsock2.h>
 #else
   #include <arpa/inet.h>

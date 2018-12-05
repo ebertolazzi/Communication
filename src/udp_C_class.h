@@ -15,7 +15,11 @@
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   typedef int socklen_t;
 #else
-  #include <sys/kernel_types.h>
+  #ifdef __linux__
+    #include <linux/types.h>
+  #else
+    #include <sys/kernel_types.h>
+  #endif
 #endif
 
 #ifdef __cplusplus
