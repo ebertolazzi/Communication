@@ -16,6 +16,7 @@ extern "C" {
 
 #ifdef _WIN32
   #include "udp_C_win.hxx"
+  #include <Ws2tcpip.h>
   typedef int ssize_t;
 #else
   #include "udp_C_unix.hxx"
@@ -67,7 +68,11 @@ Socket_open_addr(
   if ( addr == nullptr )
     pS->target_addr.sin_addr.s_addr = INADDR_ANY;
   else
+    #ifdef _WIN32
     InetPton(AF_INET, addr, &pS->target_addr.sin_addr.s_addr);
+    #else
+    pS->target_addr.sin_addr.s_addr = inet_addr(addr);
+    #endif
 }
 
 /*\

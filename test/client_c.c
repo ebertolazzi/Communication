@@ -1,17 +1,6 @@
 #include "udp_C_class.h"
 #include "codriver_interfaces_data_structs.h" // include with defined data structure
 
-/*
-#if defined(_WIN32)
-  #include <Ws2tcpip.h>
-#elif defined(__MACH__) || defined(__linux__)
-  #include <string.h>
-  #include <unistd.h>
-  #include <arpa/inet.h>
-  #include <sys/socket.h>
-#endif
-*/
-
 #include <stdio.h>
 #include <math.h>
 
