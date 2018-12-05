@@ -17,7 +17,6 @@
   BOOL
   WINAPI
   ConsoleHandler(DWORD CEvent) {
-    char mesg[128];
     switch(CEvent) {
     case CTRL_C_EVENT:
       throw InterruptException("CTRL+C received!");
