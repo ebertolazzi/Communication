@@ -63,11 +63,11 @@ Socket_open_addr(
   memset( &pS->target_addr, 0, pS->target_addr_len );
   /* Set the address structures */
   pS->target_addr.sin_family = AF_INET;
-  pS->target_addr.sin_port   = htons(port);
+  pS->target_addr.sin_port   = port;
   if ( addr == nullptr )
-    pS->target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    pS->target_addr.sin_addr.s_addr = INADDR_ANY;
   else
-    pS->target_addr.sin_addr.s_addr = inet_addr(addr);
+    InetPton(AF_INET, addr, &pS->target_addr.sin_addr.s_addr);
 }
 
 /*\

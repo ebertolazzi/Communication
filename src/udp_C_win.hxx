@@ -25,10 +25,12 @@ Socket_open( SocketData * pS, int bind_port ) {
   \*/
 
   unsigned long nonblock;
-  DWORD         timeout_win;
   WSADATA       wsa;
   int           rcvbufsize;
-
+  #ifndef WIN_NONBLOCK
+  DWORD         timeout_win;
+  #endif
+ 
   pS->socket_id = 0;
 
   if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
@@ -71,7 +73,7 @@ Socket_open( SocketData * pS, int bind_port ) {
 
   timeout.tv_sec  = 0;
   timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
-  #if defined(WIN_NONBLOCK)
+  #ifdef WIN_NONBLOCK
   nonblock = 1;
   if ( ioctlsocket( pS->socket_id,
                     FIONBIO,
