@@ -27,28 +27,28 @@ uint32_t
 int16_to_buffer( int16_t in, uint8_t buffer[2] ) {
   uint16_t tmp = htons( (uint16_t) in );
   memcpy( buffer, &tmp, sizeof(int16_t) );
-  return sizeof(int16_t) ;
+  return sizeof(int16_t);
 }
 
 uint32_t
 uint16_to_buffer( uint16_t in, uint8_t buffer[2] ) {
   uint16_t tmp = htons( in );
   memcpy( buffer, &tmp, sizeof(uint16_t)  );
-  return sizeof(uint16_t) ;
+  return sizeof(uint16_t);
 }
 
 uint32_t
 int32_to_buffer( int32_t in, uint8_t buffer[4] ) {
   uint32_t tmp = htonl( (uint32_t) in );
   memcpy( buffer, &tmp, sizeof(int32_t) );
-  return sizeof(int32_t) ;
+  return sizeof(int32_t);
 }
 
 uint32_t
 uint32_to_buffer( uint32_t in, uint8_t buffer[4] ) {
   uint32_t tmp = htonl( in );
   memcpy( buffer, &tmp, sizeof(uint32_t) );
-  return sizeof(uint32_t) ;
+  return sizeof(uint32_t);
 }
 
 uint32_t
@@ -79,7 +79,7 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
   pack754( double f, uint32_t bits, uint32_t expbits ) {
     double   fnorm;
     uint64_t sign, exp, significand, res, zero, one;
-    uint32_t significandbits = bits - expbits - 1 ; /* -1 for sign bit */
+    uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
     zero = 0;
     one  = 1;
     /* special case NaN and INF */
@@ -87,8 +87,8 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
     if ( f*0.0 != 0.0 ) return maskOfBits(expbits)<<significandbits; /* INF */
     if ( f == 0.0 ) return zero; /* get this special case out of the way */
     /* check sign and begin normalization */
-    fnorm = f ;
-    sign  = 0 ;
+    fnorm = f;
+    sign  = 0;
     if ( f < 0 ) { sign = one<<(bits-1); fnorm = -f; }
 
     /* get the normalized form of f and track the exponent
@@ -96,11 +96,11 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
     exp = maskOfBits(expbits-1); /* bias */
     while ( fnorm >= 2.0 ) { fnorm /= 2.0; ++exp; }
     while ( fnorm <  1.0 ) { fnorm *= 2.0; --exp; }
-    fnorm -= 1.0 ;
+    fnorm -= 1.0;
     /* calculate the binary form (non-float) of the significand data */
     significand = fnorm * ((one<<significandbits) + 0.5);
     /* return the final answer */
-    res = sign | (exp<<significandbits) | significand ;
+    res = sign | (exp<<significandbits) | significand;
     return res;
   }
 

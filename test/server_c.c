@@ -7,7 +7,7 @@ int
 main() {
 
   uint8_t  buffer[10];
-  uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]) ;
+  uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
 
   input_data_struct input_msg;
   uint8_t           input_data_buffer[input_data_struct_size];

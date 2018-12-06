@@ -87,7 +87,7 @@ Socket_open( SocketData * pS, int bind_port ) {
     printf("Server address: %s\n", ipAddress);
     printf("Server port:    %d\n", ntohs(pS->target_addr.sin_port));
   }
-  printf("======================================\n") ;
+  printf("======================================\n");
   return UDP_FALSE;
 }
 

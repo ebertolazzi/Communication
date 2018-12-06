@@ -22,7 +22,7 @@ int
 main(void) {
 
   uint8_t  buffer[10];
-  uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]) ;
+  uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
   input_data_struct input_msg;
   int32_t  message_id = 0;
   

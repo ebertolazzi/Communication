@@ -99,7 +99,7 @@ Socket_send(
   n_packets = Packet_Number( message_size );
 
   /* Send packets */
-  for ( ipos = 0 ; ipos < n_packets; ++ipos ) {
+  for ( ipos = 0; ipos < n_packets; ++ipos ) {
 
     Packet_Build_from_buffer( message,
                               message_size,

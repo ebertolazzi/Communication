@@ -89,14 +89,14 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     /* pull the significand */
     res = (double)(i & maskOfBits(bits-expbits-1));
     res /= (double)(1<<significandbits); /* mask */
-    res += 1.0 ; /* add the one back on */
+    res += 1.0; /* add the one back on */
     /* deal with the exponent */
     uint64_t bias  = maskOfBits(expbits-1);
     uint64_t shift = (i>>significandbits) & maskOfBits(expbits);
     while ( shift > bias ) { res *= 2.0; --shift; }
     while ( shift < bias ) { res /= 2.0; ++shift; }
     // sign it
-    if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res ;
+    if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res;
     return res;
   }
 
