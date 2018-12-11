@@ -77,7 +77,7 @@ Socket_open( SocketData * pS, int bind_port ) {
   char ipAddress[INET_ADDRSTRLEN];
   if ( bind_port == UDP_TRUE ) {
     printf("SERVER\n");
-    printf("Server port:%d\n",ntohs(pS->target_addr.sin_port));
+    printf("Server port:%d\n",pS->target_addr.sin_port);
   } else {
     inet_ntop( AF_INET,
                &(pS->target_addr.sin_addr.s_addr),
@@ -85,7 +85,7 @@ Socket_open( SocketData * pS, int bind_port ) {
                INET_ADDRSTRLEN );
     printf("CLIENT\n");
     printf("Server address: %s\n", ipAddress);
-    printf("Server port:    %d\n", ntohs(pS->target_addr.sin_port));
+    printf("Server port:    %d\n", pS->target_addr.sin_port);
   }
   printf("======================================\n");
   return UDP_FALSE;

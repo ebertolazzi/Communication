@@ -62,14 +62,14 @@ void
 Socket_open_as_client(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 );
 
 extern
 void
 Socket_open_as_server(
   SocketData * pS,
-  uint16_t     port
+  int          port
 );
 
 extern
@@ -77,7 +77,7 @@ void
 Socket_open_addr(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 );
 
 extern

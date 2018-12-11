@@ -41,15 +41,17 @@ Socket_check( SocketData * pS ) {
 }
 
 void
-Socket_open_as_client( SocketData * pS,
-                       char const   addr[],
-                       uint16_t     port ) {
+Socket_open_as_client(
+  SocketData * pS,
+  char const   addr[],
+  int          port
+) {
   Socket_open_addr( pS, addr, port );
   Socket_open( pS, UDP_FALSE );
 }
 
 void
-Socket_open_as_server( SocketData * pS, uint16_t port ) {
+Socket_open_as_server( SocketData * pS, int port ) {
   Socket_open_addr( pS, nullptr, port );
   Socket_open( pS, UDP_TRUE );
 }
@@ -58,7 +60,7 @@ void
 Socket_open_addr(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 ) {
   /* Clear the address structures */
   memset( &pS->target_addr, 0, pS->target_addr_len );
@@ -153,7 +155,7 @@ Socket_send(
   #ifdef DEBUG_UDP
   printf( "Sent message of %d packets to %s:%d\n",
           n_packets, inet_ntoa(pS->target_addr.sin_addr),
-          ntohs(pS->target_addr.sin_port) );
+          pS->target_addr.sin_port );
   #endif
 	return UDP_TRUE;
 }
@@ -253,7 +255,7 @@ Socket_receive(
     printf( "Received message of %d packets from %s:%d\n",
             pi.n_packets,
             inet_ntoa(pS->target_addr.sin_addr),
-            ntohs(pS->target_addr.sin_port) );
+            pS->target_addr.sin_port );
     #endif
     return UDP_TRUE;
   } else if ( elapsed_time_ms >= pS->timeout_ms ) {
