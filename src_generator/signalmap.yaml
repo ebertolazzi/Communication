@@ -1,0 +1,1859 @@
+---
+- :name: Update_rate
+  :type: Int32
+  :size: '1'
+  :description_topic: Update rate
+  :comment: ''
+  :unit: Hz
+- :name: HEADER
+  :type: ''
+  :size: ''
+  :description_topic: SAFESTRIP/HEADER/
+  :comment: ''
+  :unit: ''
+- :name: ID
+  :type: Int32
+  :size: '1'
+  :description_topic: Identifies UDP package
+  :comment: Enumeration |00=CAN_NETWORK,|01=CAM_V2X,|02=DENM_V2X,|03=MAP_V2X,|04=SPAT_V2X,|11=CAM_LTE,|12=DENM_LTE,|13=MAP_LTE,|14=SPAT_LTE
+  :unit: "-"
+- :name: Version
+  :type: Int32
+  :size: '1'
+  :description_topic: Protocol version
+  :comment: Identifies data structure
+  :unit: "-"
+- :name: CycleNumber
+  :type: Int32
+  :size: '1'
+  :description_topic: Loop number
+  :comment: ''
+  :unit: "-"
+- :name: TimeStamp
+  :type: Double
+  :size: '1'
+  :description_topic: Absolute time of message data
+  :comment: UTC time difference after 1st January 1970, obtained from GPS time with
+    leap seconds (Unix epoch)
+  :unit: s
+- :name: Status
+  :type: Int32
+  :size: '1'
+  :description_topic: Indicates failures on sender unit
+  :comment: 0 = ACTIVE
+  :unit: "-"
+- :name: Host_Vehicle
+  :type: ''
+  :size: ''
+  :description_topic: HOST VEHICLE (from vehicle sensors)
+  :comment: ''
+  :unit: ''
+- :name: Speed_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Filtered longitudinal velocity from  odometer
+  :comment: ''
+  :unit: m/s
+- :name: LongAcc_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Filtered longitudinal acceleration
+  :comment: ''
+  :unit: m/s2
+- :name: LatAcc_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Filtered lateral acceleration
+  :comment: ''
+  :unit: m/s2
+- :name: YawRate_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Filtered yaw-rate
+  :comment: Note that yaw-rate is the derivative of the heading, i.e. chassis rotation
+    rate, not speed rotation rate
+  :unit: rad/s
+- :name: SteerWheel_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Steering wheel angle
+  :comment: Positive when the car is turning left
+  :unit: rad
+- :name: SteerWheelSpeed_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Steering wheel rate
+  :comment: Derivative of steering wheel angle
+  :unit: rad/s
+- :name: BrakePressure_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Used instead of brake pedal position
+  :comment: ''
+  :unit: Nm
+- :name: GasPedPos_vehicle_network
+  :type: Double
+  :size: '1'
+  :description_topic: Gas pedal position
+  :comment: ''
+  :unit: "%"
+- :name: BrakePedalSwitch_vehicle_network
+  :type: Int32
+  :size: '1'
+  :description_topic: Brake pedal pressed
+  :comment: 0 = UNKNOWN; 1 = RELEASED; 2 = PRESSED
+  :unit: "-"
+- :name: VehicleType
+  :type: Int32
+  :size: '1'
+  :description_topic: ''
+  :comment: ''
+  :unit: "-"
+- :name: VehicleBarLongPos
+  :type: Double
+  :size: '1'
+  :description_topic: Baricenter position along vehicle axis
+  :comment: Distance to front bumper
+  :unit: m
+- :name: Object_motor_primitives
+  :type: ''
+  :size: ''
+  :description_topic: Object motor primitives (level 1)
+  :comment: ''
+  :unit: ''
+- :name: ObjT0
+  :type: Double
+  :size: '20'
+  :description_topic: 'Initial time of motor primitives '
+  :comment: Absolute time when motion described by motor primitives starts. Unix epoch.
+  :unit: s
+- :name: ObjS0
+  :type: Double
+  :size: '0'
+  :description_topic: starting position
+  :comment: ''
+  :unit: m
+- :name: ObjV0
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle speed at t=t0
+  :comment: Longitudinal speed at the time of generation of the motor primitive
+  :unit: m/s
+- :name: ObjA0
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle acceleration at t=t0
+  :comment: Time derivative of speed, also valid for second trajectory
+  :unit: m/s2
+- :name: ObjT1f
+  :type: Double
+  :size: '20'
+  :description_topic: Time extensioin of first motor unit
+  :comment: ''
+  :unit: s
+- :name: ObjJ0f
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle desired jerk at t=t0
+  :comment: Time derivative of acceleration
+  :unit: m/s3
+- :name: ObjS0f
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle desired snap at t=t0
+  :comment: Time derivative of jerk
+  :unit: m/s4
+- :name: ObjCr0f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired vehicle crackle at t=t0
+  :comment: Time derivative of snap
+  :unit: m/s5
+- :name: ObjT2f
+  :type: Double
+  :size: '20'
+  :description_topic: Time extension of second segment
+  :comment: ''
+  :unit: s
+- :name: ObjJ1f
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle desired jerk at t=T1f
+  :comment: Time derivative of acceleration
+  :unit: m/s3
+- :name: ObjS1f
+  :type: Double
+  :size: '20'
+  :description_topic: Vehicle desired snap at t=T1f
+  :comment: Time derivative of jerk
+  :unit: m/s4
+- :name: ObjSr1f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired vehicle crackle at t=T1f
+  :comment: Time derivative of snap
+  :unit: m/s5
+- :name: ObjSn0
+  :type: Double
+  :size: '20'
+  :description_topic: Lateral displacement at t=t0
+  :comment: Also valid for second trajectory
+  :unit: m
+- :name: ObjAlpha0
+  :type: Double
+  :size: '20'
+  :description_topic: Trajectory relative course angle at t=t0
+  :comment: Also valid for second trajectory
+  :unit: rad
+- :name: ObjDelta0
+  :type: Double
+  :size: '20'
+  :description_topic: Trajectory relative curvature at t=t0
+  :comment: Curvature of vehicle trajectory relative to lane curvature
+  :unit: m-1
+- :name: ObjT1nf
+  :type: Double
+  :size: '20'
+  :description_topic: Time extension of first lateral motor unit
+  :comment: ''
+  :unit: s
+- :name: ObjJdelta0f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-2
+- :name: ObjSdelta0f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired second derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-3
+- :name: ObjCrdelta0f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired third derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-4
+- :name: ObjT2nf
+  :type: Double
+  :size: '20'
+  :description_topic: Time extension of second lateral motor unit
+  :comment: ''
+  :unit: s
+- :name: ObjJdelta1f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-2
+- :name: ObjSdelta1f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired second derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-3
+- :name: ObjCrdelta1f
+  :type: Double
+  :size: '20'
+  :description_topic: Desired third derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-4
+- :name: Object_path_segments
+  :type: ''
+  :size: ''
+  :description_topic: Object path segments (Compact description)
+  :comment: ''
+  :unit: ''
+- :name: ObjCompactDescriptionOrigin
+  :type: UInt16
+  :size: '20'
+  :description_topic: Identify where the compact description has been derived from.
+    Different map data can be used to derive the compact description of the path (i.e.,
+    detailed trajectories map, HERE map with ADAS plugin, HERE map without ADAS plugin,
+    eHorizon,…).
+  :comment: 'Possible sources:|0 = no map data available (only 1 segment is provided
+    following the formula: max(1; v+0,2*v^2))|1 = HERE map without ADAS plugin|2 =
+    HERE map with ADAS plugin|3 = eHorizon|4 = fully detailed trajectories map'
+  :unit: "-"
+- :name: ObjPathOriginLongitudeCompact
+  :type: Double
+  :size: '20'
+  :description_topic: Longitude
+  :comment: ''
+  :unit: deg
+- :name: ObjPathOriginLatitudeCompact
+  :type: Double
+  :size: '20'
+  :description_topic: Latitude
+  :comment: ''
+  :unit: deg
+- :name: ObjPathNrSegsCompact
+  :type: UInt16
+  :size: '20'
+  :description_topic: Number of segments describing the path
+  :comment: Compact description
+  :unit: ''
+- :name: ObjPathSegLenCompact
+  :type: Double
+  :size: '400'
+  :description_topic: Distance
+  :comment: ''
+  :unit: m
+- :name: ObjPathHeadingChangeCompact
+  :type: Double
+  :size: '400'
+  :description_topic: Heading change
+  :comment: The first one is the initial heading
+  :unit: deg
+- :name: ObjPathCurvatureCompact
+  :type: Double
+  :size: '400'
+  :description_topic: Curvature
+  :comment: ''
+  :unit: m-1
+- :name: ObjPathSpeedLimitCompact
+  :type: Double
+  :size: '400'
+  :description_topic: Speed limit
+  :comment: ''
+  :unit: km/h
+- :name: ObjPathSlopeCompact
+  :type: Double
+  :size: '400'
+  :description_topic: Slope
+  :comment: Banking will be added when available
+  :unit: "%"
+- :name: ObjPathNLanesCompact
+  :type: UInt16
+  :size: '400'
+  :description_topic: Number of lanes
+  :comment: ''
+  :unit: "-"
+- :name: ObjPathLinkIdCompact
+  :type: Int32
+  :size: '400'
+  :description_topic: Link Id
+  :comment: ''
+  :unit: "-"
+- :name: ObjPathPriorityLevelCompact
+  :type: UInt16
+  :size: '400'
+  :description_topic: Priority level
+  :comment: ''
+  :unit: "-"
+- :name: Vehicle_Position
+  :type: ''
+  :size: ''
+  :description_topic: VEHICLE POSITION (from GPS and filtering)
+  :comment: ''
+  :unit: ''
+- :name: GpsLongitude
+  :type: Double
+  :size: '1'
+  :description_topic: Absolute vehicle position
+  :comment: As measured by GPS, East positive
+  :unit: deg
+- :name: GpsLatitude
+  :type: Double
+  :size: '1'
+  :description_topic: Absolute vehicle position
+  :comment: As measured by GPS, North positive
+  :unit: deg
+- :name: GpsSpeed
+  :type: Double
+  :size: '1'
+  :description_topic: Vehicle speed
+  :comment: As measured by GPS
+  :unit: m/s
+- :name: GpsCourse
+  :type: Double
+  :size: '1'
+  :description_topic: Direction of vehicle speed
+  :comment: With respect to North, clockwise, as measured by GPS
+  :unit: deg
+- :name: GpsHdop
+  :type: Double
+  :size: '1'
+  :description_topic: Position accuracy
+  :comment: Diluition of precision as indicated by GPS
+  :unit: m
+- :name: EgoLongitude
+  :type: Double
+  :size: '1'
+  :description_topic: Absolute vehicle position
+  :comment: After position filter, referred to barycentre
+  :unit: deg
+- :name: EgoLatitude
+  :type: Double
+  :size: '1'
+  :description_topic: Absolute vehicle position
+  :comment: After position filter, referred to barycentre
+  :unit: deg
+- :name: EgoCourse
+  :type: Double
+  :size: '1'
+  :description_topic: Direction of vehicle speed
+  :comment: With respect to North, clockwise, after position filter
+  :unit: deg
+- :name: EgoDop
+  :type: Double
+  :size: '1'
+  :description_topic: Position accuracy
+  :comment: Diluition of precision, after position filter
+  :unit: m
+- :name: RX_CAM
+  :type: Int32
+  :size: '1'
+  :description_topic: 'CAM messages data: EGO (1st position) + REMOTE Vehicles'
+  :comment: up to 10 vehicles
+  :unit: "-"
+- :name: CAM_message
+  :type: ''
+  :size: ''
+  :description_topic: CAM  message from XXXYYY  (and EGO)
+  :comment: ''
+  :unit: ''
+- :name: v2x_cam_header_msgID
+  :type: UInt32
+  :size: '10'
+  :description_topic: Common message header for application and facilities layer messages.
+  :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6), ev-rsr(7)
+    } (0..255)
+  :unit: "-"
+- :name: v2x_cam_header_originationStationID
+  :type: Int32
+  :size: '10'
+  :description_topic: The ITS-S ID may be a pseudonym. It may change over space and/or
+    over time.
+  :comment: Unique indentifier for verhicle or RSU
+  :unit: "-"
+- :name: v2x_cam_GenerationDeltaTime
+  :type: UInt16
+  :size: '10'
+  :description_topic: Delta Time in ms
+  :comment: Only seconds after start of minute are transmitted|generationDeltaTime
+    = TimestampIts mod 65 536|TimestampIts represents an integer value in milliseconds
+    since 2004-01-|01T00:00:00:000Z as defined in ETSI TS 102 894-2
+  :unit: s
+- :name: v2x_cam_StationType
+  :type: UInt8
+  :size: '10'
+  :description_topic: The station type depends on the integration environment of ITS-S
+    into vehicle, mobile devices or at infrastructure.
+  :comment: unknown(0), pedestrian(1), cyclist(2), moped(3), motorcycle(4), passengerCar(5),
+    bus(6), lightTruck(7), heavyTruck(8), trailer(9), specialVehicles(10), tram(11),
+    roadSideUnit(15)
+  :unit: "-"
+- :name: v2x_cam_Latitude
+  :type: Int32
+  :size: '10'
+  :description_topic: Absolute geographical latitude in a WGS84 coordinate system.
+    Included into ReferencePosition|
+  :comment: 'Unit 0,1 microdegree. Referred to front bumper position. Positive: NORTH.
+    Negative: SOUTH. Raw value set to 900 000 001 when unavailable.'
+  :unit: deg
+- :name: v2x_cam_Longitude
+  :type: Int32
+  :size: '10'
+  :description_topic: Absolute geographical longitude in a WGS84 co-ordinate system.
+    Included into ReferencePosition
+  :comment: 'Unit 0,1 microdegree.  Referred to front bumper position. Negative: WEST.
+    Positive: EAST. Raw value set to 1 800 000 001 when unavailable'
+  :unit: deg
+- :name: v2x_cam_ConfidenceEllipse_semiMajor
+  :type: Int32
+  :size: '10'
+  :description_topic: half of length of the major axis, i.e. distance between the
+    centre point and major axis point of the position accuracy ellipse.
+  :comment: Absolute position accuracy in one of the axis direction as defined in
+    a shape of ellipse with a predefined confidence level (e.g. 95 %)|The value shall
+    be set to:|• 1 if the accuracy is equal to or less than 1 cm,|• n (n > 1 and n
+    < 4093) if the accuracy is equal to or less than n cm,|• 4093 if the accuracy
+    is equal to or less than 4093 cm,|• 4094 if the accuracy is out of range, i.e.
+    greater than 4093 cm,|• 4095 if the accuracy information is unavailable.
+  :unit: cm
+- :name: v2x_cam_ConfidenceEllipse_semiMinor
+  :type: Int32
+  :size: '10'
+  :description_topic: half of length of the minor axis, i.e. distance between the
+    centre point and minor axis point of the position accuracy ellipse.
+  :comment: Absolute position accuracy in one of the axis direction as defined in
+    a shape of ellipse with a predefined confidence level (e.g. 95 %)|The value shall
+    be set to:|• 1 if the accuracy is equal to or less than 1 cm,|• n (n > 1 and n
+    < 4093) if the accuracy is equal to or less than n cm,|• 4093 if the accuracy
+    is equal to or less than 4093 cm,|• 4094 if the accuracy is out of range, i.e.
+    greater than 4093 cm,|• 4095 if the accuracy information is unavailable.
+  :unit: cm
+- :name: v2x_cam_ConfidenceEllipse_semiMajorOrientation
+  :type: Int32
+  :size: '10'
+  :description_topic: orientation direction of the ellipse major axis of the position
+    accuracy ellipse with regards to the WGS84 north.
+  :comment: Orientation of a heading with regards to the WGS84 north.|When the information
+    is not available, the DE shall be set to 3601.
+  :unit: 0.1deg
+- :name: v2x_cam_Altitude
+  :type: Int32
+  :size: '10'
+  :description_topic: Altitude in a WGS84 co-ordinate system. Included into ReferencePosition
+  :comment: Unit 0.01 m. Raw value set to 800 001 when unavailable.
+  :unit: m
+- :name: v2x_cam_Heading
+  :type: UInt16
+  :size: '10'
+  :description_topic: Orientation of a heading with regards to the WGS84 north
+  :comment: Unit 0,1 degree. Raw value set to 3 601 when unavailable
+  :unit: deg
+- :name: v2x_cam_Speed
+  :type: UInt16
+  :size: '10'
+  :description_topic: Longitudinal speed value (from  odometer)
+  :comment: Unit 0,01 m/s . Speed not available set 16383
+  :unit: m/s
+- :name: v2x_cam_VehicleLength
+  :type: UInt16
+  :size: '10'
+  :description_topic: Length of a vehicle. The value shall be set to 1 022 if the
+    vehicle length is equal to or|greater than 102,2 metres.
+  :comment: Unit 0,1 m. Set to 1 023 if the information in unavailable.
+  :unit: m
+- :name: v2x_cam_VehicleWidth
+  :type: UInt8
+  :size: '10'
+  :description_topic: Width of a vehicle, including side mirrors. For a vehicle width
+    equal to or greater than|6,1 metres, the value shall be set to 61.
+  :comment: Unit 0,1 m. Set to 62 if the information is|unavailable
+  :unit: m
+- :name: v2x_cam_LongitudinalAcceleration
+  :type: Int16
+  :size: '10'
+  :description_topic: Longitudinal acceleration
+  :comment: Unit 0,1  m/s^2. Negative values indicate that the vehicle is braking.
+    Positive values indicate that the vehicle is accelerating. Set to 161 when unavailable.
+  :unit: m/s2
+- :name: v2x_cam_YawRate
+  :type: Int16
+  :size: '10'
+  :description_topic: Yaw-rate raw value, in degree per seconds
+  :comment: 'Unit 0,01 deg/s. Positive value: anti-clockwise. Negative value: clockwise.
+    Set to 32767 when unavailable.'
+  :unit: deg/s
+- :name: v2x_cam_AccelerationControl
+  :type: UInt8
+  :size: '10'
+  :description_topic: Current controlling mechanism for longitudinal movement of the
+    vehicle.
+  :comment: AccelerationControl ::= BIT STRING {|brakePedalEngaged (0),|gasPedalEngaged
+    (1),|emergencyBrakeEngaged (2),|collisionWarningEngaged (3),|accEngaged (4),|cruiseControlEngaged
+    (5),|speedLimiterEngaged (6)|} (SIZE(7))
+  :unit: bitstring
+- :name: v2x_cam_SteeringWheelAngle
+  :type: Int16
+  :size: '10'
+  :description_topic: Steering wheel angle value
+  :comment: 'Unit 1,5 degree.  Positive value: anti-clockwise. Negative value: clockwise.
+    Not available: the value shall be set to 512.'
+  :unit: deg
+- :name: v2x_cam_LateralAcceleration
+  :type: Int16
+  :size: '10'
+  :description_topic: Lateral Acc. Value from -16 m/s^2 to 16 m/s^2
+  :comment: 'Unit 0,1 m/s^2. Negative: acc. towards right side. Positive: acc. towards
+    left side of vehicle. Set to 161 when unavailable.'
+  :unit: m/s2
+- :name: v2x_cam_VehicleRole
+  :type: Uint16
+  :size: '10'
+  :description_topic: Role played by a vehicle at a point in time.
+  :comment: VehicleRole ::= ENUMERATED {default(0), publicTransport(1),|specialTransport(2),
+    dangerousGoods(3), roadWork(4), rescue(5),|emergency(6), safetyCar(7),|agriculture(8),commercial(9),military(10),roadOperator(11),taxi(12),|reserved1(13),
+    reserved2(14), reserved3(15)}
+  :unit: bitstring
+- :name: v2x_cam_ExteriorLights_status
+  :type: Uint8
+  :size: '10'
+  :description_topic: Describes the status of the exterior light switches of a vehicle.
+    The value of each bit indicates the state of the switch, which commands the|corresponding
+    light.
+  :comment: 0 = RELEASED; 1 = PRESSED for every light command.|ExteriorLights ::=
+    BIT STRING {|lowBeamHeadlightsOn (0),|highBeamHeadlightsOn (1),|leftTurnSignalOn
+    (2),|rightTurnSignalOn (3),|daytimeRunningLightsOn (4),|reverseLightOn (5),|fogLightOn
+    (6),|parkingLightsOn (7)|} (SIZE(8))
+  :unit: "-"
+- :name: v2x_cam_PathHistory
+  :type: Int32
+  :size: '10'
+  :description_topic: DF that defines a path with a set of path points. It may contain
+    up to 40 path points.
+  :comment: Set to 5 (Up to 40 according to ETSI standard)
+  :unit: "-"
+- :name: v2x_cam_deltaLatitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines offset latitude with regards to a referred latitude
+    value. Positive values are used for providing offset towards the north from the
+    reference|position. Negative values are used for providing offset towards the
+    south from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLatitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth(-10),
+    unavailable(131072)}
+  :unit: udeg
+- :name: v2x_cam_deltaLongitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines an offset longitude with regards to a referred longitude
+    value. Positive values are used for providing offset towards the east from the
+    reference|position. Negative values are used for providing offset towards the
+    west from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLongitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest(-10),
+    unavailable(131072)} (-131071..131072)
+  :unit: udeg
+- :name: v2x_cam_deltaAltitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines an offset altitude with regards to a referred altitude
+    value. Positive values are used for providing altitude offset above the reference
+    position. For values equal or greater than 127,99 metres, the value shall be 12
+    799. Negative values are used for providing altitude offset below the reference
+    position. When the information is unavailable, the value shall be set to 12800.
+  :comment: DeltaAltitude ::= INTEGER {oneCentimeterUp (1), oneCentimeterDown (-1),|unavailable(12800)}
+    (-12700..12800)
+  :unit: 0,01m
+- :name: DENM_message
+  :type: ''
+  :size: ''
+  :description_topic: DENM  from XXXYYY (and EGO)
+  :comment: ''
+  :unit: ''
+- :name: RX_DENM
+  :type: Int32
+  :size: '1'
+  :description_topic: DENM data coming from Remote Vehicles or RSB
+  :comment: up to 10 events
+  :unit: "-"
+- :name: v2x_header_msgID
+  :type: UInt32
+  :size: '4'
+  :description_topic: Common message header for application and facilities layer messages.
+  :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6), ev-rsr(7)
+    } (0..255)
+  :unit: "-"
+- :name: v2x_header_originationStationID
+  :type: Int32
+  :size: '4'
+  :description_topic: The ITS-S ID may be a pseudonym. It may change over space and/or
+    over time.
+  :comment: Unique indentifier for verhicle or RSU
+  :unit: "-"
+- :name: v2x_denm_sequenceNumber
+  :type: UInt8
+  :size: '4'
+  :description_topic: The sequenceNumber is a unique value updated each time a new
+    event is detected.
+  :comment: ''
+  :unit: "-"
+- :name: v2x_denm_detectionTime
+  :type: Int32
+  :size: '4'
+  :description_topic: Number of milliseconds since 2004-01-01T00:00:00.000Z, as specified
+    in ISO 8601.
+  :comment: The value for TimestampIts for 2007-01-01T00:00:00.000Z is 94 694 401
+    000 milliseconds, which includes one leap second insertion since 2004-01-01T00:00:00.000Z.|TimestampIts
+    ::= INTEGER {utcStartOf2004(0), oneMillisecAfterUTCStartOf2004(1)}
+  :unit: ms
+- :name: v2x_denm_eventPosition_latitude
+  :type: Int32
+  :size: '4'
+  :description_topic: Absolute geographical latitude in a WGS84 coordinate system.
+    Included into ReferencePosition|
+  :comment: 'Unit 0,1 microdegree. Referred to front bumper position. Positive: NORTH.
+    Negative: SOUTH. Raw value set to 900 000 001 when unavailable.'
+  :unit: deg
+- :name: v2x_denm_eventPosition_longitude
+  :type: Int32
+  :size: '4'
+  :description_topic: Absolute geographical longitude in a WGS84 co-ordinate system.
+    Included into ReferencePosition
+  :comment: 'Unit 0,1 microdegree.  Referred to front bumper position. Negative: WEST.
+    Positive: EAST. Raw value set to 1 800 000 001 when unavailable'
+  :unit: deg
+- :name: v2x_denm_ConfidenceEllipse_semiMajor
+  :type: Int32
+  :size: '4'
+  :description_topic: half of length of the major axis, i.e. distance between the
+    centre point and major axis point of the position accuracy ellipse.
+  :comment: Absolute position accuracy in one of the axis direction as defined in
+    a shape of ellipse with a predefined confidence level (e.g. 95 %)|The value shall
+    be set to:|• 1 if the accuracy is equal to or less than 1 cm,|• n (n > 1 and n
+    < 4093) if the accuracy is equal to or less than n cm,|• 4093 if the accuracy
+    is equal to or less than 4093 cm,|• 4094 if the accuracy is out of range, i.e.
+    greater than 4093 cm,|• 4095 if the accuracy information is unavailable.
+  :unit: cm
+- :name: v2x_denm_ConfidenceEllipse_semiMinor
+  :type: Int32
+  :size: '4'
+  :description_topic: half of length of the minor axis, i.e. distance between the
+    centre point and minor axis point of the position accuracy ellipse.
+  :comment: Absolute position accuracy in one of the axis direction as defined in
+    a shape of ellipse with a predefined confidence level (e.g. 95 %)|The value shall
+    be set to:|• 1 if the accuracy is equal to or less than 1 cm,|• n (n > 1 and n
+    < 4093) if the accuracy is equal to or less than n cm,|• 4093 if the accuracy
+    is equal to or less than 4093 cm,|• 4094 if the accuracy is out of range, i.e.
+    greater than 4093 cm,|• 4095 if the accuracy information is unavailable.
+  :unit: cm
+- :name: v2x_denm_ConfidenceEllipse_semiMajorOrientation
+  :type: Int32
+  :size: '4'
+  :description_topic: orientation direction of the ellipse major axis of the position
+    accuracy ellipse with regards to the WGS84 north.
+  :comment: Orientation of a heading with regards to the WGS84 north.|When the information
+    is not available, the DE shall be set to 3601.
+  :unit: 0.1deg
+- :name: v2x_denm_eventPosition_altitude
+  :type: Int32
+  :size: '4'
+  :description_topic: Altitude in a WGS84 co-ordinate system. Included into ReferencePosition
+  :comment: Unit 0.01 m. Raw value set to 800 001 when unavailable.
+  :unit: m
+- :name: v2x_denm_relevanceDistance
+  :type: UInt8
+  :size: '4'
+  :description_topic: Distance of relevance for information indicated in a message.
+  :comment: 'RelevanceDistance ::= ENUMERATED {lessThan50m(0), lessThan100m(1), lessThan200m(2),
+    lessThan500m(3),lessThan1000m(4), lessThan5km(5), lessThan10km(6), over10km(7)} '
+  :unit: "-"
+- :name: v2x_denm_relevanceTrafficDirection
+  :type: UInt8
+  :size: '4'
+  :description_topic: Traffic direction that is relevant to information indicated
+    in a message.
+  :comment: RelevanceTrafficDirection ::= ENUMERATED {allTrafficDirections(0),|upstreamTraffic(1),
+    downstreamTraffic(2), oppositeTraffic(3)}
+  :unit: "-"
+- :name: v2x_denm_validityDuration
+  :type: Int32
+  :size: '4'
+  :description_topic: Duration of a traffic event validity. 24Hr maximum.
+  :comment: ValidityDuration ::= INTEGER {timeOfDetection(0), oneSecondAfterDetection(1)}
+  :unit: s
+- :name: v2x_denm_stationType
+  :type: UInt8
+  :size: '4'
+  :description_topic: The type of an ITS-S
+  :comment: StationType ::= INTEGER {unknown(0), pedestrian(1), cyclist(2), moped(3),
+    motorcycle(4), passengerCar(5), bus(6), lightTruck(7), heavyTruck(8), trailer(9),
+    specialVehicles(10), tram(11), roadSideUnit(15)}
+  :unit: "-"
+- :name: v2x_denm_eventType_CauseCode
+  :type: Int32
+  :size: '4'
+  :description_topic: Value of the direct cause code of a detected event as defined
+    in ETSI EN 302 637-3 - V1.2.2 (2014-11)
+  :comment: trafficCondition (1), | accident (2), | roadworks (3), | adverseWeatherCondition-Adhesion
+    (6), hazardousLocation-SurfaceCondition (9), humanPresenceOnTheRoad (12), | wrongWayDriving
+    (14), adverseWeatherCondition-ExtremeWeatherCondition (17), adverseWeatherCondition-Visibility
+    (18), adverseWeatherCondition-Precipitation (19) | collisionRisk (97), | signalViolation
+    (98), | dangerousSituation (99)
+  :unit: "-"
+- :name: v2x_denm_eventType_SubCauseCode
+  :type: Int32
+  :size: '4'
+  :description_topic: Value of the direct sub cause code of a detected event as defined
+    in ETSI EN 302 637-3 - V1.2.2 (2014-11)
+  :comment: 'SAFE STRIP relevant : (see v2x_denm_eventType_CauseCode)SubCauseCode
+    example:  collisionRisk_SubCauseCode: Cunavailable(0), longitudinalCollisionRisk(1),
+    crossingCollisionRisk(2), lateralCollisionRisk(3), vulnerableRoadUser(4)'
+  :unit: "-"
+- :name: v2x_denm_frictionCoefficient_value
+  :type: Uint16
+  :size: '4'
+  :description_topic: Value of the friction coefficient estimated (CUSTOM)
+  :comment: ''
+  :unit: '0.0001'
+- :name: v2x_denm_frictionCoefficient_confidence
+  :type: Uint16
+  :size: '4'
+  :description_topic: Confidence of the value of the friction coefficient (CUSTOM)
+  :comment: ''
+  :unit: '0.0001'
+- :name: v2x_denm_traces
+  :type: Int32
+  :size: '10'
+  :description_topic: The DF consists of a list of event points which represents the
+    dimension of a plain event in a predefined order.
+  :comment: Set to 5 (Up to 40 according to ETSI standard)
+  :unit: "-"
+- :name: v2x_denm_trace_deltaLatitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines offset latitude with regards to a referred latitude
+    value. Positive values are used for providing offset towards the north from the
+    reference|position. Negative values are used for providing offset towards the
+    south from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLatitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth(-10),
+    unavailable(131072)}
+  :unit: udeg
+- :name: v2x_denm_trace_deltaLongitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines an offset longitude with regards to a referred longitude
+    value. Positive values are used for providing offset towards the east from the
+    reference|position. Negative values are used for providing offset towards the
+    west from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLongitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest(-10),
+    unavailable(131072)} (-131071..131072)
+  :unit: udeg
+- :name: v2x_denm_trace_deltaAltitude
+  :type: Int32
+  :size: '50'
+  :description_topic: It defines an offset altitude with regards to a referred altitude
+    value. Positive values are used for providing altitude offset above the reference
+    position. For values equal or greater than 127,99 metres, the value shall be 12
+    799. Negative values are used for providing altitude offset below the reference
+    position. When the information is unavailable, the value shall be set to 12800.
+  :comment: DeltaAltitude ::= INTEGER {oneCentimeterUp (1), oneCentimeterDown (-1),|unavailable(12800)}
+    (-12700..12800)
+  :unit: 0,01m
+- :name: v2x_denm_rww_speedLimit
+  :type: Int32
+  :size: '10'
+  :description_topic: Speed limitation applied to a geographical position, a road
+    section or a geographical region.
+  :comment: 'SpeedLimit ::= INTEGER {oneKmPerHour(1)} '
+  :unit: km/h
+- :name: v2x_denm_rww_speedLimitPos_deltaLatitude
+  :type: Int32
+  :size: '10'
+  :description_topic: It defines offset latitude with regards to a referred latitude
+    value. Positive values are used for providing offset towards the north from the
+    reference|position. Negative values are used for providing offset towards the
+    south from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLatitude ::= INTEGER {oneMicrodegreeNorth (10), oneMicrodegreeSouth(-10),
+    unavailable(131072)}
+  :unit: udeg
+- :name: v2x_denm_rww_speedLimitPos_deltaLongitude
+  :type: Int32
+  :size: '10'
+  :description_topic: It defines an offset longitude with regards to a referred longitude
+    value. Positive values are used for providing offset towards the east from the
+    reference|position. Negative values are used for providing offset towards the
+    west from the reference position. When the information is unavailable, the value
+    shall be set to 131072.
+  :comment: DeltaLongitude ::= INTEGER {oneMicrodegreeEast (10), oneMicrodegreeWest(-10),
+    unavailable(131072)} (-131071..131072)
+  :unit: udeg
+- :name: v2x_denm_rww_speedLimitPos_deltaAltitude
+  :type: Int32
+  :size: '10'
+  :description_topic: It defines an offset altitude with regards to a referred altitude
+    value. Positive values are used for providing altitude offset above the reference
+    position. For values equal or greater than 127,99 metres, the value shall be 12
+    799. Negative values are used for providing altitude offset below the reference
+    position. When the information is unavailable, the value shall be set to 12800.
+  :comment: DeltaAltitude ::= INTEGER {oneCentimeterUp (1), oneCentimeterDown (-1),|unavailable(12800)}
+    (-12700..12800)
+  :unit: 0,01m
+- :name: v2x_denm_rww_TrafficFlowRule
+  :type: UInt8
+  :size: '10'
+  :description_topic: It indicates traffic rules that apply to vehicles at a certain
+    position. It includes the|following information:|• If overtaking is prohibited
+    for all vehicles, the DE shall be set to 0.|• If overtaking is prohibited for
+    trucks, the DE shall be set to 1.|• If vehicles should pass to the right lane,
+    the DE shall be set to 2.|• If vehicles should pass to the left lane, the DE shall
+    be set to 3.
+  :comment: TrafficRule ::= ENUMERATED {noPassing(0), noPassingForTrucks(1), passToRight(2),
+    passToLeft(3), ... }
+  :unit: "-"
+- :name: TRAIN_message
+  :type: ''
+  :size: ''
+  :description_topic: 'TRAIN ???  message from XXXYYY '
+  :comment: ''
+  :unit: ''
+- :name: RX_MAP
+  :type: Int32
+  :size: '1'
+  :description_topic: MAP data coming from RSU
+  :comment: up to 1 map message (from the same station)
+  :unit: "-"
+- :name: MAPEM
+  :type: ''
+  :size: ''
+  :description_topic: MAPEM from ETSI TS 103 301 V1.1.1 (2016-11) & SAE J2735_201603
+  :comment: ''
+  :unit: ''
+- :name: v2x_header_msgID
+  :type: UInt32
+  :size: '1'
+  :description_topic: Common message header for application and facilities layer messages.
+  :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6), ev-rsr(7)
+    } (0..255)
+  :unit: "-"
+- :name: v2x_header_originationStationID
+  :type: Int32
+  :size: '1'
+  :description_topic: The ITS-S ID may be a pseudonym. It may change over space and/or
+    over time.
+  :comment: Unique indentifier for verhicle or RSU
+  :unit: "-"
+- :name: v2x_map_msgCount
+  :type: UInt8
+  :size: '1'
+  :description_topic: The DE_MsgCount data element is used to provide a sequence number
+    within a stream of messages with the same DSRCmsgID and from the same sender.
+    A sender may initialize this element to any value in the range 0-127 when sending
+    the first message with a given DSRCmsgID.
+  :comment: "-"
+  :unit: "-"
+- :name: v2x_map_intersection
+  :type: Int32
+  :size: '1'
+  :description_topic: A complete description of an intersection's roadway geometry
+    and its allowed navigational paths (independent of any additional regulatory restrictions
+    that may apply over time or from user classification).
+  :comment: Set to 1 (up to 32 from SAE J2735_201603)
+  :unit: "-"
+- :name: 'v2x_map_intersection_name  '
+  :type: UInt8
+  :size: '1'
+  :description_topic: The DescriptiveName data element is used in maps and intersections
+    to provide a human readable and recognizable name for the feature that follows.
+    It is typically used when debugging a data flow and not in production use.
+  :comment: 'IA5String.|Default value when this filed is not sent: empty array (i.e.
+    all zero).'
+  :unit: "-"
+- :name: v2x_map_intersection_id
+  :type: UInt32
+  :size: '1'
+  :description_topic: A unique mapping to the intersection in question within the
+    above region of use.
+  :comment: The values zero through 255 are allocated for testing purposes.
+  :unit: "-"
+- :name: v2x_map_intersection_refLatitude
+  :type: Int32
+  :size: '1'
+  :description_topic: Absolute geographical latitude in a WGS84 coordinate system.|
+  :comment: 'Unit 0,1 microdegree. Referred to front bumper position. Positive: NORTH.
+    Negative: SOUTH. Raw value set to 900 000 001 when unavailable.'
+  :unit: deg
+- :name: v2x_map_intersection_refLongitude
+  :type: Int32
+  :size: '1'
+  :description_topic: '8'
+  :comment: 'Unit 0,1 microdegree.  Referred to front bumper position. Negative: WEST.
+    Positive: EAST. Raw value set to 1 800 000 001 when unavailable'
+  :unit: deg
+- :name: 'v2x_map_intersection_refAltitude  '
+  :type: Int32
+  :size: '1'
+  :description_topic: The DE_Elevation data element represents the geographic position
+    above or below the reference ellipsoid (typically WGS-84).
+  :comment: 'Elevation ::= INTEGER (-4096..61439)|-- In units of 10 cm steps above
+    or below the reference ellipsoid|-- Providing a range of -409.5 to + 6143.9 meters|--
+    The value -4096 shall be used when Unknown is to be sent|Default value when this
+    filed is not sent: 61440'
+  :unit: 10cm
+- :name: 'v2x_map_intersection_laneWidth  '
+  :type: Int32
+  :size: '1'
+  :description_topic: Reference width used by all subsequent lanes. The DE_LaneWidth
+    data element conveys the width of a lane in LSB units of 1 cm. Maximum value for
+    a lane is 327.67 meters in width.
+  :comment: 'Default value when this fieldis not set: 32768'
+  :unit: cm
+- :name: 'v2x_map_intersection_speedLimitType  '
+  :type: UInt8
+  :size: '1'
+  :description_topic: The SpeedLimitType data element relates the type of speed limit
+    to which a given speed refers.
+  :comment: 'SpeedLimitType ::= ENUMERATED {|unknown, -- Speed limit type not available|maxSpeedInSchoolZone,
+    -- Only sent when the limit is active|maxSpeedInSchoolZoneWhenChildrenArePresent,
+    -- Sent at any time|maxSpeedInConstructionZone, -- Used for work zones, incident
+    zones, etc. where a reduced speed is present|vehicleMinSpeed,|vehicleMaxSpeed,
+    -- Regulatory speed limit for general traffic|vehicleNightMaxSpeed,|truckMinSpeed,|truckMaxSpeed,|truckNightMaxSpeed,|vehiclesWithTrailersMinSpeed,|vehiclesWithTrailersMaxSpeed,|vehiclesWithTrailersNightMaxSpeed,|...|}|Default
+    value when this fieldis not set: 13'
+  :unit: "-"
+- :name: 'v2x_map_intersection_speedLimitValue  '
+  :type: Int32
+  :size: '1'
+  :description_topic: Reference regulatory speed limits used by all subsequent lanes.|This
+    data element represents the velocity of an object, typically a vehicle speed or
+    the recommended speed of travel along a roadway, expressed in unsigned units of
+    0.02 meters per second
+  :comment: 'Velocity ::= INTEGER (0..8191) -- Units of 0.02 m/s|-- The value 8191
+    indicates that velocity is unavailable||Default value when this fieldis not set:
+    8192'
+  :unit: 0.02m/s
+- :name: v2x_map_intersection_LaneSet
+  :type: Int32
+  :size: '1'
+  :description_topic: The LaneList data frame consists of a list of GenericLane entries.
+  :comment: Set to 16 (up to 255 from SAE J2735_201603)
+  :unit: "-"
+- :name: v2x_map_intersection_LaneSet_ID
+  :type: UInt8
+  :size: '16'
+  :description_topic: The unique ID number assigned to this lane object
+  :comment: LaneID ::= INTEGER (0..255)|-- the value 0 shall be used when the lane
+    ID is not available or not known|-- the value 255 is reserved for future use
+  :unit: "-"
+- :name: v2x_map_intersection_LaneSet_laneAttributes_directionalUse
+  :type: UInt8
+  :size: '16'
+  :description_topic: The LaneDirection data element is used to denote the allowed
+    direction of travel over a lane object. By convention, the lane object is always
+    described from the stop line outwards away from the intersection. Therefore, the
+    ingress direction is from the end of the path to the stop line and the egress
+    direction is from the stop line outwards.
+  :comment: LaneDirection ::= BIT STRING {|-- Allowed directions of travel in the
+    lane object -- All lanes are described from the stop line outwards|ingressPath
+    (0), -- travel from rear of path to front is allowed|egressPath (1) -- travel
+    from front of path to rear  is allowed |} (SIZE (2))
+  :unit: bitstring
+- :name: v2x_map_intersection_LaneSet_laneAttributes_LaneType
+  :type: UInt16
+  :size: '16'
+  :description_topic: The Lane Type Attributes data frame is used to hold attribute
+    information specific to a given lane type
+  :comment: 'LaneAttributes-Vehicle ::= BIT STRING { -- With bits as defined:|isVehicleRevocableLane
+    (0),|-- this lane may be activated or not based|-- on the current SPAT message
+    contents|-- if not asserted, the lane is ALWAYS present|isVehicleFlyOverLane (1),|--
+    path of lane is not at grade|hovLaneUseOnly (2),|restrictedToBusUse (3),|restrictedToTaxiUse
+    (4),|restrictedFromPublicUse (5),|hasIRbeaconCoverage (6),|permissionOnRequest
+    (7) -- e.g. to inform about a lane for e-cars|} (SIZE (8,...))|OR|LaneAttributes-Crosswalk
+    ::= BIT STRING { -- With bits as defined: -- MUTCD provides no suitable "types"
+    to use here|crosswalkRevocableLane (0),|-- this lane may be activated or not based|--
+    on the current SPAT message contents|-- if not asserted, the lane is ALWAYS present|bicyleUseAllowed
+    (1),|-- The path allows bicycle traffic,|-- if not set, this mode is prohibited|isXwalkFlyOverLane
+    (2),|-- path of lane is not at grade|fixedCycleTime (3),|-- ped walk phases use
+    preset times|-- i.e. there is not a ''push to cross'' button|biDirectionalCycleTimes
+    (4),|-- ped walk phases use different SignalGroupID|-- for each direction. The
+    first SignalGroupID|-- in the first Connection represents ''inbound''|-- flow
+    (the direction of travel towards the first|-- node point) while second SignalGroupID
+    in the|-- next Connection entry represents the ''outbound''|-- flow. And use of
+    RestrictionClassID entries|-- in the Connect follow this same pattern in pairs.|hasPushToWalkButton
+    (5),|-- Has a demand input|audioSupport (6),|-- audio crossing cues present|rfSignalRequestPresent
+    (7),|-- Supports RF push to wwalk technologies|unsignalizedSegmentsPresent (8)|--
+    The lane path consists of one of more segments|-- which are not part of a signal
+    group ID|-- Bits 9~15 reserved and set to zero|} (SIZE (16))'
+  :unit: bitstring
+- :name: 'v2x_map_intersection_LaneSet_allowedManeuvers  '
+  :type: UInt16
+  :size: '16'
+  :description_topic: the permitted maneuvers for this lane
+  :comment: 'AllowedManeuvers ::= BIT STRING {|-- With bits as defined:|-- Allowed
+    maneuvers at path end (stop line)|-- All maneuvers with bits not set are therefore
+    prohibited !|-- A value of zero shall be used for unknown, indicating no Maneuver|maneuverStraightAllowed
+    (0),|-- a Straight movement is allowed in this lane|maneuverLeftAllowed (1),|--
+    a Left Turn movement is allowed in this lane|maneuverRightAllowed (2),|-- a Right
+    Turn movement is allowed in this lane|maneuverUTurnAllowed (3),|-- a U turn movement
+    is allowed in this lane|maneuverLeftTurnOnRedAllowed (4),|-- a Stop, and then
+    proceed when safe movement|-- is allowed in this lane|maneuverRightTurnOnRedAllowed
+    (5),|-- a Stop, and then proceed when safe movement|-- is allowed in this lane|maneuverLaneChangeAllowed
+    (6),|-- a movement which changes to an outer lane|-- on the egress side is allowed
+    in this lane|-- (example: left into either outbound lane)|maneuverNoStoppingAllowed
+    (7),|-- the vehicle should not stop at the stop line|-- (example: a flashing green
+    arrow)|yieldAllwaysRequired (8),|-- the allowed movements above are not protected|--
+    (example: an permanent yellow condition)|goWithHalt (9),|-- after making a full
+    stop, may proceed|caution (10),|-- proceed past stop line with caution|reserved1
+    (11)|-- used to align to 12 Bit Field|} (SIZE(12))|Default value when the data
+    element is not available: 4096'
+  :unit: bitstring
+- :name: v2x_map_intersection_LaneSet_nodeList
+  :type: Int32
+  :size: '16'
+  :description_topic: The NodeListXY data structure provides the sequence of signed
+    offset node point values for determining the Xs and Ys (and possibly Width or
+    Zs when present), using the then current Position3D object to build a path for
+    the centerline of the subject lane type. Each X,Y point is referred to as a Node
+    Point.
+  :comment: Set to 10 (up to 63 from SAE J2735_201603)
+  :unit: "-"
+- :name: v2x_map_intersection_LaneSet_nodeList_Xoffset
+  :type: Int32
+  :size: '160'
+  :description_topic: A 32-bit node type with offset values from the last point in
+    X (offset is positive to the East direction).|Node is within 327.67m of last node
+    (considering both X and Y offsets)
+  :comment: "-"
+  :unit: cm
+- :name: v2x_map_intersection_LaneSet_nodeList_Yoffset
+  :type: Int32
+  :size: '160'
+  :description_topic: A 32-bit node type with offset values from the last point in
+    Y (offset is positive to the North direction).|Node is within 327.67m of last
+    node (considering both X and Y offsets)
+  :comment: "-"
+  :unit: cm
+- :name: v2x_map_intersection_LaneSet_connectsTo
+  :type: Int32
+  :size: '16'
+  :description_topic: a list of other lanes and their signal group Ids.
+  :comment: Set to 6 (up to 16 from SAE J2735_201603)
+  :unit: "-"
+- :name: v2x_map_intersection_LaneSet_connectingLaneID
+  :type: UInt8
+  :size: '96'
+  :description_topic: Index of the connecting lane
+  :comment: LaneID ::= INTEGER (0..255) -- the value 0 shall be used when the lane
+    ID is -- not available or not known -- the value 255 is reserved for future use
+  :unit: "-"
+- :name: v2x_map_intersection_LaneSet_connectingLaneSignalGroup
+  :type: UInt8
+  :size: '96'
+  :description_topic: The matching signal group send by the SPAT message for this
+    lane/maneuver.
+  :comment: SignalGroupID ::= INTEGER (0..255)|-- The value 0 shall be used when the
+    ID is not available or not known|-- the value 255 is reserved to indicate a permanent
+    green movement state|-- therefore a simple 8 phase signal controller device might
+    use 1..9 as its groupIDs
+  :unit: "-"
+- :name: RX_SPAT
+  :type: Int32
+  :size: '1'
+  :description_topic: SPAT data coming from RSU
+  :comment: up to 1 SPAT message (from the same station)
+  :unit: "-"
+- :name: SPATEM
+  :type: ''
+  :size: ''
+  :description_topic: SPATEM from ETSI TS 103 301 V1.1.1 (2016-11) & SAE J2735_201603
+  :comment: ''
+  :unit: ''
+- :name: v2x_header_msgID
+  :type: UInt32
+  :size: '10'
+  :description_topic: Common message header for application and facilities layer messages.
+  :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6), ev-rsr(7)
+    } (0..255)
+  :unit: "-"
+- :name: v2x_header_originationStationID
+  :type: Int32
+  :size: '10'
+  :description_topic: The ITS-S ID may be a pseudonym. It may change over space and/or
+    over time.
+  :comment: Unique indentifier for verhicle or RSU
+  :unit: "-"
+- :name: v2x_spat_intersection_Number
+  :type: Int32
+  :size: '1'
+  :description_topic: The Signal Phase and Timing (SPAT) message is used to convey
+    the current status of one or more signalized intersections. Along with the MSG_MapData
+    message (which describes a full geometric layout of an intersection) the receiver
+    of this message can determine the state of the signal phasing and when the next
+    expected phase will occur.
+  :comment: Set to 1 (up to 32 from SAE J2735_201603)
+  :unit: "-"
+- :name: 'v2x_spat_intersection_name  '
+  :type: UInt8
+  :size: '1'
+  :description_topic: The DescriptiveName data element is used in maps and intersections
+    to provide a human readable and recognizable name for the feature that follows.
+    It is typically used when debugging a data flow and not in production use.
+  :comment: 'IA5String.|Default value when this filed is not sent: empty array (i.e.
+    all zero).'
+  :unit: "-"
+- :name: v2x_spat_intersection_region
+  :type: UInt32
+  :size: '1'
+  :description_topic: A unique mapping to the intersection in question within the
+    above region of use.
+  :comment: The values zero through 255 are allocated for testing purposes.
+  :unit: "-"
+- :name: v2x_spat_intersection_id
+  :type: Int32
+  :size: '1'
+  :description_topic: Absolute geographical latitude in a WGS84 coordinate system.|
+  :comment: 'Unit 0,1 microdegree. Referred to front bumper position. Positive: NORTH.
+    Negative: SOUTH. Raw value set to 900 000 001 when unavailable.'
+  :unit: deg
+- :name: v2x_spat_intersection_status
+  :type: UInt16
+  :size: '1'
+  :description_topic: The Intersection Status Object contains Advanced Traffic Controller
+    (ATC) status information that may be sent to local OBUs as part of the SPAT process.
+  :comment: 'IntersectionStatusObject ::= BIT STRING {|manualControlIsEnabled (0),|--
+    Timing reported is per programmed values, etc. but person|-- at cabinet can manually
+    request that certain intervals are|-- terminated early (e.g. green).|stopTimeIsActivated
+    (1),|-- And all counting/timing has stopped.|failureFlash (2),|-- Above to be
+    used for any detected hardware failures,|-- e.g. conflict monitor as well as for
+    police flash|preemptIsActive (3),|signalPriorityIsActive (4),|-- Additional states|fixedTimeOperation
+    (5),|-- Schedule of signals is based on time only|-- (i.e. the state can be calculated)|trafficDependentOperation
+    (6),|-- Operation is based on different levels of traffic parameters|-- (requests,
+    duration of gaps or more complex parameters)|standbyOperation (7),|-- Controller:
+    partially switched off or partially amber flashing|failureMode (8),|-- Controller
+    has a problem or failure in operation|off (9),|-- Controller is switched off|--
+    Related to MAP and SPAT bindings|recentMAPmessageUpdate (10),|-- Map revision
+    with content changes|recentChangeInMAPassignedLanesIDsUsed (11),|-- Change in
+    MAP''s assigned lanes used (lane changes)|-- Changes in the active lane list description|noValidMAPisAvailableAtThisTime
+    (12),|-- MAP (and various lanes indexes) not available|noValidSPATisAvailableAtThisTime
+    (13)|-- SPAT system is not working at this time|SAE INTERNATIONAL J2735™ MAR2016
+    Page 143 of 267|-- Bits 14,15 reserved at this time and shall be zero|} (SIZE(16))'
+  :unit: bitstring
+- :name: 'v2x_spat_intersection_moy  '
+  :type: Int32
+  :size: '1'
+  :description_topic: Minute of current UTC year
+  :comment: 'MinuteOfTheYear ::= INTEGER (0..527040) -- the value 527040 shall be
+    used for invalid||Default value when this field is not set: 527041'
+  :unit: minute
+- :name: 'v2x_spat_intersection_timestamp  '
+  :type: Int32
+  :size: '1'
+  :description_topic: the mSec point in the current UTC minute|
+  :comment: 'The DSRC second expressed in this data element consists of integer values
+    from zero to 60999, representing the milliseconds within a minute. A leap second
+    is represented by the value range 60000 to 60999. The value of 65535 shall represent
+    an unavailable value in the range of the minute. The values from 61000 to 65534
+    are reserved.||Default value when this field is not set: 65535'
+  :unit: ms
+- :name: v2x_spat_intersection_states
+  :type: Int32
+  :size: '12'
+  :description_topic: "|Each Movement is given in turn and contains its signal phase
+    state, mapping to the lanes it applies to, and  point in time it will end, and
+    it may contain both active and future states"
+  :comment: Set to 12 (up to 255 from SAE J2735_201603)
+  :unit: "-"
+- :name: v2x_spat_intersection_state_signalGroupID
+  :type: UInt8
+  :size: '12'
+  :description_topic: the group id is used to map to lists of lanes (and their descriptions)
+    -> connection between MAP and its TrafficLightPhaseTiming.
+  :comment: SignalGroupID ::= INTEGER (0..255)|-- The value 0 shall be used when the
+    ID is not available or not known|-- the value 255 is reserved to indicate a permanent
+    green movement state|-- therefore a simple 8 phase signal controller device might
+    use 1..9 as its groupIDs
+  :unit: "-"
+- :name: v2x_spat_intersection_state_eventPhase
+  :type: UInt8
+  :size: '12'
+  :description_topic: Consisting of:|-- Phase state (the basic 11 states)|-- Directional,
+    protected, or permissive state
+  :comment: 'MovementPhaseState ::= ENUMERATED {|unavailable (0),-- This state is
+    used for unknown or error|dark (1),-- The signal head is dark (unlit)|-- Reds|stop-Then-Proceed
+    (2), -- Often called ''flashing red'' in US -- Driver Action:Stop vehicle at stop
+    line. Do not proceed unless it is safe. Note that the right to proceed either
+    right or left when it is safe may be contained in the lane description to handle
+    what is called a ''right on red''|stop-And-Remain (3), e.g. called ''red light''
+    in US -- Driver Action:Stop vehicle at stop line. Do not proceed. Note that the
+    right to proceed either right or left when it is safe may be contained in the
+    lane description to handle what is called a ''right on red''|-- Greens|pre-Movement
+    (4),|-- Not used in the US, red+yellow partly in EU-- Driver Action: Stop vehicle.
+    Prepare to proceed (pending green) (Prepare for transition to green/go)|permissive-Movement-Allowed
+    (5), Often called ''permissive green'' in US-- Driver Action: Proceed with caution,
+    must yield to all conflicting traffic. Conflicting traffic may be present in the
+    intersection conflict area|protected-Movement-Allowed (6), Often called ''protected
+    green'' in US-- Driver Action: Proceed, tossing caution to the wind, in indicated
+    (allowed) direction.|-- Yellows / Ambers -- The vehicle is not allowed to cross
+    the stop bar if it is possible -- to stop without danger.|permissive-clearance
+    (7), Often called ''permissive yellow'' in US-- Driver Action: Prepare to stop.
+    Proceed if unable to stop, Clear Intersection. Conflicting traffic may be present
+    in the intersection conflict area|protected-clearance (8),  Often called ''protected
+    yellow'' in US Driver Action: Prepare to stop. Proceed if unable to stop, in indicated
+    direction (to connected lane) Clear Intersection.|caution-Conflicting-Traffic
+    (9) Often called ''flashing yellow'' in US Often used for extended periods of
+    time -- Driver Action: Proceed with caution, Conflicting traffic may be present
+    in the intersection conflict area|}'
+  :unit: "-"
+- :name: v2x_spat_intersection_state_startTime
+  :type: Int32
+  :size: '12'
+  :description_topic: When this phase 1st started
+  :comment: Tenths of a second in the current or next hour in respect of UTC time.
+    A range of 0~36000 covers one hour  (UTC time modulo 36000). The values 35991..35999
+    are used when a leap second occurs. 36001 is to be used when value undefined or
+    unknown|Note that this is NOT expressed in GPS time
+  :unit: ms
+- :name: v2x_spat_intersection_state_minEndTime
+  :type: Int32
+  :size: '12'
+  :description_topic: Expected shortest end time
+  :comment: Tenths of a second in the current or next hour in respect of UTC time.
+    A range of 0~36000 covers one hour  (UTC time modulo 36000). The values 35991..35999
+    are used when a leap second occurs. 36001 is to be used when value undefined or
+    unknown|Note that this is NOT expressed in GPS time
+  :unit: ms
+- :name: MANOEUVRES THREATS PARAMETERS (from codriver)
+  :type: ''
+  :size: ''
+  :description_topic: ''
+  :comment: ''
+  :unit: ''
+- :name: First_manoeuvre_parameters
+  :type: ''
+  :size: ''
+  :description_topic: First manoeuvre parameters
+  :comment: ''
+  :unit: ''
+- :name: TimeHeadwayPolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal w.r.t. obstacle
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: LegalSpeedPolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: LegalSpeedLimitf
+  :type: Int32
+  :size: '1'
+  :description_topic: Speed limit not followed by the driver
+  :comment: ''
+  :unit: Km/h
+- :name: LandmarkPolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: LandmarkTypef
+  :type: Int32
+  :size: '1'
+  :description_topic: Landmark not followed by the driver
+  :comment: 0 = NO LANDMARK|1 = STOP SIGN|2 = PEDESTRIAN CROSSING|3 = YIELD SIGN|4
+    = SEMAPHORE
+  :unit: "-"
+- :name: AccelerationPolicyForCurvef
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW LEFT|3 = YELLOW RIGHT|4 = RED LEFT|5
+    = RED RIGHT
+  :unit: "-"
+- :name: RearTimeHeadwayPolicyLeftf
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal with respect to side vehicle
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: LeftThreatTypef
+  :type: Int32
+  :size: '1'
+  :description_topic: Class of left threat
+  :comment: 0 = SIDE OBSTACLE; 1 = RUN OFF ROAD
+  :unit: "-"
+- :name: RearTimeHeadwayPolicyRightf
+  :type: Int32
+  :size: '1'
+  :description_topic: Identified driver goal with respect to side vehicle
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: RightThreatTypef
+  :type: Int32
+  :size: '1'
+  :description_topic: Class of right threat
+  :comment: 0 = SIDE OBSTACLE; 1 = RUN OFF ROAD
+  :unit: "-"
+- :name: LeftLanePolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: GREEN means stay in lane|YELLOW means use part of side lane|RED
+    means no side lane or trespass road edge
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: RightLanePolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: GREEN means stay in lane|YELLOW means use part of side lane|RED
+    means no side lane or trespass road edge
+  :comment: 0 = NOT COMPUTED|1 = GREEN|2 = YELLOW|3 = RED
+  :unit: "-"
+- :name: TravelTimePolicyf
+  :type: Int32
+  :size: '1'
+  :description_topic: Driver driving style
+  :comment: 0 = NOT COMPUTED|1 = COMFORT|2 = NORMAL|3 = SPORT
+  :unit: "-"
+- :name: RecommendedGearf
+  :type: Int32
+  :size: '1'
+  :description_topic: Recommended gear for green mode
+  :comment: 0 = NOT COMPUTED
+  :unit: "-"
+- :name: FRONT TARGET OBSTACLE
+  :type: ''
+  :size: ''
+  :description_topic: ''
+  :comment: ''
+  :unit: ''
+- :name: First_manoeuvre_front_target_obstacle
+  :type: ''
+  :size: ''
+  :description_topic: First manoeuvre front target obstacle
+  :comment: ''
+  :unit: ''
+- :name: WarningLevel
+  :type: Uint8
+  :size: '5'
+  :description_topic: Warning Level
+  :comment: 0 = system active with no warning 1 = warning level one "yellow" 2 = warning
+    level two "red" 3 = unavailable
+  :unit: "-"
+- :name: TargetIDf
+  :type: Int32
+  :size: '5'
+  :description_topic: Track ID
+  :comment: ID of the target assigned by the codriver
+  :unit: "-"
+- :name: TargetClassf
+  :type: Int32
+  :size: '5'
+  :description_topic: Danger Object class
+  :comment: 0 = UNCLASSIFIED|1 = UNKNOWN SMALL|2 = UNKNOWN BIG|3 = PEDESTRIAN (VRU)|4
+    = BIKE OR MOTORBIKE|5 = CAR|6 = TRUCK OR BUS |7= ROADWORKS |8= WRONG WAY DRIVING
+    |9= TRAIN APPROCHING LEVEL CROSSING | 10 = low friction area
+  :unit: "-"
+- :name: TargetComingDirection
+  :type: Uint8
+  :size: '5'
+  :description_topic: Coming direction of the danger
+  :comment: If the danger comes from a moving object (cars or trains) indicates the
+    direction of the lane from which it si coming , front and behind indicates parallel
+    lanes. | 1 = left | 2 = right | 3 = front | 4 = behind | 5 = front left | 6 =
+    front right | 7 = behind left | 8 = behind right. | 9 = static | 10 = multiple
+    directions (intersection)
+  :unit: "-"
+- :name: TargetXf
+  :type: Double
+  :size: '5'
+  :description_topic: Front distance
+  :comment: ''
+  :unit: m
+- :name: TargetYf
+  :type: Double
+  :size: '5'
+  :description_topic: Lateral distance
+  :comment: ''
+  :unit: m
+- :name: TargetDistancef
+  :type: Double
+  :size: '5'
+  :description_topic: Travel distance to target
+  :comment: Distance to intersection or danger object obtained from absolute positions
+    of vehicle and target
+  :unit: m
+- :name: TargetLengthf
+  :type: Double
+  :size: '5'
+  :description_topic: Length
+  :comment: ''
+  :unit: m
+- :name: TargetWidthf
+  :type: Double
+  :size: '5'
+  :description_topic: Width
+  :comment: ''
+  :unit: m
+- :name: TargetSpeedf
+  :type: Double
+  :size: '5'
+  :description_topic: Longitudinal speed over ground
+  :comment: 0 means stationary
+  :unit: m
+- :name: time_slots
+  :type: Double
+  :size: '4'
+  :description_topic: Time slots available for the intersection only, computed by
+    the Co-Driver
+  :comment: 'two slots max: t0>t1  t2>t3 second slot. Refererred to the current time
+    (only for intersection)'
+  :unit: 0.001 s
+- :name: INTENTIONS PARAMETERS
+  :type: ''
+  :size: ''
+  :description_topic: ''
+  :comment: ''
+  :unit: ''
+- :name: Motor_primitives_level_1
+  :type: ''
+  :size: ''
+  :description_topic: Motor primitives (level 1)
+  :comment: ''
+  :unit: ''
+- :name: T0
+  :type: Double
+  :size: '5'
+  :description_topic: 'Initial time of motor primitives '
+  :comment: Absolute time when motion described by motor primitives starts. Unix epoch.
+  :unit: s
+- :name: First_trajectory_motor_primitives_parameters
+  :type: ''
+  :size: ''
+  :description_topic: First trajectory motor primitives parameters
+  :comment: ''
+  :unit: ''
+- :name: V0
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle speed at t=t0
+  :comment: Longitudinal speed at the time of generation of thge motor primitive
+  :unit: m/s
+- :name: A0
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle acceleration at t=t0
+  :comment: Time derivative of speed, also valid for second trajectory
+  :unit: m/s2
+- :name: T1f
+  :type: Double
+  :size: '5'
+  :description_topic: Time extensioin of first motor unit
+  :comment: ''
+  :unit: s
+- :name: J0f
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle desired jerk at t=t0
+  :comment: Time derivative of acceleration
+  :unit: m/s3
+- :name: S0f
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle desired snap at t=t0
+  :comment: Time derivative of jerk
+  :unit: m/s4
+- :name: Cr0f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired vehicle crackle at t=t0
+  :comment: Time derivative of snap
+  :unit: m/s5
+- :name: T2f
+  :type: Double
+  :size: '5'
+  :description_topic: Time extension of second segment
+  :comment: ''
+  :unit: s
+- :name: J1f
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle desired jerk at t=T1f
+  :comment: Time derivative of acceleration
+  :unit: m/s3
+- :name: S1f
+  :type: Double
+  :size: '5'
+  :description_topic: Vehicle desired snap at t=T1f
+  :comment: Time derivative of jerk
+  :unit: m/s4
+- :name: Cr1f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired vehicle crackle at t=T1f
+  :comment: Time derivative of snap
+  :unit: m/s5
+- :name: Sn0
+  :type: Double
+  :size: '5'
+  :description_topic: Lateral displacement at t=t0
+  :comment: Also valid for second trajectory
+  :unit: m
+- :name: Alpha0
+  :type: Double
+  :size: '5'
+  :description_topic: Trajectory relative course angle at t=t0
+  :comment: Also valid for second trajectory
+  :unit: rad
+- :name: Delta0
+  :type: Double
+  :size: '5'
+  :description_topic: Trajectory relative curvature at t=t0
+  :comment: Curvature of vehicle trajectory relative to lane curvature
+  :unit: m-1
+- :name: T1nf
+  :type: Double
+  :size: '5'
+  :description_topic: Time extension of first lateral motor unit
+  :comment: ''
+  :unit: s
+- :name: Jdelta0f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-1 s-1
+- :name: Sdelta0f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired second derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-1 s-2
+- :name: Crdelta0f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired third derivative of trajectory curvature versus travelled
+    distance at t=t0
+  :comment: ''
+  :unit: m-1 s-3
+- :name: T2nf
+  :type: Double
+  :size: '5'
+  :description_topic: Time extension of second lateral motor unit
+  :comment: ''
+  :unit: s
+- :name: Jdelta1f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-1 s-1
+- :name: Sdelta1f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired second derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-1 s-2
+- :name: Crdelta1f
+  :type: Double
+  :size: '5'
+  :description_topic: Desired third derivative of trajectory curvature versus travelled
+    distance at t=T1nf
+  :comment: ''
+  :unit: m-1 s-3
+- :name: Road_centerline_description
+  :type: ''
+  :size: ''
+  :description_topic: Road centerline description
+  :comment: ''
+  :unit: ''
+- :name: OriginXCompact
+  :type: Double
+  :size: '1'
+  :description_topic: ''
+  :comment: ''
+  :unit: m
+- :name: OriginYCompact
+  :type: Double
+  :size: '1'
+  :description_topic: ''
+  :comment: ''
+  :unit: m
+- :name: NrSegsCompact
+  :type: UInt16
+  :size: '1'
+  :description_topic: Number of segments describing the path
+  :comment: Compact description
+  :unit: "-"
+- :name: DistanceCompact
+  :type: Double
+  :size: '5'
+  :description_topic: ''
+  :comment: ''
+  :unit: m
+- :name: HeadingChangeCompact
+  :type: Double
+  :size: '5'
+  :description_topic: ''
+  :comment: The first one is the initial heading
+  :unit: deg
+- :name: CurvatureCompact
+  :type: Double
+  :size: '5'
+  :description_topic: ''
+  :comment: ''
+  :unit: m-1
+- :name: SpeedLimitCompact
+  :type: Double
+  :size: '5'
+  :description_topic: ''
+  :comment: ''
+  :unit: km/h
+- :name: SlopeCompact
+  :type: Double
+  :size: '5'
+  :description_topic: ''
+  :comment: Banking will be added when available
+  :unit: "%"
+- :name: NLanesCompact
+  :type: UInt16
+  :size: '5'
+  :description_topic: Number of lanes
+  :comment: ''
+  :unit: "-"
+- :name: Manoeuver_type_level_2
+  :type: ''
+  :size: ''
+  :description_topic: Manoeuver type (level 2)
+  :comment: ''
+  :unit: ''
+- :name: FirstManoeuverTypeLong
+  :type: Uint8
+  :size: '5'
+  :description_topic: Symbolic description (t.b.d.)
+  :comment: 'free flow(1) | follow object(2) | stopping(3) | passing(4) '
+  :unit: "-"
+- :name: FirstManoeuverTypeLat
+  :type: Uint8
+  :size: '5'
+  :description_topic: Symbolic description (t.b.d.)
+  :comment: 'E.g: lane keeping(1)  lane change left(2) lane change right(3) turn left
+    (4) turn right(5)'
+  :unit: "-"
+- :name: SecondManoeuverTypeLong
+  :type: Uint8
+  :size: '5'
+  :description_topic: Symbolic description (t.b.d.)
+  :comment: 'free flow(1) | follow object(2) | stopping(3) | passing(4) '
+  :unit: "-"
+- :name: SecondManoeuverTypeLat
+  :type: Uint8
+  :size: '5'
+  :description_topic: Symbolic description (t.b.d.)
+  :comment: 'E.g: lane keeping(1)  lane change left(2) lane change right(3) turn left
+    (4) turn right(5)'
+  :unit: "-"
+- :name: Additional Signals
+  :type: ''
+  :size: ''
+  :description_topic: ''
+  :comment: ''
+  :unit: ''
+- :name: Strain_Gauge
+  :type: ''
+  :size: ''
+  :description_topic: Strain Gauge
+  :comment: ''
+  :unit: ''
+- :name: Strain_gauge_Sensor_ID
+  :type: Int32
+  :size: '10'
+  :description_topic: ID of the single sensor
+  :comment: ''
+  :unit: "-"
+- :name: Strain_gauge_Cumulative_time
+  :type: double
+  :size: '10'
+  :description_topic: Cumulative time related to the sensor measurements
+  :comment: ''
+  :unit: s
+- :name: Strain_gage_output_voltage
+  :type: double
+  :size: '10'
+  :description_topic: Output in voltage
+  :comment: ''
+  :unit: V
+- :name: Estimated_remaining_life
+  :type: Uint32
+  :size: '10'
+  :description_topic: estimated life left of the sensor
+  :comment: ''
+  :unit: " load cycles"
+- :name: Remaining life probability
+  :type: double
+  :size: '10'
+  :description_topic: Remaining life probability
+  :comment: ''
+  :unit: "-"
+- :name: Automation_Level
+  :type: Uint8
+  :size: '5'
+  :description_topic: Level of automation
+  :comment: SAE standard
+  :unit: "-"
+- :name: Last_vehicle_pass_direction
+  :type: UInt8
+  :size: '10'
+  :description_topic: Direction of the last vehicle going through  the strip in the
+    parking slot
+  :comment: it may contain come confidence level or error (a list of values must be
+    done)
+  :unit: "-"
+- :name: VMS_VDS
+  :type: ''
+  :size: ''
+  :description_topic: VMS/VDS
+  :comment: ''
+  :unit: ''
+- :name: VMS_traffic_condition
+  :type: Uint8
+  :size: '1'
+  :description_topic: Traffic condition message
+  :comment: 'Cause cose = 1, subcause: | 0=Unavailable | 1=Increased volume of traffic
+    | 2 = Traffic jam slowly increasing | 3 = Traffic jam increasing | 4 = Traffic
+    jam strongly increasing | 5 = Traffic stationary | 6 = Traffic jam slightly decreasing
+    | 7 = Traffic jam decreasing | 8 = Traffic jam strongly decreasing'
+  :unit: "-"
+- :name: VMS_roadworks
+  :type: Uint8
+  :size: '1'
+  :description_topic: Roadworks presence message
+  :comment: 'cause code 3, subcause: | 0=Unavailable| 1=Major roadwork | 2=Road marking
+    work | 3=Slow moving road maintenance | 4=Winter service | 5=Street cleaning'
+  :unit: "-"
+- :name: VMS_AWC_adhesion
+  :type: Uint8
+  :size: '1'
+  :description_topic: "(AWC=Adverse Wheater Condition)  adverse adhesion message"
+  :comment: 'cause code=6, subcause : | 0=Unavailable | 1=Heavy frost on road | 2=Fuel
+    on road | 3=Mud on road | 4=Snow on road | 5=Ice on road | 6=Black ice on road
+    |7=Oil on road | 8=Loose chippings | 9=Instant black ice | 10=Roads salted'
+  :unit: "-"
+- :name: VMS_HL_surface_condition
+  :type: Uint8
+  :size: '1'
+  :description_topic: Condition specific for the zone (HL=hazardous location)
+  :comment: 'cause code=9, sub cause: | 0=Unavailable | 1=Rock falls | 2=Earthquake
+    damage | 3=Sewer collapse | 4=Subsidence | 5=Snow drifts | 6=Storm damage | 7=Burst
+    pipe | 8=Volcano eruption | 9=Falling ice'
+  :unit: "-"
+- :name: VMS_HL_obstacle_on_the_road
+  :type: Uint8
+  :size: '1'
+  :description_topic: Condition specific for the zone with obstacle (HL=hazardous
+    location)
+  :comment: 'cause code = 10, sub cause code: | 0=Unavailable | 1=Shed load | 2=Parts
+    of vehicles | 3=Parts of tyres | 4=Big objects | 5=Fallen trees | 6=Hub caps |
+    7=Waiting | vehicles'
+  :unit: "-"
+- :name: VMS_AWC_extreme_weather_condition
+  :type: Uint8
+  :size: '1'
+  :description_topic: "(AWC=Adverse Wheater Condition) extreme case"
+  :comment: cause code = 17 , subcause:| 0=Unavailable | 1=Strong winds | 2=Damaging
+    hail | 3=Hurricane | 4=Thunderstorm | 5=Tornado | 6=Blizzard |
+  :unit: "-"
+- :name: VMS_AWC_visibility
+  :type: Uint8
+  :size: '1'
+  :description_topic: "(AWC=Adverse Wheater Condition) specific for visibility"
+  :comment: 'cause code = 18, sub cause: | 0=Unavailable | 1=Visibility reduced due
+    to fog | 2=Visibility reduced due to smoke| 3=Visibility reduced due to heavy
+    snowfall | 4=Visibility reduced due to heavy rain | 5=Visibility reduced due to
+    heavy hail | 6=Visibility reduced due to low sun glare | 7=Visibility reduced
+    due to sandstorms | 8=Visibility reduced due to swarms of insects'
+  :unit: "-"
+- :name: VMS_AWC_precipitation
+  :type: Uint8
+  :size: '1'
+  :description_topic: "(AWC=Adverse Wheater Condition) specific for precipitation"
+  :comment: 'cause code: 19 , subcause: | 0=unavailable | 1=heavy rain | 2=heavy snowfall
+    | 3=soft hail |'
+  :unit: "-"
+- :name: VMS_stationary_vehicle
+  :type: Uint8
+  :size: '1'
+  :description_topic: info about stationary vehicle on the roads
+  :comment: 'cause code: 94 , subcause: | 0=Unavailable | 1=Human Problem | 2=Vehicle
+    breakdown | 3=Post crash | 4=Public transport stop | 5=Carrying dangerous goods
+    |'
+  :unit: "-"
