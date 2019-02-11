@@ -1,10 +1,6 @@
 
 /* ============================================================================
-
  UDP communication with limited packed size
-
- Author: Gastone Pietro Rosati Papini
-
  ============================================================================ */
 
 #include "udp_class.hh"
@@ -17,7 +13,6 @@
   BOOL
   WINAPI
   ConsoleHandler(DWORD CEvent) {
-    char mesg[128];
     switch(CEvent) {
     case CTRL_C_EVENT:
       throw InterruptException("CTRL+C received!");
@@ -35,7 +30,7 @@
       throw InterruptException("User is logging off!");
       break;
     }
-    return TRUE;
+    return UDP_TRUE;
   }
 #else
   #include <signal.h>
@@ -46,7 +41,10 @@ Socket::Socket()
   Socket_new( &data );
   // Taken from answer to "How can I catch a ctrl-c event? (C++)"
   #ifdef _MSC_VER
-  if ( SetConsoleCtrlHandler( (PHANDLER_ROUTINE)ConsoleHandler,TRUE) == FALSE ) {
+  if ( SetConsoleCtrlHandler(
+         (PHANDLER_ROUTINE)ConsoleHandler,
+         UDP_TRUE
+       ) == UDP_FALSE ) {
     // unable to install handler...
     // display message to the user
     std::cerr << "Unable to install handler!\n";
@@ -57,8 +55,8 @@ Socket::Socket()
   sigIntHandler.sa_handler = sig_to_exception;
   sigemptyset(&sigIntHandler.sa_mask);
   sigIntHandler.sa_flags = 0;
-  sigaction(SIGINT,&sigIntHandler, NULL);
-  //sigaction(SIGABRT,&sigIntHandler, NULL);
-  sigaction(SIGTERM,&sigIntHandler, NULL);
+  sigaction(SIGINT,&sigIntHandler, nullptr );
+  //sigaction(SIGABRT,&sigIntHandler, nullptr );
+  sigaction(SIGTERM,&sigIntHandler, nullptr );
   #endif
 }

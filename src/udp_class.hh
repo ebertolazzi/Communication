@@ -1,10 +1,6 @@
 
 /* ============================================================================
-
  UDP communication with limited packed size
-
- Author: Enrico Bertolazzi, Francesco Biral, Gastone Pietro Rosati Papini
-
  ============================================================================ */
 
 #ifndef __UDP_CLASS_HH
@@ -19,11 +15,16 @@
 #include <iostream>
 #include <exception>
 
+#if __cplusplus >= 201103L
+  #define NORETURN [[ noreturn ]]
+#else
+  #define NORETURN
+#endif
+
 class InterruptException : public std::exception {
 public:
   InterruptException( char const s[] ) : S(s) {}
   InterruptException( std::string const & s ) : S(s) {}
-  virtual ~InterruptException() throw() {}
   std::string S;
 };
 
@@ -32,6 +33,7 @@ class Socket {
   SocketData data;
 
   #ifndef _MSC_VER
+  NORETURN
   static
   void
   sig_to_exception( int s ) {
@@ -46,26 +48,24 @@ public:
   Socket();
 
   void
-  open_as_client( char const addr[], uint16_t port ) {
-    Socket_open_as_client( &data, addr, port );
-  }
+  open_as_client( char const addr[], int port )
+  { Socket_open_as_client( &data, addr, port ); }
 
   void
-  open_as_server( uint16_t port ) {
-    Socket_open_as_server( &data, port );
-  }
+  open_as_server( int port )
+  { Socket_open_as_server( &data, port ); }
 
   void
   server_start()
-  { data.server_run = TRUE; }
+  { data.server_run = UDP_TRUE; }
 
   void
   server_stop()
-  { data.server_run = FALSE; }
+  { data.server_run = UDP_FALSE; }
 
   bool
   server_running() const
-  { return data.server_run == TRUE; }
+  { return data.server_run == UDP_TRUE; }
 
   void
   set_timeout_ms( uint64_t tout_ms )
@@ -74,7 +74,7 @@ public:
   bool
   close() {
     int ok = Socket_close( &data );
-    return ok == TRUE;
+    return ok == UDP_TRUE;
   }
 
   void
@@ -88,7 +88,7 @@ public:
 
   // Send message function
   int
-  send( uint32_t buffer_id,
+  send( int32_t  buffer_id,
         uint8_t  buffer[],
         uint32_t buffer_size ) {
     return Socket_send( &data, buffer_id, buffer, buffer_size );
@@ -96,10 +96,10 @@ public:
 
   // Receive message function
   int
-  receive( uint32_t & buffer_id,
-           uint8_t    buffer[],
-           uint32_t   buffer_size,
-           uint64_t   start_time ) {
+  receive( int32_t & buffer_id,
+           uint8_t   buffer[],
+           uint32_t  buffer_size,
+           uint64_t  start_time ) {
     return Socket_receive( &data,
                            &buffer_id,
                            buffer,

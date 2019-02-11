@@ -1,10 +1,5 @@
-
 /* ============================================================================
-
- UDP communication with limited packed size
-
- Author: Gastone Pietro Rosati Papini
-
+  UDP communication with limited packed size
  ============================================================================ */
 
 #include "udp_C_class.h"
@@ -14,8 +9,9 @@
 extern "C" {
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include "udp_C_win.hxx"
+  #include <Ws2tcpip.h>
   typedef int ssize_t;
 #else
   #include "udp_C_unix.hxx"
@@ -25,8 +21,8 @@ void
 Socket_new( SocketData * pS ) {
   pS->socket_id       = -1;
   pS->target_addr_len = sizeof(struct sockaddr_in);
-  pS->server_run      = FALSE;
-  pS->timeout_ms      = APP_TIMEOUT_MS;
+  pS->server_run      = UDP_FALSE;
+  pS->timeout_ms      = UDP_APP_TIMEOUT_MS;
 }
 
 void
@@ -40,34 +36,40 @@ Socket_check( SocketData * pS ) {
 }
 
 void
-Socket_open_as_client( SocketData * pS,
-                       char const   addr[],
-                       uint16_t     port ) {
+Socket_open_as_client(
+  SocketData * pS,
+  char const   addr[],
+  int          port
+) {
   Socket_open_addr( pS, addr, port );
-  Socket_open( pS, FALSE );
+  Socket_open( pS, UDP_FALSE );
 }
 
 void
-Socket_open_as_server( SocketData * pS, uint16_t port ) {
+Socket_open_as_server( SocketData * pS, int port ) {
   Socket_open_addr( pS, nullptr, port );
-  Socket_open( pS, TRUE );
+  Socket_open( pS, UDP_TRUE );
 }
 
 void
 Socket_open_addr(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 ) {
   /* Clear the address structures */
   memset( &pS->target_addr, 0, pS->target_addr_len );
   /* Set the address structures */
   pS->target_addr.sin_family = AF_INET;
-  pS->target_addr.sin_port   = htons(port);
+  pS->target_addr.sin_port   = port;
   if ( addr == nullptr )
-    pS->target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    pS->target_addr.sin_addr.s_addr = INADDR_ANY;
   else
+    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+    InetPton(AF_INET, addr, &pS->target_addr.sin_addr.s_addr);
+    #else
     pS->target_addr.sin_addr.s_addr = inet_addr(addr);
+    #endif
 }
 
 /*\
@@ -77,7 +79,7 @@ Socket_open_addr(
 int
 Socket_send(
   SocketData * pS,
-  uint32_t     message_id,
+  int32_t      message_id,
   uint8_t      message[],
   uint32_t     message_size
 ) {
@@ -94,7 +96,7 @@ Socket_send(
   n_packets = Packet_Number( message_size );
 
   /* Send packets */
-  for ( ipos = 0 ; ipos < n_packets; ++ipos ) {
+  for ( ipos = 0; ipos < n_packets; ++ipos ) {
 
     Packet_Build_from_buffer( message,
                               message_size,
@@ -108,39 +110,39 @@ Socket_send(
     while ( 1 ) {
 	  	if ( sendto( pS->socket_id,
                    packet.data_buffer,
-                   (size_t) PACKET_BYTES,
+                   (size_t) UDP_PACKET_BYTES,
                    0,
                    (struct sockaddr *) &pS->target_addr,
                    sizeof(pS->target_addr) ) == SOCKET_ERROR ) {
         socket_elapsed_time = get_time_ms() - socket_start_time;
 			  if ( WSAGetLastError() != WSAEWOULDBLOCK ||
-             socket_elapsed_time >= RECV_SND_TIMEOUT_MS ) {
+             socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) {
 			  	printf( "sendto() failed. Error Code: %d\n", WSAGetLastError() );
-				  return FALSE;
+				  return UDP_FALSE;
 			  }
 		  } else {
 			  break;
       }
     }
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 	  if ( sendto( socket_id,
                  packet.data_buffer,
-                 (size_t) PACKET_BYTES,
+                 (size_t) UDP_PACKET_BYTES,
                  0,
                  (struct sockaddr *) &target_addr,
                  sizeof(target_addr) ) == SOCKET_ERROR ) {
   		printf( "sendto() failed. Error Code: %d\n", WSAGetLastError() );
-		  return FALSE;
+		  return UDP_FALSE;
     }
     #elif defined(__MACH__) || defined(__linux__)
     if ( sendto( pS->socket_id,
                  packet.data_buffer,
-                 (size_t) PACKET_BYTES,
+                 (size_t) UDP_PACKET_BYTES,
                  0,
                  (struct sockaddr *) &pS->target_addr,
                  sizeof(pS->target_addr) ) == SOCKET_ERROR ) {
 		  perror("error sendto()");
-		  return FALSE;
+		  return UDP_FALSE;
     }
     #endif
   }
@@ -148,9 +150,9 @@ Socket_send(
   #ifdef DEBUG_UDP
   printf( "Sent message of %d packets to %s:%d\n",
           n_packets, inet_ntoa(pS->target_addr.sin_addr),
-          ntohs(pS->target_addr.sin_port) );
+          pS->target_addr.sin_port );
   #endif
-	return TRUE;
+	return UDP_TRUE;
 }
 
 /*\
@@ -160,7 +162,7 @@ Socket_send(
 int
 Socket_receive(
   SocketData * pS,
-  uint32_t   * p_message_id,
+  int32_t    * p_message_id,
   uint8_t      message[],
   uint32_t     message_size,
   uint64_t     start_time_ms
@@ -184,14 +186,14 @@ Socket_receive(
 
   /* Receive packets */
   elapsed_time_ms = start_time_ms == 0 ? 0 : get_time_ms() - start_time_ms;
-  while ( elapsed_time_ms <= pS->timeout_ms && pS->server_run == TRUE ) {
+  while ( elapsed_time_ms <= pS->timeout_ms && pS->server_run == UDP_TRUE ) {
 
     #if defined(WIN_NONBLOCK)
     socket_start_time = get_time_ms();
     while ( 1 ) {
       recv_bytes = recvfrom( pS->socket_id,
                              packet.data_buffer,
-                             (size_t) PACKET_BYTES,
+                             (size_t) UDP_PACKET_BYTES,
                              0,
                              (struct sockaddr *) &pS->target_addr,
                              &pS->target_addr_len );
@@ -199,22 +201,22 @@ Socket_receive(
 
       if ( recv_bytes == SOCKET_ERROR ) {
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
-             socket_elapsed_time >= RECV_SND_TIMEOUT_MS ) break;
+             socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) break;
       } else {
         break;
       }
     }
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
     recv_bytes = recvfrom( pS->socket_id,
                            packet.data_buffer,
-                           (size_t) PACKET_BYTES,
+                           (size_t) UDP_PACKET_BYTES,
                            0,
                            (struct sockaddr *) &pS->target_addr,
                            &pS->target_addr_len );
     #elif defined(__MACH__) || defined(__linux__)
     recv_bytes = recvfrom( pS->socket_id,
                            packet.data_buffer,
-                           (size_t) PACKET_BYTES,
+                           (size_t) UDP_PACKET_BYTES,
                            0,
                            (struct sockaddr *) &pS->target_addr,
                            &pS->target_addr_len );
@@ -222,7 +224,7 @@ Socket_receive(
 
     #if defined(WIN_NONBLOCK)
     if ( recv_bytes != SOCKET_ERROR )
-    #elif defined(_WIN32)
+    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
     if ( recv_bytes != SOCKET_ERROR)
     #elif defined(__MACH__) || defined(__linux__)
     if ( recv_bytes > 0 )
@@ -232,7 +234,7 @@ Socket_receive(
       Packet_Add_to_buffer( &pi, &packet, message, message_size );
       pS->server_run = pi.server_run;
     } else {
-      sleep_ms(SLEEP_MS);
+      sleep_ms(UDP_SLEEP_MS);
     }
 
     if ( pi.received_packets == pi.n_packets && pi.n_packets > 0 ) break;
@@ -248,16 +250,16 @@ Socket_receive(
     printf( "Received message of %d packets from %s:%d\n",
             pi.n_packets,
             inet_ntoa(pS->target_addr.sin_addr),
-            ntohs(pS->target_addr.sin_port) );
+            pS->target_addr.sin_port );
     #endif
-    return TRUE;
+    return UDP_TRUE;
   } else if ( elapsed_time_ms >= pS->timeout_ms ) {
     printf( "Receive Warning: Time-out reached! Timeout is: %llu Time needed: %llu\n",
             pS->timeout_ms, elapsed_time_ms );
-    return FALSE;
+    return UDP_FALSE;
   } else {
     printf( "Receive Warning: Server not running'n" );
-    return FALSE;
+    return UDP_FALSE;
   }
 
 }

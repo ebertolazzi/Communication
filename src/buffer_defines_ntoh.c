@@ -1,13 +1,13 @@
 #include "buffer_defines.h"
 #include <string.h>
 
-#if defined(_WIN32)
-#include <Ws2tcpip.h>
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  #include <Ws2tcpip.h>
 #elif defined(__MACH__) || defined(__linux__)
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
+  #include <string.h>
+  #include <unistd.h>
+  #include <arpa/inet.h>
+  #include <sys/socket.h>
 #endif
 
 static
@@ -23,53 +23,62 @@ ntohll_local( uint64_t n ) {
 
 // ----------------------------------------------------------------------------
 
-void
+uint32_t
 buffer_to_uint16( uint8_t const buffer[2], uint16_t * out ) {
   uint16_t tmp;
-  memcpy( &tmp, buffer, 2 );
+  memcpy( &tmp, buffer, sizeof(uint16_t) );
   *out = ntohs( tmp );
+  return sizeof(uint16_t);
 }
 
-void
+uint32_t
 buffer_to_int16( uint8_t const buffer[2], int16_t * out ) {
   uint16_t tmp;
-  memcpy( &tmp, buffer, 2 );
+  memcpy( &tmp, buffer, sizeof(int16_t) );
   *((uint16_t*)out) = ntohs( tmp );
+  return sizeof(int16_t);
 }
 
-void
+uint32_t
 buffer_to_uint32( uint8_t const buffer[4], uint32_t * out ) {
   uint32_t tmp;
-  memcpy( &tmp, buffer, 4 );
+  memcpy( &tmp, buffer, sizeof(uint32_t) );
   *out = ntohl( tmp );
+  return sizeof(uint32_t);
 }
 
-void
+uint32_t
 buffer_to_int32( uint8_t const buffer[4], int32_t * out ) {
   uint32_t tmp;
-  memcpy( &tmp, buffer, 4 );
+  memcpy( &tmp, buffer, sizeof(int32_t) );
   *((uint32_t*)out) = ntohl( tmp );
+  return sizeof(int32_t);
 }
 
-void
+uint32_t
 buffer_to_uint64( uint8_t const buffer[8], uint64_t * out ) {
   uint64_t tmp;
-  memcpy( &tmp, buffer, 8 );
+  memcpy( &tmp, buffer, sizeof(uint64_t) );
   *out = ntohll_local( tmp );
+  return sizeof(uint64_t);
 }
 
-void
+uint32_t
 buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
   uint64_t tmp;
-  memcpy( &tmp, buffer, 8 );
+  memcpy( &tmp, buffer, sizeof(int64_t) );
   *((uint64_t*)out) = ntohll_local( tmp );
+  return sizeof(int64_t);
 }
 
 #ifdef PACK_FLOAT
 
-  #ifndef maskOfBits
-    #define maskOfBits(NBITS) ((uint64_t(1)<<NBITS)-uint64_t(1))
-  #endif
+  static
+  uint64_t
+  maskOfBits( uint32_t NBITS ) {
+    uint64_t one = 1;
+    return (one<<NBITS)-one;
+  }
 
   static
   double
@@ -78,54 +87,59 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
     if ( i == 0 ) return 0;
     /* pull the significand */
-    res = (double)(i & maskOfBits(bits-expbits-1);
+    res = (double)(i & maskOfBits(bits-expbits-1));
     res /= (double)(1<<significandbits); /* mask */
-    res += 1.0 ; /* add the one back on */
+    res += 1.0; /* add the one back on */
     /* deal with the exponent */
     uint64_t bias  = maskOfBits(expbits-1);
     uint64_t shift = (i>>significandbits) & maskOfBits(expbits);
     while ( shift > bias ) { res *= 2.0; --shift; }
     while ( shift < bias ) { res /= 2.0; ++shift; }
     // sign it
-    if ( i & (uint64_t(1)<<(bits-1)) ) res = -res ;
+    if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res;
+    return res;
   }
 
-  void
-  buffer_to_float( uint8_t const buffer[8], float *out) {
+  uint32_t
+  buffer_to_float( uint8_t const buffer[4], float *out) {
     uint32_t tmp32;
     buffer_to_uint32( buffer, &tmp32 );
     uint64_t tmp64 = (uint64_t)tmp32;
     double tmpd = unpack754( tmp64, 32, 8 );
     *out = (float)tmpd;
+    return sizeof(float);
   }
 
-  void
+  uint32_t
   buffer_to_double( uint8_t const buffer[8], double *out ) {
     uint64_t tmp64;
     buffer_to_uint64( buffer, &tmp64 );
     *out = unpack754( tmp64, 32, 8 );
+    return sizeof(double);
   }
 
 #else
 
-  void
+  uint32_t
   buffer_to_float( uint8_t const buffer[8], float *out) {
     union FloatInt {
       float    f;
       uint32_t i;
     } tmp;
-    buffer_to_uint32( buffer, &tmp.i );
+    uint32_t res = buffer_to_uint32( buffer, &tmp.i );
     *out = tmp.f;
+    return res;
   }
 
-  void
+  uint32_t
   buffer_to_double( uint8_t const buffer[8], double *out ) {
     union DoubleInt {
       double   d;
       uint64_t i;
     } tmp;
-    buffer_to_uint64( buffer, &tmp.i );
+    uint32_t res = buffer_to_uint64( buffer, &tmp.i );
     *out = tmp.d;
+    return res;
   }
 
 #endif

@@ -1,10 +1,6 @@
 
 /* ============================================================================
-
  UDP communication with limited packed size
-
- Author: Gastone Pietro Rosati Papini
-
  ============================================================================ */
 
 #ifndef __UDP_C_CLASS_HH
@@ -15,7 +11,11 @@
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   typedef int socklen_t;
 #else
-  #include <sys/kernel_types.h>
+  #ifdef __linux__
+    #include <linux/types.h>
+  #else
+    #include <sys/kernel_types.h>
+  #endif
 #endif
 
 #ifdef __cplusplus
@@ -25,12 +25,12 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-#ifndef TRUE
-  #define TRUE 1
+#ifndef UDP_TRUE
+  #define UDP_TRUE 1
 #endif
 
-#ifndef FALSE
-  #define FALSE -1
+#ifndef UDP_FALSE
+  #define UDP_FALSE -1
 #endif
 
 #ifndef __cplusplus
@@ -58,14 +58,14 @@ void
 Socket_open_as_client(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 );
 
 extern
 void
 Socket_open_as_server(
   SocketData * pS,
-  uint16_t     port
+  int          port
 );
 
 extern
@@ -73,7 +73,7 @@ void
 Socket_open_addr(
   SocketData * pS,
   char const   addr[],
-  uint16_t     port
+  int          port
 );
 
 extern
@@ -88,7 +88,7 @@ extern
 int
 Socket_send(
   SocketData * pS,
-  uint32_t     message_id,
+  int32_t      message_id,
   uint8_t      message[],
   uint32_t     message_size
 );
@@ -97,7 +97,7 @@ extern
 int
 Socket_receive(
   SocketData * pS,
-  uint32_t   * message_id,
+  int32_t    * message_id,
   uint8_t      message[],
   uint32_t     message_size,
   uint64_t     start_time

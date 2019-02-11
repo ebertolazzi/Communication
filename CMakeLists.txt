@@ -11,7 +11,7 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET Alglin )
+SET( TARGET Communication )
 
 PROJECT( ${TARGET} CXX C )
 
@@ -44,6 +44,11 @@ SET( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
 SET( CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG} )
 
 SET( SOURCES )
+FILE( GLOB S ./src/*.c )
+FOREACH (F ${S})
+  FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  LIST( APPEND SOURCES ${RF} )
+ENDFOREACH (F ${S})
 FILE( GLOB S ./src/*.cc )
 FOREACH (F ${S})
   FILE( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
@@ -59,53 +64,13 @@ ENDFOREACH (F ${S})
 
 add_library( ${TARGET} STATIC ${SOURCES} ${HEADERS} )
 
-SET( EXELISTCPP
-  Simplex-Test1
-  Simplex-Test2
-  Simplex-Test3
-  Simplex-Test4
-  SimplexTest1
-  SimplexTest2
-  SimplexTest3
-  SimplexTest4
-  test0-FD
-  test1-small-factorization
-  test12-BandedMatrix
-  test13-BFGS
-  test2-Threads
-  test3-Timing
-  test4-KKT
-  test5-ABD-Diaz
-  test6-ABD-Block
-  test7-BorderedCR
-)
-
-SET(EXELISTC test8-Cinterface test9-Cinterface )
+SET( EXELISTC   client_c server_c )
+SET( EXELISTCPP client_cpp server_cpp )
 
 MESSAGE( STATUS "YEAR = ${YEAR}" )
 MESSAGE( STATUS "BITS = ${BITS}" )
 
-#SET( SUPERLU_NAME "superlu_vs${YEAR}_${BITS}" )
-#SET( OPENBLAS_NAME "libopenblas_${BITS}" )
-#SET( LAPACK_NAME "lapack_${BITS}" )
-#SET( BLAS_NAME "blas_${BITS}" )
-
-SET(LLPATH ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd )
-
-#
-# setup search path for DLL 
-#
-# openblas linked with #pragma
-set(CMAKE_MSVCIDE_RUN_PATH ${LLPATH}/dll/openblas)
-SET(LOCLIBS openblas superlu lapack )
-FOREACH( S ${LOCLIBS} )
-	FILE( GLOB SS ${LLPATH}/lib/${S} )
-	LINK_DIRECTORIES( ${SS} )
-	FILE( GLOB SS ${LLPATH}/dll/${S} )
-	LINK_DIRECTORIES( ${SS} )
-ENDFOREACH( S ${LOCLIBS} )
-
-INCLUDE_DIRECTORIES( src ${LLPATH}/include ${LLPATH}/include/eigen3 )
+INCLUDE_DIRECTORIES( src )
 
 IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
   INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
@@ -125,30 +90,19 @@ IF( BUILD_EXECUTABLE )
   ##                    COMMAND ctest --output-on-failure)
   ##
 
-  LINK_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/lib ${CMAKE_CURRENT_SOURCE_DIR}/lib3rd/dll )
-
-  #ENABLE_TESTING()
-
-  FIND_PACKAGE(BLAS)
-  FIND_PACKAGE(LAPACK)
-
-  if(LAPACK_FOUND AND BLAS_FOUND)
-    SET(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
-  endif()
-
   ADD_CUSTOM_TARGET( all_tests ALL )
 
   SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
   FILE(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/bin )	
   FOREACH( S ${EXELISTCPP} )
-  	ADD_EXECUTABLE( ${S} src_tests/${S}.cc ${HEADERS} )
+  	ADD_EXECUTABLE( ${S} test/${S}.cc ${HEADERS} )
   	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} )
     ADD_DEPENDENCIES( all_tests ${S} )
   ENDFOREACH( S $(EXELIST) )
 
   FOREACH( S ${EXELISTC} )
-  	ADD_EXECUTABLE( ${S} src_tests/${S}.c ${HEADERS} )
+  	ADD_EXECUTABLE( ${S} test/${S}.c ${HEADERS} )
   	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
   	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} )
     ADD_DEPENDENCIES( all_tests ${S} )
@@ -163,13 +117,14 @@ ENDIF()
 
 FILE( GLOB HDRC   ./src/*.h )
 FILE( GLOB HDRCPP ./src/*.hh )
+FILE( GLOB HDRHXX ./src/*.hxx )
 
 INSTALL( TARGETS ${TARGET}
          RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
          LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
          ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX} )
 
-INSTALL(FILES ${HDRC} ${HDRCPP} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+INSTALL(FILES ${HDRC} ${HDRCPP} ${HDRHXX} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
 
 
 MESSAGE( STATUS "Using ${SSE_FLAGS} extensions")
@@ -191,3 +146,6 @@ ENDIF()
 IF( BUILD_EXECUTABLE )
   MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )
 ENDIF()
+
+MESSAGE( STATUS "HEADERS = ${HEADERS}" )
+MESSAGE( STATUS "SOURCES = ${SOURCES}" )

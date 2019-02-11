@@ -1,6 +1,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #ifndef SOCKET_ERROR
   #define SOCKET_ERROR (-1)
@@ -12,27 +13,26 @@
 
 int
 Socket_open( SocketData * pS, int bind_port ) {
-  pS->socket_id = 0;
 
   unsigned int   opt_buflen;
   struct timeval timeout;
 
   /* Create UDP socket */
-  pS->socket_id = (int)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
     perror("error socket()");
-    return FALSE;
+    return UDP_FALSE;
   }
 
   /* Set send buffer size limit */
-  opt_buflen = PACKET_BYTES;
+  opt_buflen = UDP_PACKET_BYTES;
   if ( setsockopt( pS->socket_id,
                    SOL_SOCKET,
                    SO_SNDBUF,
                    (char *)&opt_buflen,
                    sizeof(opt_buflen) ) == SOCKET_ERROR ) {
     perror("error setsockopt()");
-    return FALSE;
+    return UDP_FALSE;
   }
 
   /*\
@@ -42,14 +42,14 @@ Socket_open( SocketData * pS, int bind_port ) {
   \*/
 
   timeout.tv_sec = 0;
-  timeout.tv_usec = RECV_SND_TIMEOUT_MS * 1000;
+  timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
   if ( setsockopt( pS->socket_id,
                    SOL_SOCKET,
                    SO_SNDTIMEO,
                    (char *)&timeout,
                    sizeof(timeout) ) == SOCKET_ERROR ) {
     perror("error setsockopt()");
-    return FALSE;
+    return UDP_FALSE;
   }
   if ( setsockopt( pS->socket_id,
                    SOL_SOCKET,
@@ -57,27 +57,27 @@ Socket_open( SocketData * pS, int bind_port ) {
                    (char *)&timeout,
                    sizeof(timeout) ) == SOCKET_ERROR ) {
     perror("error setsockopt()");
-    return FALSE;
+    return UDP_FALSE;
   }
 
   /*\
    | If it is a server, bind socket to port
   \*/
 
-  if ( bind_port == TRUE ) {
+  if ( bind_port == UDP_TRUE ) {
     if ( bind( pS->socket_id,
               (const struct sockaddr*) &pS->target_addr,
               sizeof(pS->target_addr) ) == SOCKET_ERROR ) {
       perror("error bind()");
-      return FALSE;
+      return UDP_FALSE;
     }
   }
 
   printf("======================================\n");
   char ipAddress[INET_ADDRSTRLEN];
-  if ( bind_port == TRUE ) {
+  if ( bind_port == UDP_TRUE ) {
     printf("SERVER\n");
-    printf("Server port:%d\n",ntohs(pS->target_addr.sin_port));
+    printf("Server port:%d\n",pS->target_addr.sin_port);
   } else {
     inet_ntop( AF_INET,
                &(pS->target_addr.sin_addr.s_addr),
@@ -85,10 +85,10 @@ Socket_open( SocketData * pS, int bind_port ) {
                INET_ADDRSTRLEN );
     printf("CLIENT\n");
     printf("Server address: %s\n", ipAddress);
-    printf("Server port:    %d\n", ntohs(pS->target_addr.sin_port));
+    printf("Server port:    %d\n", pS->target_addr.sin_port);
   }
-  printf("======================================\n") ;
-  return FALSE;
+  printf("======================================\n");
+  return UDP_FALSE;
 }
 
 /*\
@@ -97,9 +97,9 @@ Socket_open( SocketData * pS, int bind_port ) {
 
 int
 Socket_close( SocketData * pS ) {
-  if ( shutdown( pS->socket_id, SHUT_RDWR ) == SOCKET_ERROR ) {
+  if ( close( pS->socket_id ) != 0 ) {
     perror("error shutdown(socket_id,...)");
-    return FALSE;
+    return UDP_FALSE;
   }
-  return TRUE;
+  return UDP_TRUE;
 }

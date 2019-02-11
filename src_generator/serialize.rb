@@ -4,9 +4,9 @@ def type_to_size( t )
   case t
   when /^double$/  
     sz = 8;
-  when /^single$/     
+  when /^single$/
     sz = 4;
-  when /^int8$/ 
+  when /^int8$/
     sz = 1;
   when /^uint8$/
     sz = 1;
