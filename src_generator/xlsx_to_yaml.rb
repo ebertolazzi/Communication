@@ -19,18 +19,15 @@ require_relative ARGV[0]
 conf = Config.new
 
 columns_to_idx = {}
-columns        = []
-
-objects   = { :in_struct => [], :out_struct => [] }
-tot_bytes = { :in_struct => 0,  :out_struct => 0  }
+#objects        = { :in_struct => [], :out_struct => [] }
+#tot_bytes      = { :in_struct => 0,  :out_struct => 0  }
 
 # Open and read file: the ".csv" file is obtained from the ".xlsx" file 
 # with "File -> Save as -> Format: "Common formats: Comma Separated Values (.csv)"
-objects[:origin_file] = File.basename conf.input_file_name
 
 puts conf.input_file_name
 
-$workbook_data = {}
+$workbook_data = { :origin_file => File.basename(conf.input_file_name) }
 $last_struct   = {}
 
 workbook = RubyXL::Parser.parse(conf.input_file_name+".xlsx")
@@ -98,7 +95,6 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
             data[k] = "MISSING";
           end
         end
-        columns << data;
       end
     rescue => e
       puts "skipping unmappable row `#{e}`".red
@@ -109,11 +105,11 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
       when 'yes' || 'no'
         if $last_struct[:active] then
           tmp = {
-            :fields      => $last_struct[:fields],
-            :subtopic    => $last_struct[:subtopic]
+            :fields   => $last_struct[:fields],
+            :subtopic => $last_struct[:subtopic]
           };
           tmp[:subsubtopic] = $last_struct[:subsubtopic] if $last_struct[:subsubtopic]
-          $workbook_data[ $last_struct[:struct_name] ] = tmp;
+          $workbook_data[ $last_struct[:struct_name].to_sym ] = tmp;
         end
         $last_struct               = {};
         $last_struct[:struct_name] = data[:name];
@@ -125,9 +121,7 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
         else
           $last_struct[:subtopic] = data[:description_subtopic];
         end
-
         $last_struct[:fields] = [];
-
       when 'x'
         data.delete_if { |key, value| !conf.for_structs.include? key }
         $last_struct[:fields] << data;

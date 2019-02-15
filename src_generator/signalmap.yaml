@@ -1,5 +1,6 @@
 ---
-Header:
+:origin_file: signalmap_safestrip_interfaces_v1.0
+:Header:
   :fields:
   - :name: ID
     :comment: Enumeration |00=CAN_NETWORK,|01=CAM_V2X,|02=DENM_V2X,|03=MAP_V2X,|04=SPAT_V2X,|11=CAM_LTE,|12=DENM_LTE,|13=MAP_LTE,|14=SPAT_LTE
@@ -33,7 +34,7 @@ Header:
     :range: ''
     :unit: "-"
   :subtopic: Header
-HostVehicle:
+:HostVehicle:
   :fields:
   - :name: Speed_vehicle_network
     :comment: Filtered longitudinal velocity from  odometer
@@ -376,7 +377,7 @@ HostVehicle:
     :range: ''
     :unit: "-"
   :subtopic: HostVehicle
-CAM_message:
+:CAM_message:
   :fields:
   - :name: v2x_cam_header_msgID
     :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6),
@@ -562,7 +563,7 @@ CAM_message:
     :unit: 0,01m
   :subtopic: CAM
   :subsubtopic: v2x_cam_header_msgID
-DENM_message:
+:DENM_message:
   :fields:
   - :name: v2x_header_msgID
     :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6),
@@ -701,7 +702,7 @@ DENM_message:
     :unit: '0.0001'
   :subtopic: DENMM
   :subsubtopic: v2x_header_msgID
-MAPEM_message:
+:MAPEM_message:
   :fields:
   - :name: v2x_header_msgID
     :comment: messageID INTEGER{ denm(1),cam(2), poi(3), spat(4), map(5), ivi(6),
@@ -1039,12 +1040,12 @@ MAPEM_message:
     :unit: ms
   :subtopic: MAPEM
   :subsubtopic: v2x_header_msgID
-FirstManoeuvreParameters:
+:FirstManoeuvreParameters:
   :fields:
   - :name: OutputID
     :comment: ID of the applications
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Int32
     :range: ''
     :unit: ''
   - :name: TimeHeadwayPolicyf
@@ -1135,12 +1136,12 @@ FirstManoeuvreParameters:
     :unit: "-"
   :subtopic: FirstManoeuvreParameters
   :subsubtopic: OutputID
-FirstManoeuvreFrontTargetObstacle:
+:FirstManoeuvreFrontTargetObstacle:
   :fields:
   - :name: OutputID
     :comment: ID of the applications
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Int32
     :range: ''
     :unit: ''
   - :name: WarningLevel
@@ -1220,12 +1221,12 @@ FirstManoeuvreFrontTargetObstacle:
     :unit: 0.001 s
   :subtopic: FirstManoeuvreFrontTargetObstacle
   :subsubtopic: OutputID
-FirstTrajectoryMotorPrimitivesParameters:
+:FirstTrajectoryMotorPrimitivesParameters:
   :fields:
   - :name: OutputID
     :comment: ID of the applications
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Int32
     :range: ''
     :unit: ''
   - :name: T0
@@ -1417,12 +1418,12 @@ FirstTrajectoryMotorPrimitivesParameters:
     :unit: "-"
   :subtopic: FirstTrajectoryMotorPrimitivesParameters
   :subsubtopic: OutputID
-ManoeuverTypeLevel2:
+:ManoeuverTypeLevel2:
   :fields:
   - :name: OutputID
     :comment: ID of the applications
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Int32
     :range: ''
     :unit: ''
   - :name: FirstManoeuverTypeLong
@@ -1453,12 +1454,12 @@ ManoeuverTypeLevel2:
     :unit: "-"
   :subtopic: ManoeuverTypeLevel2
   :subsubtopic: OutputID
-StrainGauge:
+:StrainGauge:
   :fields:
   - :name: StripID
     :comment: ID of the strip
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Int32
     :range: ''
     :unit: ''
   - :name: Strain_gauge_Sensor_ID
@@ -1493,7 +1494,7 @@ StrainGauge:
     :unit: "-"
   :subtopic: StrainGauge
   :subsubtopic: StripID
-AutomationLevel:
+:AutomationLevel:
   :fields:
   - :name: Automation_Level
     :comment: SAE standard
@@ -1502,12 +1503,12 @@ AutomationLevel:
     :range: ''
     :unit: "-"
   :subtopic: AutomationLevel
-ParkingApplication:
+:ParkingApplication:
   :fields:
   - :name: StripID
     :comment: ID of the strip
-    :size: ''
-    :type: ''
+    :size: '1'
+    :type: Uint32
     :range: ''
     :unit: ''
   - :name: Last_vehicle_pass_direction
