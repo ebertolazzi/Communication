@@ -47,6 +47,7 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
     #
     version    = data_row[0].value
     main_topic = data_row[1].value
+    $workbook_data[:main_topic] = main_topic;
     puts "MAIN TOPIC=#{main_topic} #{version}"
   when 1
     #  _  _             _
