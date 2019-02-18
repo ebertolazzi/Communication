@@ -1,6 +1,7 @@
 
 def type_to_size( t )
   sz = 0
+  t.downcase!
   case t
   when /^double$/
     sz = 8;
@@ -258,7 +259,7 @@ def to_mqtt_topic( name, data )
   main_topic  = data[:main_topic];
   subtopic    = data[name][:subtopic];
   subsubtopic = data[name][:subsubtopic];
-  res  = "void\n#{name}_topic(\n"
+  res  = "void\n#{name}_mqtt_topic(\n"
   res += "  #{name} * S,\n"
   res += "  char topic[],\n"
   res += "  int topic_len\n"
@@ -266,6 +267,21 @@ def to_mqtt_topic( name, data )
   res += "  char const * topic = \"#{main_topic}/#{subtopic}\";\n"
   if subtopic and subtopic.length > 0 then
     res += "  snprintf( topic, topic_max_len, \"%s/%d\", topic, S->#{subsubtopic} );\n"
+  else
+    res += "  snprintf( topic, topic_max_len, \"%s\", topic );\n"
+  end
+  res += "}\n"
+  return res
+end
+
+def to_mqtt_alltopics( name, data )
+  main_topic  = data[:main_topic];
+  subtopic    = data[name][:subtopic];
+  subsubtopic = data[name][:subsubtopic];
+  res  = "void\n#{name}_mqtt_alltopics( char topic[], int topic_len ) {\n"
+  res += "  char const * topic = \"#{main_topic}/#{subtopic}\";\n"
+  if subtopic and subtopic.length > 0 then
+    res += "  snprintf( topic, topic_max_len, \"%s/#\", topic );\n"
   else
     res += "  snprintf( topic, topic_max_len, \"%s\", topic );\n"
   end
@@ -290,10 +306,12 @@ def to_C_struct( name, hsc )
     dim += type_to_size(tv);
   end
   res += "} #{name};\n\n"
+  res += "/* size of the serialized version of struct #{name} */\n"
   res += "#define #{name}_size #{dim}\n"
-  res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
-  res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n"
-  res += "\nextern\nvoid\n#{name}_print( #{name} const * S );\n\n"
+  ##res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
+  ##res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n"
+  ##res += "\nextern\nvoid\n#{name}_print( #{name} const * S );\n\n"
+  ##res += "\nextern\nvoid\n#{name}_mqtt_topic( #{name} const * S, char topic[], int topic_len );\n\n"
   return res
 end
 
