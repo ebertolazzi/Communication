@@ -64,9 +64,9 @@ def type_to_C_fmt( t )
   when /^single$/
     res = "g"
   when /^int8$/
-    res = "hd"
+    res = "hhd"
   when /^uint8$/
-    res = "hu"
+    res = "hhu"
   when /^int16$/
     res = "hd"
   when /^uint16$/
@@ -190,7 +190,7 @@ end
 def to_print( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res  = "void\n#{name}_print( #{name} const * S ) {\n"
   res += "  int i_count;\n" if maxsz > 1
   fds.each do |f|
@@ -212,7 +212,7 @@ end
 def to_buffer( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res  = "void\n#{name}_to_buffer(\n  #{name} const * S,\n  uint8_t buffer[]\n) {\n"
   res += "  int i_count;\n" if maxsz > 1
   res += "  uint8_t * ptr = buffer;\n"
@@ -235,10 +235,10 @@ end
 def from_buffer( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res  = "void\nbuffer_to_#{name}(\n  uint8_t const buffer[],\n  #{name} * S\n) {\n"
   res += "  int i_count;\n" if maxsz > 1
-  res += "  uint8_t * ptr = buffer;\n"
+  res += "  uint8_t const * ptr = buffer;\n"
   fds.each do |f|
     tv  = f[:type];
     fmt = type_to_C_fmt(tv);
@@ -255,35 +255,40 @@ def from_buffer( name, hsc )
   return res
 end
 
-def to_mqtt_topic( name, data )
+def to_MQTT_topic( name, data )
   main_topic  = data[:main_topic];
   subtopic    = data[name][:subtopic];
   subsubtopic = data[name][:subsubtopic];
-  res  = "void\n#{name}_mqtt_topic(\n"
-  res += "  #{name} * S,\n"
+  res  = "void\n#{name}_MQTT_topic(\n"
+  res += "  #{name} const * S,\n"
   res += "  char topic[],\n"
-  res += "  int topic_len\n"
+  res += "  int topic_max_len\n"
   res += ") {\n"
-  res += "  char const * topic = \"#{main_topic}/#{subtopic}\";\n"
-  if subtopic and subtopic.length > 0 then
-    res += "  snprintf( topic, topic_max_len, \"%s/%d\", topic, S->#{subsubtopic} );\n"
+  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
+  if subsubtopic and subsubtopic.length > 0 then
+    res += "  snprintf( topic, topic_max_len, \"%s/%d\", base_topic, S->#{subsubtopic} );\n"
   else
-    res += "  snprintf( topic, topic_max_len, \"%s\", topic );\n"
+    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
   end
+  res += "}\n\n"
+  res += "int\n#{name}_MQTT_compare( char const topic[] ) {\n"
+  res += "  int topic_len = #{1+main_topic.length+subtopic.length};\n"
+  res += "  char const * topic_ref = \"#{main_topic}/#{subtopic}\";\n"
+  res += "  return strncmp( topic, topic_ref, topic_len );\n"
   res += "}\n"
   return res
 end
 
-def to_mqtt_alltopics( name, data )
+def to_MQTT_alltopics( name, data )
   main_topic  = data[:main_topic];
   subtopic    = data[name][:subtopic];
   subsubtopic = data[name][:subsubtopic];
-  res  = "void\n#{name}_mqtt_alltopics( char topic[], int topic_len ) {\n"
-  res += "  char const * topic = \"#{main_topic}/#{subtopic}\";\n"
+  res  = "void\n#{name}_MQTT_alltopics( char topic[], int topic_max_len ) {\n"
+  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
   if subtopic and subtopic.length > 0 then
-    res += "  snprintf( topic, topic_max_len, \"%s/#\", topic );\n"
+    res += "  snprintf( topic, topic_max_len, \"%s/#\", base_topic );\n"
   else
-    res += "  snprintf( topic, topic_max_len, \"%s\", topic );\n"
+    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
   end
   res += "}\n"
   return res
@@ -292,7 +297,7 @@ end
 def to_C_struct( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res   = "typedef struct {\n";
   dim   = 0;
   fds.each do |f|
@@ -301,7 +306,7 @@ def to_C_struct( name, hsc )
     sz = f[:size].to_i;
     n += "[#{sz}]" if sz > 1
     n += ';'
-    res += "  #{tv.ljust(6)} #{n.ljust(len+6)}"
+    res += "  #{type_to_C(tv).ljust(8)} #{n.ljust(len+6)}"
     res += " /* #{f[:comment]} */\n"
     dim += type_to_size(tv);
   end
@@ -311,14 +316,14 @@ def to_C_struct( name, hsc )
   ##res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
   ##res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n"
   ##res += "\nextern\nvoid\n#{name}_print( #{name} const * S );\n\n"
-  ##res += "\nextern\nvoid\n#{name}_mqtt_topic( #{name} const * S, char topic[], int topic_len );\n\n"
+  ##res += "\nextern\nvoid\n#{name}_MQTT_topic( #{name} const * S, char topic[], int topic_len );\n\n"
   return res
 end
 
 def to_MATLAB_struct( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res   = "";
   fds.each do |f|
     tv = f[:type];
@@ -332,7 +337,7 @@ end
 def to_SIMULINK_struct( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   dim   = 0;
   res   = "typedef struct {\n";
   fds.each do |f|
@@ -355,7 +360,7 @@ end
 def to_SIMULINK_busInfo( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   dim   = 0;
 
   res    = "  /* Bus Information */\n"
@@ -390,7 +395,7 @@ end
 def to_SIMULINK_busInfo_in_data( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   dim   = 0;
 
   res   = "  uint8_T *payload = (uint8_T *) ssGetInputPortSignal(S, 0);\n"
@@ -423,7 +428,7 @@ end
 def to_SIMULINK_busInfo_in_data_rtw( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   dim   = 0;
 
   res   = "  uint8_T * payload         = (uint8_T *) ssGetInputPortSignal(S, 0);\n"
@@ -453,7 +458,7 @@ end
 def to_SIMULINK_message( name, hsc, no_size = false )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
   res   = ""
   fds.each_with_index do |f,ipos|
     tv   = f[:type];
@@ -469,7 +474,7 @@ end
 def simulink_to_buffer( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
 
   res  = "static\nvoid\nsimulink_#{name}_to_buffer(\n"
   res += "  SimStruct *S,\n"
@@ -503,7 +508,7 @@ end
 def simulink_from_buffer( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
 
   res  = "static\nvoid\nsimulink_buffer_to_#{name}(\n"
   res += "  uint8_t const * buffer,\n"
@@ -534,7 +539,7 @@ end
 def simulink_set_output_signal( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
 
   res  = "static\nvoid\nsimulink_#{name}_set_output_signal( SimStruct *S ) {\n"
   ##res += "  int nout = #{vec.size()};\n"
@@ -559,7 +564,7 @@ end
 def simulink_set_input_signal( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
 
   res  = "static\nvoid\nsimulink_#{name}_set_input_signal( SimStruct *S ) {\n"
   ##res += "  int nout = #{vec.size()};\n"

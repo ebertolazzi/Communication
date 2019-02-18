@@ -24,6 +24,18 @@ ntohll_local( uint64_t n ) {
 // ----------------------------------------------------------------------------
 
 uint32_t
+buffer_to_uint8( uint8_t const buffer[1], uint8_t * out ) {
+  *out = buffer[0];
+  return sizeof(uint8_t);
+}
+
+uint32_t
+buffer_to_int8( uint8_t const buffer[1], int8_t * out ) {
+  *((uint8_t*)out) = buffer[0];
+  return sizeof(int8_t);
+}
+
+uint32_t
 buffer_to_uint16( uint8_t const buffer[2], uint16_t * out ) {
   uint16_t tmp;
   memcpy( &tmp, buffer, sizeof(uint16_t) );

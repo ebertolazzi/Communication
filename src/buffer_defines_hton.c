@@ -24,6 +24,18 @@ htonll_local( uint64_t n ) {
 // --------------------------------------------------
 
 uint32_t
+int8_to_buffer( int8_t in, uint8_t buffer[1] ) {
+  buffer[0] = (uint8_t)in;
+  return sizeof(int8_t);
+}
+
+uint32_t
+uint8_to_buffer( uint8_t in, uint8_t buffer[1] ) {
+  buffer[0] = in;
+  return sizeof(uint8_t);
+}
+
+uint32_t
 int16_to_buffer( int16_t in, uint8_t buffer[2] ) {
   uint16_t tmp = htons( (uint16_t) in );
   memcpy( buffer, &tmp, sizeof(int16_t) );

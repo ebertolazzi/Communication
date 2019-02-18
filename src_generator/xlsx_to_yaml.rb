@@ -91,7 +91,7 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
           k   = item[1];
           idx = columns_to_idx[k];
           if idx then
-            data[k] = row[idx].to_s;
+            data[k] = row[idx].to_s.chomp.gsub(/\s/,'_');
           else
             data[k] = "MISSING";
           end
@@ -103,14 +103,17 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
     end
     begin
       case data[:yes_no_x]
-      when 'yes' || 'no'
+      when 'yes', 'no'
         if $last_struct[:active] then
+          puts "create #{data[:name]}"
           tmp = {
             :fields   => $last_struct[:fields],
             :subtopic => $last_struct[:subtopic]
           };
           tmp[:subsubtopic] = $last_struct[:subsubtopic] if $last_struct[:subsubtopic]
           $workbook_data[ $last_struct[:struct_name].to_sym ] = tmp;
+        else
+          puts "skip #{data[:name]}"
         end
         $last_struct               = {};
         $last_struct[:struct_name] = data[:name];

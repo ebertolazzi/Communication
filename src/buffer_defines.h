@@ -18,6 +18,8 @@
   #include <stdint.h>
 #endif
 
+extern uint32_t uint8_to_buffer ( uint8_t  in, uint8_t buffer[1] );
+extern uint32_t int8_to_buffer  ( int8_t   in, uint8_t buffer[1] );
 extern uint32_t uint16_to_buffer( uint16_t in, uint8_t buffer[2] );
 extern uint32_t int16_to_buffer ( int16_t  in, uint8_t buffer[2] );
 extern uint32_t int32_to_buffer ( int32_t  in, uint8_t buffer[4] );
@@ -27,6 +29,8 @@ extern uint32_t uint64_to_buffer( uint64_t in, uint8_t buffer[8] );
 extern uint32_t float_to_buffer ( float    in, uint8_t buffer[4] );
 extern uint32_t double_to_buffer( double   in, uint8_t buffer[8] );
 
+extern uint32_t buffer_to_uint8 ( uint8_t const buffer[1], uint8_t  * out );
+extern uint32_t buffer_to_int8  ( uint8_t const buffer[1], int8_t   * out );
 extern uint32_t buffer_to_uint16( uint8_t const buffer[2], uint16_t * out );
 extern uint32_t buffer_to_int16 ( uint8_t const buffer[2], int16_t  * out );
 extern uint32_t buffer_to_uint32( uint8_t const buffer[4], uint32_t * out );
