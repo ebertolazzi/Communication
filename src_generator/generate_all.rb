@@ -143,6 +143,12 @@ def generate_cpp_header( data )
 #include <string>
 #include <iostream>
 
+#ifdef DEBUG
+  #define MQTT_MESSAGE_DEBUG(A) std::cerr << A << \'\n\'
+#else
+  #define MQTT_MESSAGE_DEBUG(A)
+#endif
+
 <% @data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic then %>
 #include "<%= tag %>.h"
@@ -150,11 +156,7 @@ def generate_cpp_header( data )
 
 class MQTT_<%= @main_topic %>_publisher : public mosqpp::mosquittopp {
 private:
-  std::string host;
   std::string id;
-  std::string topic;
-  int         port;
-  int         keepalive;
   int         qos;
 
   virtual void on_connect(int rc);
@@ -163,14 +165,11 @@ private:
 
 public:
 
-  MQTT_<%= @main_topic %>_publisher(
-    std::string const & id,
-    std::string const & topic,
-    std::string const & host,
-    int                 port
-  );
+  MQTT_<%= @main_topic %>_publisher( std::string const & id );
 
   virtual ~MQTT_<%= @main_topic %>_publisher();
+
+  using mosqpp::mosquittopp::connect;
 
 <% @data.keys.each do |tag|
     if tag != :origin_file and tag != :main_topic then %>
@@ -184,9 +183,15 @@ class MQTT_<%= @main_topic %>_subscriber : public mosqpp::mosquittopp {
   <%= tag %> <%= tag %>_data;
 <% end; end; %>
 public:
-  MQTT_<%= @main_topic %>_subscriber( char const id[], bool clean_session )
+  MQTT_<%= @main_topic %>_subscriber( char const id[], bool clean_session = true )
   : mosqpp::mosquittopp( id, clean_session )
   {}
+
+  virtual
+  ~MQTT_<%= @main_topic %>_subscriber()
+  {}
+
+  using mosqpp::mosquittopp::connect;
 
   virtual
   void
@@ -220,23 +225,11 @@ def generate_cpp_body( data )
 #include <iostream>
 #include "<%= @main_topic %>.hpp"
 
-MQTT_<%= @main_topic %>_publisher::MQTT_<%= @main_topic %>_publisher(
-  std::string const & _id,
-  std::string const & _topic,
-  std::string const & _host,
-  int                 _port
-)
-: host(_host)
-, id(_id)
-, topic(_topic)
-, port(_port)
-, keepalive(false)
+MQTT_<%= @main_topic %>_publisher::MQTT_<%= @main_topic %>_publisher( std::string const & _id )
+: id(_id)
 , qos(0)
 {
-
-
 }
-
 
 MQTT_<%= @main_topic %>_publisher::~MQTT_<%= @main_topic %>_publisher() {
 
@@ -246,21 +239,21 @@ MQTT_<%= @main_topic %>_publisher::~MQTT_<%= @main_topic %>_publisher() {
 
 void
 MQTT_<%= @main_topic %>_publisher::on_connect( int rc ) {
-
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_connect");
 }
 
 // on_disconnect is called by thread each time we exeperience a server disconnection
 
 void
 MQTT_<%= @main_topic %>_publisher::on_disconnect( int rc ) {
-
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_disconnect");
 }
 
 // on_publish is called each time a message succeed to be sent to broker.
 // The parameter is the message id you can set when publish.
 void
 MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
-
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_publish");
 }
 
 <% @data.keys.each do |tag|
@@ -315,7 +308,11 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
     std::cerr << "Skipping empty payload!\n";
 <% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic then %>
   } else if ( <%= tag %>_MQTT_compare( message->topic ) == 0 ) {
+    MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_subscriber::on_message TOPIC: " << message->topic );
     buffer_to_<%= tag %>( ptr, &<%= tag %>_data );
+    #ifdef DEBUG
+    <%= tag %>_print( &<%= tag %>_data );
+    #endif
 <% end; end; %>
   } else {
     std::cerr << "unmanaged topic " << message->topic << \'\n\';
