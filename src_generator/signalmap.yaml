@@ -1,5 +1,5 @@
 ---
-:origin_file: signalmap_safestrip_interfaces_v1.0
+:origin_file: signalmap_safestrip_interfaces_v1.4
 :main_topic: SafeStrip
 :Header:
   :fields:
@@ -256,7 +256,7 @@
     :range: "-12700_-_12800"
     :unit: 0,01m
   :subtopic: CAM
-  :subsubtopic: v2x_cam_header_msgID
+  :subsubtopic: v2x_cam_header_originationStationID
 :DENM_message:
   :fields:
   - :name: v2x_header_msgID
@@ -367,7 +367,7 @@
     :type: Uint16
     :range: 0-2
     :unit: '0.0001'
-  :subtopic: DENMM
+  :subtopic: DENM
   :subsubtopic: v2x_header_msgID
 :MAPEM_message:
   :fields:
