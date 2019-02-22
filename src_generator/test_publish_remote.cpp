@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 using namespace std;
 
@@ -15,13 +17,17 @@ main() {
   cout << "Connect ... \n";
 
   // Set the security options
+  // Set the security options
   const char* server_address = "93.62.253.212";
   const char* username       = "safestrip";
   const char* password       = "S@f3str1p";
+  //const char* protocol       = "TLSv1.2";
 
-  mqtt_publisher.tls_set("ca.crt");
+  mqtt_publisher.tls_set("ca.crt"); // return 0 no problem
   mqtt_publisher.tls_insecure_set( true );
   mqtt_publisher.username_pw_set( username , password );
+  //mqtt_publisher.tls_opts_set( 1 , protocol );
+
   return_code = mqtt_publisher.connect( server_address , 8883 , 60 );
   cout << "publish return code: " << return_code << "\n"; //DEBUG
 
