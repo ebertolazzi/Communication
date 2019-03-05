@@ -1,5 +1,5 @@
 ---
-:origin_file: signalmap_safestrip_interfaces_v1.4
+:origin_file: signalmap_safestrip_interfaces_v1.5
 :main_topic: SafeStrip
 :Header:
   :fields:
@@ -231,25 +231,19 @@
     :type: Uint8
     :range: 0_-_7
     :unit: "-"
-  - :name: v2x_cam_PathHistory
-    :comment: Set_to_5_(Up_to_40_according_to_ETSI_standard)
-    :size: '10'
-    :type: Int32
-    :range: 0_-_5
-    :unit: "-"
-  - :name: v2x_cam_deltaLatitude
+  - :name: v2x_cam_PathHistory_deltaLatitude
     :comment: DeltaLatitude_::=_INTEGER_{oneMicrodegreeNorth_(10),_oneMicrodegreeSouth(-10),_unavailable(131072)}
     :size: '10'
     :type: Int32
     :range: "-131071_-_131072"
     :unit: udeg
-  - :name: v2x_cam_deltaLongitude
+  - :name: v2x_cam_PathHistory_deltaLongitude
     :comment: DeltaLongitude_::=_INTEGER_{oneMicrodegreeEast_(10),_oneMicrodegreeWest(-10),_unavailable(131072)}_(-131071..131072)
     :size: '10'
     :type: Int32
     :range: "-131071_-_131072"
     :unit: udeg
-  - :name: v2x_cam_deltaAltitude
+  - :name: v2x_cam_PathHistory_deltaAltitude
     :comment: DeltaAltitude_::=_INTEGER_{oneCentimeterUp_(1),_oneCentimeterDown_(-1),|unavailable(12800)}_(-12700..12800)
     :size: '10'
     :type: Int32
@@ -367,6 +361,24 @@
     :type: Uint16
     :range: 0-2
     :unit: '0.0001'
+  - :name: v2x_denm_PathHistory_deltaLatitude
+    :comment: DeltaLatitude_::=_INTEGER_{oneMicrodegreeNorth_(10),_oneMicrodegreeSouth(-10),_unavailable(131072)}_used_
+    :size: '10'
+    :type: Int32
+    :range: "-131071_-_131072"
+    :unit: udeg
+  - :name: v2x_denm_PathHistory_deltaLongitude
+    :comment: DeltaLongitude_::=_INTEGER_{oneMicrodegreeEast_(10),_oneMicrodegreeWest(-10),_unavailable(131072)}_(-131071..131072)
+    :size: '10'
+    :type: Int32
+    :range: "-131071_-_131072"
+    :unit: udeg
+  - :name: v2x_denm_PathHistory_deltaAltitude
+    :comment: DeltaAltitude_::=_INTEGER_{oneCentimeterUp_(1),_oneCentimeterDown_(-1),|unavailable(12800)}_(-12700..12800)
+    :size: '10'
+    :type: Int32
+    :range: "-12700_-_12800"
+    :unit: 0,01m
   :subtopic: DENM
   :subsubtopic: v2x_header_msgID
 :MAPEM_message:

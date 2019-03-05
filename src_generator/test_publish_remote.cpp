@@ -12,7 +12,7 @@ main() {
 
   MQTT_SafeStrip_publisher  mqtt_publisher("publisher");
 
-  int return_code;
+  int return_code, debug;
 
   cout << "Connect ... \n";
 
@@ -21,15 +21,16 @@ main() {
   const char* server_address = "93.62.253.212";
   const char* username       = "safestrip";
   const char* password       = "S@f3str1p";
-  //const char* protocol       = "TLSv1.2";
+  const char* protocol       = "tlsv1.2";
 
+  debug = mqtt_publisher.tls_opts_set( 1 , protocol );
   mqtt_publisher.tls_set("ca.crt"); // return 0 no problem
   mqtt_publisher.tls_insecure_set( true );
   mqtt_publisher.username_pw_set( username , password );
-  //mqtt_publisher.tls_opts_set( 1 , protocol );
+  
 
   return_code = mqtt_publisher.connect( server_address , 8883 , 60 );
-  cout << "publish return code: " << return_code << "\n"; //DEBUG
+  cout << "publish return code: " << return_code << "and debug: " << debug << "\n"; //DEBUG
 
   cout << "Starting ... \n";
   for ( int j = 0; j < 1000; j++) {
