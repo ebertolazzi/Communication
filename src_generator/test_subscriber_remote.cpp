@@ -31,10 +31,10 @@ main() {
   const char* password       = "S@f3str1p";
   const char* protocol       = "tlsv1.2";
 
-  debug = mqtt_subscriber.tls_opts_set( 1 , protocol );
-  mqtt_subscriber.tls_set("ca.crt"); // return 0 no problem
-  mqtt_subscriber.tls_insecure_set( true );
-  mqtt_subscriber.username_pw_set( username , password );
+  mqtt_publisher.username_pw_set( username , password );
+  mqtt_publisher.tls_set("ca.crt", NULL, NULL, NULL, NULL); // return 0 no problem
+  mqtt_publisher.tls_insecure_set( true );
+  debug = mqtt_publisher.tls_opts_set( 0 , protocol , NULL );
 
   
 
