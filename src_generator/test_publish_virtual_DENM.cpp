@@ -8,6 +8,7 @@ using namespace std;
 int
 main() {
 
+  // initialize the subscriber object
   MQTT_SafeStrip_publisher  mqtt_publisher("publisher");
 
   cout << "Connect ... \n";
@@ -42,18 +43,16 @@ main() {
     denm.v2x_denm_eventType_SubCauseCode                 = 1;
     denm.v2x_denm_frictionCoefficient_value              = 222;
     denm.v2x_denm_frictionCoefficient_confidence         = 50;
+
+    for(int iii = 0; iii < 10; iii++)
+    {
+      denm.v2x_denm_EventHistory_deltaLongitude[iii] = iii;
+      denm.v2x_denm_EventHistory_deltaLatitude[iii] = 2*iii;
+      denm.v2x_denm_EventHistory_deltaAltitude[iii] = 3*iii;
+    }
+    
     mqtt_publisher.publish( denm );
 
-    // Sending
-    AutomationLevel al;
-    al.Automation_Level = j;
-    mqtt_publisher.publish( al );
-/*
-    StrainGauge sg;
-    sg.StripID = j;
-    sg.Strain_gauge_Cumulative_time = 123.45;
-    mqtt_publisher.publish( sg );
-*/
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
   cout << "> Clean exit\n";
