@@ -42,8 +42,18 @@ main() {
     denm.v2x_denm_eventType_SubCauseCode                 = 1;
     denm.v2x_denm_frictionCoefficient_value              = 222;
     denm.v2x_denm_frictionCoefficient_confidence         = 50;
-
     mqtt_publisher.publish( denm );
+
+    // Sending
+    AutomationLevel al;
+    al.Automation_Level = j;
+    mqtt_publisher.publish( al );
+/*
+    StrainGauge sg;
+    sg.StripID = j;
+    sg.Strain_gauge_Cumulative_time = 123.45;
+    mqtt_publisher.publish( sg );
+*/
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
   cout << "> Clean exit\n";
