@@ -1,5 +1,5 @@
 ---
-:origin_file: signalmap_safestrip_interfaces_v1.0
+:origin_file: signalmap_safestrip_interfaces_v1.6
 :main_topic: SafeStrip
 :Header:
   :fields:
@@ -231,32 +231,26 @@
     :type: Uint8
     :range: 0_-_7
     :unit: "-"
-  - :name: v2x_cam_PathHistory
-    :comment: Set_to_5_(Up_to_40_according_to_ETSI_standard)
-    :size: '10'
-    :type: Int32
-    :range: 0_-_5
-    :unit: "-"
-  - :name: v2x_cam_deltaLatitude
+  - :name: v2x_cam_PathHistory_deltaLatitude
     :comment: DeltaLatitude_::=_INTEGER_{oneMicrodegreeNorth_(10),_oneMicrodegreeSouth(-10),_unavailable(131072)}
     :size: '10'
     :type: Int32
     :range: "-131071_-_131072"
     :unit: udeg
-  - :name: v2x_cam_deltaLongitude
+  - :name: v2x_cam_PathHistory_deltaLongitude
     :comment: DeltaLongitude_::=_INTEGER_{oneMicrodegreeEast_(10),_oneMicrodegreeWest(-10),_unavailable(131072)}_(-131071..131072)
     :size: '10'
     :type: Int32
     :range: "-131071_-_131072"
     :unit: udeg
-  - :name: v2x_cam_deltaAltitude
+  - :name: v2x_cam_PathHistory_deltaAltitude
     :comment: DeltaAltitude_::=_INTEGER_{oneCentimeterUp_(1),_oneCentimeterDown_(-1),|unavailable(12800)}_(-12700..12800)
     :size: '10'
     :type: Int32
     :range: "-12700_-_12800"
     :unit: 0,01m
   :subtopic: CAM
-  :subsubtopic: v2x_cam_header_msgID
+  :subsubtopic: v2x_cam_header_originationStationID
 :DENM_message:
   :fields:
   - :name: v2x_header_msgID
@@ -367,7 +361,25 @@
     :type: Uint16
     :range: 0-2
     :unit: '0.0001'
-  :subtopic: DENMM
+  - :name: v2x_denm_EventHistory_deltaLatitude
+    :comment: DeltaLatitude_::=_INTEGER_{oneMicrodegreeNorth_(10),_oneMicrodegreeSouth(-10),_unavailable(131072)}_used_
+    :size: '10'
+    :type: Int32
+    :range: "-131071_-_131072"
+    :unit: udeg
+  - :name: v2x_denm_EventHistory_deltaLongitude
+    :comment: DeltaLongitude_::=_INTEGER_{oneMicrodegreeEast_(10),_oneMicrodegreeWest(-10),_unavailable(131072)}_(-131071..131072)
+    :size: '10'
+    :type: Int32
+    :range: "-131071_-_131072"
+    :unit: udeg
+  - :name: v2x_denm_EventHistory_deltaAltitude
+    :comment: DeltaAltitude_::=_INTEGER_{oneCentimeterUp_(1),_oneCentimeterDown_(-1),|unavailable(12800)}_(-12700..12800)
+    :size: '10'
+    :type: Int32
+    :range: "-12700_-_12800"
+    :unit: 0,01m
+  :subtopic: DENM
   :subsubtopic: v2x_header_msgID
 :MAPEM_message:
   :fields:
@@ -505,10 +517,41 @@
     :unit: "-"
   :subtopic: MAPEM
   :subsubtopic: v2x_header_msgID
+:DSS_inputs:
+  :fields:
+  - :name: OutputID
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
+  - :name: WarningLevel
+    :comment: 0_=_system_active_with_no_warning_1_=_warning_level_one_"yellow"_2_=_warning_level_two_"red"_3_=_unavailable
+    :size: '1'
+    :type: Uint8
+    :range: 0_÷_3
+    :unit: "-"
+  :subtopic: DSS_inputs
+  :subsubtopic: OutputID
+:HMI_inputs:
+  :fields:
+  - :name: OutputID
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
+  - :name: WarningLevel
+    :comment: 0_=_system_active_with_no_warning_1_=_warning_level_one_"yellow"_2_=_warning_level_two_"red"_3_=_unavailable
+    :size: '1'
+    :type: Uint8
+    :range: 0_÷_3
+    :unit: "-"
+  :subtopic: HMI_inputs/
 :FirstManoeuvreParameters:
   :fields:
   - :name: OutputID
-    :comment: ID_of_the_applications
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
     :type: Int32
     :range: ''
@@ -602,7 +645,7 @@
 :FirstManoeuvreFrontTargetObstacle:
   :fields:
   - :name: OutputID
-    :comment: ID_of_the_applications
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
     :type: Int32
     :range: ''
@@ -678,7 +721,7 @@
 :FirstTrajectoryMotorPrimitivesParameters:
   :fields:
   - :name: OutputID
-    :comment: ID_of_the_applications
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
     :type: Int32
     :range: ''
@@ -820,7 +863,7 @@
 :ManoeuverTypeLevel2:
   :fields:
   - :name: OutputID
-    :comment: ID_of_the_applications
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
     :type: Int32
     :range: ''
@@ -902,6 +945,12 @@
   :subtopic: AutomationLevel
 :ParkingApplication:
   :fields:
+  - :name: OutputID
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
   - :name: StripID
     :comment: ID_of_the_strip
     :size: '1'

@@ -308,7 +308,7 @@ def to_C_struct( name, hsc )
     n += ';'
     res += "  #{type_to_C(tv).ljust(8)} #{n.ljust(len+6)}"
     res += " /* #{f[:comment]} */\n"
-    dim += type_to_size(tv);
+    dim += sz*type_to_size(tv);
   end
   res += "} #{name};\n\n"
   res += "/* size of the serialized version of struct #{name} */\n"
@@ -348,7 +348,7 @@ def to_SIMULINK_struct( name, hsc )
     n   += "[#{sz}]" if sz > 1
     n   += ';'
     res += "  #{t.ljust(10)} #{n.ljust(len+6)} /* #{f[:comment]} */\n"
-    dim += type_to_size(tv);
+    dim += sz*type_to_size(tv);
   end
   res += "} #{name};\n\n"
   res += "#define #{name}_size #{dim}\n"
@@ -495,7 +495,7 @@ def simulink_to_buffer( name, hsc )
       res += "      #{tv[0]}_to_buffer( *p[i_count], ptr ); ptr += #{sz};\n"
       res += "    }\n"
       res += "  }\n"
-    else 
+    else
       res += "  { #{t} const ** p = (#{t} const **)ssGetInputPortSignalPtrs( S, #{ipos} );\n"
       res += "    #{tv[0]}_to_buffer( **p, ptr ); ptr += #{sz};\n"
       res += "  }\n"

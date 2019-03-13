@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "denm_message.h": "c"
+    }
+}

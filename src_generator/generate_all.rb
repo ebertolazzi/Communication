@@ -277,6 +277,30 @@ MQTT_<%= @main_topic %>_publisher::publish(
     this->qos,
     false
   );
+  switch ( ret ) {
+  case MOSQ_ERR_SUCCESS:
+    break;
+  case MOSQ_ERR_INVAL:
+    std::cout << "publish <%= @main_topic %>: the input parameters were invalid.\n";
+    break;
+  case MOSQ_ERR_NOMEM:
+    std::cout << "publish <%= @main_topic %>: an out of memory condition occurred.";
+    break;
+  case MOSQ_ERR_NO_CONN:
+    std::cout << "publish <%= @main_topic %>: the client isn’t connected to a broker.";
+    break;
+  case MOSQ_ERR_PROTOCOL:
+    std::cout << "publish <%= @main_topic %>: there is a protocol error communicating with the broker.";
+    break;
+  case MOSQ_ERR_PAYLOAD_SIZE:
+    std::cout << "publish <%= @main_topic %>: payloadlen is too large.";
+    break;
+  case MOSQ_ERR_MALFORMED_UTF8:
+    std::cout << "publish <%= @main_topic %>: malformed utf8\n";
+    break;
+  default:
+    std::cout << "publish <%= @main_topic %>: return = " << ret << "\n";
+  }
   return ret == MOSQ_ERR_SUCCESS;
 }
 

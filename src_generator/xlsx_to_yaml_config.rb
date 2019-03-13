@@ -5,7 +5,7 @@ class Config
                 :for_structs
 
   def initialize
-    @input_file_name = '../../signalmap_safestrip_interfaces_v1.0'
+    @input_file_name = '../../signalmap_safestrip_interfaces_v1.6'
     @yaml_file_name  = 'signalmap'
 
     @columns_map = [
