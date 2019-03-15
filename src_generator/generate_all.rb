@@ -295,9 +295,9 @@ MQTT_<%= @main_topic %>_publisher::publish(
   case MOSQ_ERR_PAYLOAD_SIZE:
     std::cout << "publish <%= @main_topic %>: payloadlen is too large.";
     break;
-  case MOSQ_ERR_MALFORMED_UTF8:
-    std::cout << "publish <%= @main_topic %>: malformed utf8\n";
-    break;
+  //case MOSQ_ERR_MALFORMED_UTF8:
+  //  std::cout << "publish <%= @main_topic %>: malformed utf8\n";
+  //  break;
   default:
     std::cout << "publish <%= @main_topic %>: return = " << ret << "\n";
   }
