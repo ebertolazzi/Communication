@@ -1,7 +1,7 @@
 
 GEN_FOLDER_REL   = generated#      Folder where the generated headers are (ex: safestrip.hpp)
-MOSQUITTO_FOLDER = /usr/local/lib# Folder where is the mosquitto library
-SSL_FOLDER       = -I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib # command for SSL (found if you try to type brew link --force openssl)
+MOSQUITTO        = -L/usr/local/lib -lmosquitto -lmosquittopp
+SSL_FOLDER       = /usr/local/opt/openssl/lib/libssl.a  /usr/local/opt/openssl/lib/libcrypto.a # command for SSL (found if you try to type brew link --force openssl)
 DEBUG_FLAG       = -DDEBUG#        Default with debug to print structures
 
 all: test_publish_remote test_subscriber_remote test_publish test_subscriber test_publish_virtual_DENM
@@ -11,20 +11,19 @@ remote_test : test_publish_remote test_subscriber_remote
 local_test : test_publish test_subscriber # default targets required
 
 
-test_publish_remote: test_publish_remote.cpp 
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* -L$(MOSQUITTO_FOLDER) -lmosquittopp -lmosquitto $(SSL_FOLDER) -lssl -o $@
-test_subscriber_remote: test_subscriber_remote.cpp 
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* -L$(MOSQUITTO_FOLDER) -lmosquittopp -lmosquitto $(SSL_FOLDER) -lssl -o $@
+test_publish_remote: test_publish_remote.cpp
+	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+test_subscriber_remote: test_subscriber_remote.cpp
+	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
-test_publish: test_publish.cpp 
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* -L$(MOSQUITTO_FOLDER) -lmosquittopp -lmosquitto -o $@
-test_subscriber: test_subscriber.cpp 
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* -L$(MOSQUITTO_FOLDER) -lmosquittopp -lmosquitto -o $@
+test_publish: test_publish.cpp
+	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+test_subscriber: test_subscriber.cpp
+	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
-test_publish_virtual_DENM: test_publish_virtual_DENM.cpp 
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* -L$(MOSQUITTO_FOLDER) -lmosquittopp -lmosquitto -o $@
+test_publish_virtual_DENM: test_publish_virtual_DENM.cpp
+	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
-	
 clean:
 	rm test_publish test_subscriber test_publish_remote test_subscriber_remote test_publish_virtual_DENM
 

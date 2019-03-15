@@ -2,8 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
+//#include <openssl/ssl.h>
+//#include <openssl/err.h>
 
 using namespace std;
 
@@ -24,14 +24,14 @@ main() {
   const char* protocol       = "tlsv1.2";
 
   mqtt_publisher.username_pw_set( username , password );
-  mqtt_publisher.tls_set("ca.crt", NULL, NULL, NULL, NULL); // return 0 no problem
+  mqtt_publisher.tls_set("./ca.crt", NULL, NULL, NULL, NULL); // return 0 no problem
   mqtt_publisher.tls_insecure_set( true );
   debug = mqtt_publisher.tls_opts_set( 0 , protocol , NULL );
   
   
 
   return_code = mqtt_publisher.connect( server_address , 8883 , 60 );
-  cout << "publish return code: " << return_code << "and debug: " << debug << "\n"; //DEBUG
+  cout << "connect return code: " << return_code << "\nand debug: " << debug << "\n"; //DEBUG
 
   cout << "Starting ... \n";
   for ( int j = 0; j < 1000; j++) {
