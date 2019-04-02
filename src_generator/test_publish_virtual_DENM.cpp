@@ -39,10 +39,10 @@ main() {
     denm.v2x_denm_relevanceTrafficDirection              = 1;
     denm.v2x_denm_validityDuration                       = 10;
     denm.v2x_denm_stationType                            = 15;
-    denm.v2x_denm_eventType_CauseCode                    = 9;
-    denm.v2x_denm_eventType_SubCauseCode                 = 1;
-    denm.v2x_denm_frictionCoefficient_value              = 222;
-    denm.v2x_denm_frictionCoefficient_confidence         = 50;
+    denm.v2x_denm_eventType_CauseCode                    = 14;
+    denm.v2x_denm_eventType_SubCauseCode                 = 0;
+    denm.v2x_denm_frictionCoefficient_value              = 0;
+    denm.v2x_denm_frictionCoefficient_confidence         = 0;
 
     for(int iii = 0; iii < 10; iii++)
     {
