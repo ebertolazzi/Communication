@@ -24,6 +24,8 @@ main() {
   //mqtt.connect( "192.168.0.106", 1883, 60 );
   mqtt_subscriber.connect( "127.0.0.1", 1883, 60 );
 
+  AutomationLevel al;
+
   //  __
   // |  |   ___ ___ ___
   // |  |__| . | . | . |
@@ -32,8 +34,12 @@ main() {
   cout << "Entering loop.\n";
   mqtt_subscriber.loop_start();
   cout << "Running\n";
-  while (_running)
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  while (_running){
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    al = mqtt_subscriber.get_last_AutomationLevel();
+
+    printf("this is your AL: %i\n",al.Automation_Level);}
 
   cout << "Clean exit\n";
 

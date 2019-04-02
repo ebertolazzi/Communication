@@ -200,6 +200,19 @@ public:
   virtual
   void
   on_message( const struct mosquitto_message *message );
+
+  <% @data.keys.each do |tag|
+    if tag != :origin_file and tag != :main_topic then %>
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
+  <%= tag %>
+  get_last_<%= tag %>();
+  
+  <% end; end %>
+  
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  
 };
 
 #endif
@@ -342,6 +355,21 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
     std::cerr << "unmanaged topic " << message->topic << \'\n\';
   }
 }
+
+<% @data.keys.each do |tag|
+  if tag != :origin_file and tag != :main_topic then %>
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+<%= tag %>
+MQTT_<%= @main_topic %>_subscriber::get_last_<%= tag %>()
+{
+  return this-><%= tag %>_data;
+}
+
+<% end; end %>
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 // EOF: <%= @main_topic %>.cpp
 '''
