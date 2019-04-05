@@ -78,7 +78,7 @@ def type_to_C_fmt( t )
   when /^int64$/
     res = "ld"
   when /^uint64$/
-    res = "lu"
+    res = "llu"
   else
   puts "type_to_C_fmt: unknown name of #{t}"
   end
