@@ -39,7 +39,8 @@ main() {
 
     al = mqtt_subscriber.get_last_AutomationLevel();
 
-    printf("this is your AL: %i\n",al.Automation_Level);}
+    printf("this is your AL: %i\n",al.Automation_Level);
+  }
 
   cout << "Clean exit\n";
 

@@ -25,7 +25,7 @@ test_publish_virtual_DENM: test_publish_virtual_DENM.cpp
 	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
 clean:
-	rm test_publish test_subscriber test_publish_remote test_subscriber_remote test_publish_virtual_DENM
+	rm -f test_publish test_subscriber test_publish_remote test_subscriber_remote test_publish_virtual_DENM
 
 
 

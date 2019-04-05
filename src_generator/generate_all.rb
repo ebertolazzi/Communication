@@ -203,16 +203,16 @@ public:
 
   <% @data.keys.each do |tag|
     if tag != :origin_file and tag != :main_topic then %>
-  
+
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  
+
   <%= tag %>
   get_last_<%= tag %>();
-  
+
   <% end; end %>
-  
+
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  
+
 };
 
 #endif
@@ -252,21 +252,21 @@ MQTT_<%= @main_topic %>_publisher::~MQTT_<%= @main_topic %>_publisher() {
 
 void
 MQTT_<%= @main_topic %>_publisher::on_connect( int rc ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_connect");
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_connect, id = " << this->id);
 }
 
 // on_disconnect is called by thread each time we exeperience a server disconnection
 
 void
 MQTT_<%= @main_topic %>_publisher::on_disconnect( int rc ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_disconnect");
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_disconnect, id = " << this->id);
 }
 
 // on_publish is called each time a message succeed to be sent to broker.
 // The parameter is the message id you can set when publish.
 void
 MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_publish");
+  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_publish, id = " << this->id);
 }
 
 <% @data.keys.each do |tag|
