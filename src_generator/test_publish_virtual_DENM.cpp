@@ -9,7 +9,7 @@ int
 main() {
 
   // initialize the subscriber object
-  MQTT_SafeStrip_publisher  mqtt_publisher("publisher");
+  MQTT_SafeStrip_publisher  mqtt_publisher("publisher",true);
 
   cout << "Connect ... \n";
   mqtt_publisher.connect( "127.0.0.1", 1883, 60 );

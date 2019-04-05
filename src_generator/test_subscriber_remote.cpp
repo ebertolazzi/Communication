@@ -20,7 +20,7 @@ clean_exit( int signum ) {
 int
 main() {
 
-  MQTT_SafeStrip_subscriber mqtt_subscriber("subscriber");
+  MQTT_SafeStrip_subscriber mqtt_subscriber("subscriber",true);
 
 
   int debug;

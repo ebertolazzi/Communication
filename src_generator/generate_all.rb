@@ -165,7 +165,7 @@ private:
 
 public:
 
-  MQTT_<%= @main_topic %>_publisher( std::string const & id );
+  MQTT_<%= @main_topic %>_publisher( char const id[], bool clean_session = true);
 
   virtual ~MQTT_<%= @main_topic %>_publisher();
 
@@ -183,7 +183,7 @@ class MQTT_<%= @main_topic %>_subscriber : public mosqpp::mosquittopp {
   <%= tag %> <%= tag %>_data;
 <% end; end; %>
 public:
-  MQTT_<%= @main_topic %>_subscriber( char const id[], bool clean_session = true )
+  MQTT_<%= @main_topic %>_subscriber( char const id[], bool clean_session = true)
   : mosqpp::mosquittopp( id, clean_session )
   {}
 
@@ -238,35 +238,43 @@ def generate_cpp_body( data )
 #include <iostream>
 #include "<%= @main_topic %>.hpp"
 
-MQTT_<%= @main_topic %>_publisher::MQTT_<%= @main_topic %>_publisher( std::string const & _id )
-: id(_id)
+MQTT_<%= @main_topic %>_publisher::MQTT_<%= @main_topic %>_publisher( char const _id[], bool clean_session )
+: mosqpp::mosquittopp( _id, clean_session )
 , qos(0)
 {
+  id = _id == nullptr ? "NULL" : _id;
+  mosqpp::lib_init();
 }
 
 MQTT_<%= @main_topic %>_publisher::~MQTT_<%= @main_topic %>_publisher() {
-
+  mosqpp::lib_cleanup();
 }
 
 // on_connect is called by thread each time we exeperience a server connection
 
 void
 MQTT_<%= @main_topic %>_publisher::on_connect( int rc ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_connect, id = " << this->id);
+  MQTT_MESSAGE_DEBUG(
+    "MQTT_<%= @main_topic %>_publisher::on_connect, rc = " << rc << ", id = " << this->id
+  );
 }
 
-// on_disconnect is called by thread each time we exeperience a server disconnection
+// on_disconnect is called by thread each time we experience a server disconnection
 
 void
 MQTT_<%= @main_topic %>_publisher::on_disconnect( int rc ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_disconnect, id = " << this->id);
+  MQTT_MESSAGE_DEBUG(
+    "MQTT_<%= @main_topic %>_publisher::on_disconnect rc = " << rc << ", id = " << this->id
+  );
 }
 
 // on_publish is called each time a message succeed to be sent to broker.
 // The parameter is the message id you can set when publish.
 void
 MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
-  MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_publisher::on_publish, id = " << this->id);
+  MQTT_MESSAGE_DEBUG(
+    "MQTT_<%= @main_topic %>_publisher::on_publish, mid = " << mid << " id = " << this->id
+  );
 }
 
 <% @data.keys.each do |tag|

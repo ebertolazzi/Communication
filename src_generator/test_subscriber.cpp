@@ -18,7 +18,7 @@ clean_exit( int signum ) {
 int
 main() {
 
-  MQTT_SafeStrip_subscriber mqtt_subscriber("subscriber");
+  MQTT_SafeStrip_subscriber mqtt_subscriber("subscriber",true);
 
   cout << "Connect ... \n";
   //mqtt.connect( "192.168.0.106", 1883, 60 );

@@ -6,9 +6,11 @@
 using namespace std;
 
 int
-main() {
+main( int argc, char const * argv[] ) {
 
-  MQTT_SafeStrip_publisher  mqtt_publisher("publisher");
+  char const * id = argc > 1 ? argv[1] : "publish";
+
+  MQTT_SafeStrip_publisher  mqtt_publisher(id,true);
 
   cout << "Connect ... \n";
   mqtt_publisher.connect( "127.0.0.1", 1883, 60 );

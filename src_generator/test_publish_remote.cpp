@@ -10,7 +10,7 @@ using namespace std;
 int
 main() {
 
-  MQTT_SafeStrip_publisher  mqtt_publisher("publisher");
+  MQTT_SafeStrip_publisher  mqtt_publisher("publisher",true);
 
   int return_code, debug;
 
