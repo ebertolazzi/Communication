@@ -1,41 +1,14 @@
 ---
-:origin_file: signalmap_safestrip_interfaces_v1.6
+:origin_file: signalmap_safestrip_interfaces_v2.0
 :main_topic: SafeStrip
-:Header:
-  :fields:
-  - :name: ID
-    :comment: Enumeration_|00=CAN_NETWORK,|01=CAM_V2X,|02=DENM_V2X,|03=MAP_V2X,|04=SPAT_V2X,|11=CAM_LTE,|12=DENM_LTE,|13=MAP_LTE,|14=SPAT_LTE
-    :size: '1'
-    :type: Int32
-    :range: '1'
-    :unit: "-"
-  - :name: Version
-    :comment: Identifies_data_structure
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_2
-    :unit: "-"
-  - :name: CycleNumber
-    :comment: ''
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_2
-    :unit: "-"
-  - :name: TimeStamp
-    :comment: UTC_time_difference_after_1st_January_1970,_obtained_from_GPS_time_with_leap_seconds_(Unix_epoch)
-    :size: '1'
-    :type: Double
-    :range: ''
-    :unit: s
-  - :name: Status
-    :comment: 0_=_ACTIVE
-    :size: '1'
-    :type: Int32
-    :range: ''
-    :unit: "-"
-  :subtopic: Header
 :HostVehicle:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: Speed_vehicle_network
     :comment: Filtered_longitudinal_velocity_from__odometer
     :size: '1'
@@ -87,7 +60,7 @@
   - :name: BrakePedalSwitch_vehicle_network
     :comment: 0_=_UNKNOWN;_1_=_RELEASED;_2_=_PRESSED
     :size: '1'
-    :type: Int32
+    :type: Uint8
     :range: 0_÷_2
     :unit: "-"
   - :name: VehicleType
@@ -105,17 +78,23 @@
   :subtopic: HostVehicle
 :CAM_message:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: v2x_cam_header_msgID
     :comment: messageID_INTEGER{_denm(1),cam(2),_poi(3),_spat(4),_map(5),_ivi(6),_ev-rsr(7)_}_(0..255)
     :size: '1'
     :type: UInt32
-    :range: 0_÷_255
+    :range: 0_÷_4294967295
     :unit: "-"
   - :name: v2x_cam_header_originationStationID
     :comment: Unique_indentifier_for_verhicle_or_RSU
     :size: '1'
-    :type: Int32
-    :range: "-2147483647_÷_2147483647"
+    :type: UInt32
+    :range: 0_÷_4294967295
     :unit: "-"
   - :name: v2x_cam_GenerationDeltaTime
     :comment: Only_seconds_after_start_of_minute_are_transmitted|generationDeltaTime_=_TimestampIts_mod_65_536|TimestampIts_represents_an_integer_value_in_milliseconds_since_2004-01-|01T00:00:00:000Z_as_defined_in_ETSI_TS_102_894-2
@@ -133,32 +112,32 @@
     :comment: Unit_0,1_microdegree._Referred_to_front_bumper_position._Positive:_NORTH._Negative:_SOUTH._Raw_value_set_to_900_000_001_when_unavailable.
     :size: '1'
     :type: Int32
-    :range: "-90_÷_90"
+    :range: "-131071_-_131072"
     :unit: deg
   - :name: v2x_cam_Longitude
     :comment: Unit_0,1_microdegree.__Referred_to_front_bumper_position._Negative:_WEST._Positive:_EAST._Raw_value_set_to_1_800_000_001_when_unavailable
     :size: '1'
     :type: Int32
-    :range: "-180_÷_180"
+    :range: "-131071_-_131072"
     :unit: deg
   - :name: v2x_cam_ConfidenceEllipse_semiMajor
     :comment: Absolute_position_accuracy_in_one_of_the_axis_direction_as_defined_in_a_shape_of_ellipse_with_a_predefined_confidence_level_(e.g._95_%)|The_value_shall_be_set_to:|•_1_if_the_accuracy_is_equal_to_or_less_than_1_cm,|•_n_(n_>_1_and_n_<_4093)_if_the_accuracy_is_equal_to_or_less_than_n_cm,|•_4093_if_the_accuracy_is_equal_to_or_less_than_4093_cm,|•_4094_if_the_accuracy_is_out_of_range,_i.e._greater_than_4093_cm,|•_4095_if_the_accuracy_information_is_unavailable.
     :size: '1'
     :type: Int32
     :range: 0_-_4095
-    :unit: cm
+    :unit: m
   - :name: v2x_cam_ConfidenceEllipse_semiMinor
     :comment: Absolute_position_accuracy_in_one_of_the_axis_direction_as_defined_in_a_shape_of_ellipse_with_a_predefined_confidence_level_(e.g._95_%)|The_value_shall_be_set_to:|•_1_if_the_accuracy_is_equal_to_or_less_than_1_cm,|•_n_(n_>_1_and_n_<_4093)_if_the_accuracy_is_equal_to_or_less_than_n_cm,|•_4093_if_the_accuracy_is_equal_to_or_less_than_4093_cm,|•_4094_if_the_accuracy_is_out_of_range,_i.e._greater_than_4093_cm,|•_4095_if_the_accuracy_information_is_unavailable.
     :size: '1'
     :type: Int32
     :range: 0_-_4095
-    :unit: cm
+    :unit: m
   - :name: v2x_cam_ConfidenceEllipse_semiMajorOrientation
     :comment: Orientation_of_a_heading_with_regards_to_the_WGS84_north.|When_the_information_is_not_available,_the_DE_shall_be_set_to_3601.
     :size: '1'
     :type: Int32
     :range: 0_-_3601
-    :unit: 0.1deg
+    :unit: deg
   - :name: v2x_cam_Altitude
     :comment: Unit_0.01_m._Raw_value_set_to_800_001_when_unavailable.
     :size: '1'
@@ -206,7 +185,7 @@
     :size: '1'
     :type: UInt8
     :range: 0_-_7
-    :unit: bitstring
+    :unit: "-"
   - :name: v2x_cam_SteeringWheelAngle
     :comment: Unit_1,5_degree.__Positive_value:_anti-clockwise._Negative_value:_clockwise._Not_available:_the_value_shall_be_set_to_512.
     :size: '1'
@@ -224,7 +203,7 @@
     :size: '1'
     :type: Uint16
     :range: 0-15
-    :unit: bitstring
+    :unit: "-"
   - :name: v2x_cam_ExteriorLights_status
     :comment: 0_=_RELEASED;_1_=_PRESSED_for_every_light_command.|ExteriorLights_::=_BIT_STRING_{|lowBeamHeadlightsOn_(0),|highBeamHeadlightsOn_(1),|leftTurnSignalOn_(2),|rightTurnSignalOn_(3),|daytimeRunningLightsOn_(4),|reverseLightOn_(5),|fogLightOn_(6),|parkingLightsOn_(7)|}_(SIZE(8))
     :size: '1'
@@ -248,16 +227,22 @@
     :size: '10'
     :type: Int32
     :range: "-12700_-_12800"
-    :unit: 0,01m
+    :unit: m
   :subtopic: CAM
   :subsubtopic: v2x_cam_header_originationStationID
 :DENM_message:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: v2x_header_msgID
     :comment: messageID_INTEGER{_denm(1),cam(2),_poi(3),_spat(4),_map(5),_ivi(6),_ev-rsr(7)_}_(0..255)
     :size: '1'
     :type: UInt32
-    :range: 0_÷_255
+    :range: 0_÷_4294967295
     :unit: "-"
   - :name: v2x_header_originationStationID
     :comment: Unique_indentifier_for_verhicle_or_RSU
@@ -268,13 +253,13 @@
   - :name: v2x_denm_sequenceNumber
     :comment: ''
     :size: '1'
-    :type: UInt8
+    :type: UInt16
     :range: 0_-_65535
     :unit: "-"
   - :name: v2x_denm_detectionTime
     :comment: The_value_for_TimestampIts_for_2007-01-01T00:00:00.000Z_is_94_694_401_000_milliseconds,_which_includes_one_leap_second_insertion_since_2004-01-01T00:00:00.000Z.|TimestampIts_::=_INTEGER_{utcStartOf2004(0),_oneMillisecAfterUTCStartOf2004(1)}
     :size: '1'
-    :type: Int32
+    :type: UInt64
     :range: 0_-_4398046511103
     :unit: ms
   - :name: v2x_denm_eventPosition_latitude
@@ -294,19 +279,19 @@
     :size: '1'
     :type: Int32
     :range: 0_-_4095
-    :unit: cm
+    :unit: m
   - :name: v2x_denm_ConfidenceEllipse_semiMinor
     :comment: Absolute_position_accuracy_in_one_of_the_axis_direction_as_defined_in_a_shape_of_ellipse_with_a_predefined_confidence_level_(e.g._95_%)|The_value_shall_be_set_to:|•_1_if_the_accuracy_is_equal_to_or_less_than_1_cm,|•_n_(n_>_1_and_n_<_4093)_if_the_accuracy_is_equal_to_or_less_than_n_cm,|•_4093_if_the_accuracy_is_equal_to_or_less_than_4093_cm,|•_4094_if_the_accuracy_is_out_of_range,_i.e._greater_than_4093_cm,|•_4095_if_the_accuracy_information_is_unavailable.
     :size: '1'
     :type: Int32
     :range: 0_-_4095
-    :unit: cm
+    :unit: m
   - :name: v2x_denm_ConfidenceEllipse_semiMajorOrientation
     :comment: Orientation_of_a_heading_with_regards_to_the_WGS84_north.|When_the_information_is_not_available,_the_DE_shall_be_set_to_3601.
     :size: '1'
     :type: Int32
     :range: 0_-_3601
-    :unit: 0.1deg
+    :unit: deg
   - :name: v2x_denm_eventPosition_altitude
     :comment: Unit_0.01_m._Raw_value_set_to_800_001_when_unavailable.
     :size: '1'
@@ -350,17 +335,17 @@
     :range: 0_-_255
     :unit: "-"
   - :name: v2x_denm_frictionCoefficient_value
-    :comment: Value_of_the_friction_coefficient_estimated_(CUSTOM)
+    :comment: Value_of_the_friction_coefficient_estimated_(CUSTOM)_65535_=_unavailable
     :size: '1'
     :type: Uint16
-    :range: 0-2
-    :unit: '0.0001'
+    :range: 0-2000
+    :unit: "-"
   - :name: v2x_denm_frictionCoefficient_confidence
-    :comment: Confidence_of_the_value_of_the_friction_coefficient_(CUSTOM)
+    :comment: Confidence_of_the_value_of_the_friction_coefficient_(CUSTOM)_65535_=_unavailable
     :size: '1'
     :type: Uint16
-    :range: 0-2
-    :unit: '0.0001'
+    :range: 0-2000
+    :unit: "-"
   - :name: v2x_denm_EventHistory_deltaLatitude
     :comment: DeltaLatitude_::=_INTEGER_{oneMicrodegreeNorth_(10),_oneMicrodegreeSouth(-10),_unavailable(131072)}_used_
     :size: '10'
@@ -378,22 +363,28 @@
     :size: '10'
     :type: Int32
     :range: "-12700_-_12800"
-    :unit: 0,01m
+    :unit: m
   :subtopic: DENM
   :subsubtopic: v2x_header_msgID
 :MAPEM_message:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: v2x_header_msgID
     :comment: messageID_INTEGER{_denm(1),cam(2),_poi(3),_spat(4),_map(5),_ivi(6),_ev-rsr(7)_}_(0..255)
     :size: '1'
     :type: UInt32
-    :range: 0_÷_255
+    :range: 0_÷_4294967295
     :unit: "-"
   - :name: v2x_header_originationStationID
     :comment: Unique_indentifier_for_verhicle_or_RSU
     :size: '1'
-    :type: Int32
-    :range: "-2147483647_÷_2147483647"
+    :type: UInt32
+    :range: 0_÷_4294967295
     :unit: "-"
   - :name: v2x_map_msgCount
     :comment: "-"
@@ -436,13 +427,13 @@
     :size: '1'
     :type: Int32
     :range: "-4096_-_61439"
-    :unit: 10cm
+    :unit: m
   - :name: v2x_map_intersection_laneWidth__
     :comment: Default_value_when_this_fieldis_not_set:_32768
     :size: '1'
     :type: Int32
     :range: 0_-_32767
-    :unit: cm
+    :unit: m
   - :name: v2x_map_intersection_speedLimitType__
     :comment: SpeedLimitType_::=_ENUMERATED_{|unknown,_--_Speed_limit_type_not_available|maxSpeedInSchoolZone,_--_Only_sent_when_the_limit_is_active|maxSpeedInSchoolZoneWhenChildrenArePresent,_--_Sent_at_any_time|maxSpeedInConstructionZone,_--_Used_for_work_zones,_incident_zones,_etc._where_a_reduced_speed_is_present|vehicleMinSpeed,|vehicleMaxSpeed,_--_Regulatory_speed_limit_for_general_traffic|vehicleNightMaxSpeed,|truckMinSpeed,|truckMaxSpeed,|truckNightMaxSpeed,|vehiclesWithTrailersMinSpeed,|vehiclesWithTrailersMaxSpeed,|vehiclesWithTrailersNightMaxSpeed,|...|}|Default_value_when_this_fieldis_not_set:_13
     :size: '1'
@@ -454,7 +445,7 @@
     :size: '1'
     :type: Int32
     :range: 0_-_8192
-    :unit: 0.02m/s
+    :unit: m/s
   - :name: v2x_map_intersection_LaneSet
     :comment: Set_to_16_(up_to_255_from_SAE_J2735_201603)
     :size: '1'
@@ -472,19 +463,19 @@
     :size: '16'
     :type: UInt8
     :range: 0-3
-    :unit: bitstring
+    :unit: "-"
   - :name: v2x_map_intersection_LaneSet_laneAttributes_LaneType
     :comment: LaneAttributes-Vehicle_::=_BIT_STRING_{_--_With_bits_as_defined:|isVehicleRevocableLane_(0),|--_this_lane_may_be_activated_or_not_based|--_on_the_current_SPAT_message_contents|--_if_not_asserted,_the_lane_is_ALWAYS_present|isVehicleFlyOverLane_(1),|--_path_of_lane_is_not_at_grade|hovLaneUseOnly_(2),|restrictedToBusUse_(3),|restrictedToTaxiUse_(4),|restrictedFromPublicUse_(5),|hasIRbeaconCoverage_(6),|permissionOnRequest_(7)_--_e.g._to_inform_about_a_lane_for_e-cars|}_(SIZE_(8,...))|OR|LaneAttributes-Crosswalk_::=_BIT_STRING_{_--_With_bits_as_defined:_--_MUTCD_provides_no_suitable_"types"_to_use_here|crosswalkRevocableLane_(0),|--_this_lane_may_be_activated_or_not_based|--_on_the_current_SPAT_message_contents|--_if_not_asserted,_the_lane_is_ALWAYS_present|bicyleUseAllowed_(1),|--_The_path_allows_bicycle_traffic,|--_if_not_set,_this_mode_is_prohibited|isXwalkFlyOverLane_(2),|--_path_of_lane_is_not_at_grade|fixedCycleTime_(3),|--_ped_walk_phases_use_preset_times|--_i.e._there_is_not_a_'push_to_cross'_button|biDirectionalCycleTimes_(4),|--_ped_walk_phases_use_different_SignalGroupID|--_for_each_direction._The_first_SignalGroupID|--_in_the_first_Connection_represents_'inbound'|--_flow_(the_direction_of_travel_towards_the_first|--_node_point)_while_second_SignalGroupID_in_the|--_next_Connection_entry_represents_the_'outbound'|--_flow._And_use_of_RestrictionClassID_entries|--_in_the_Connect_follow_this_same_pattern_in_pairs.|hasPushToWalkButton_(5),|--_Has_a_demand_input|audioSupport_(6),|--_audio_crossing_cues_present|rfSignalRequestPresent_(7),|--_Supports_RF_push_to_wwalk_technologies|unsignalizedSegmentsPresent_(8)|--_The_lane_path_consists_of_one_of_more_segments|--_which_are_not_part_of_a_signal_group_ID|--_Bits_9~15_reserved_and_set_to_zero|}_(SIZE_(16))
     :size: '16'
     :type: UInt16
     :range: 0_-_65536
-    :unit: bitstring
+    :unit: "-"
   - :name: v2x_map_intersection_LaneSet_allowedManeuvers__
     :comment: AllowedManeuvers_::=_BIT_STRING_{|--_With_bits_as_defined:|--_Allowed_maneuvers_at_path_end_(stop_line)|--_All_maneuvers_with_bits_not_set_are_therefore_prohibited_!|--_A_value_of_zero_shall_be_used_for_unknown,_indicating_no_Maneuver|maneuverStraightAllowed_(0),|--_a_Straight_movement_is_allowed_in_this_lane|maneuverLeftAllowed_(1),|--_a_Left_Turn_movement_is_allowed_in_this_lane|maneuverRightAllowed_(2),|--_a_Right_Turn_movement_is_allowed_in_this_lane|maneuverUTurnAllowed_(3),|--_a_U_turn_movement_is_allowed_in_this_lane|maneuverLeftTurnOnRedAllowed_(4),|--_a_Stop,_and_then_proceed_when_safe_movement|--_is_allowed_in_this_lane|maneuverRightTurnOnRedAllowed_(5),|--_a_Stop,_and_then_proceed_when_safe_movement|--_is_allowed_in_this_lane|maneuverLaneChangeAllowed_(6),|--_a_movement_which_changes_to_an_outer_lane|--_on_the_egress_side_is_allowed_in_this_lane|--_(example:_left_into_either_outbound_lane)|maneuverNoStoppingAllowed_(7),|--_the_vehicle_should_not_stop_at_the_stop_line|--_(example:_a_flashing_green_arrow)|yieldAllwaysRequired_(8),|--_the_allowed_movements_above_are_not_protected|--_(example:_an_permanent_yellow_condition)|goWithHalt_(9),|--_after_making_a_full_stop,_may_proceed|caution_(10),|--_proceed_past_stop_line_with_caution|reserved1_(11)|--_used_to_align_to_12_Bit_Field|}_(SIZE(12))|Default_value_when_the_data_element_is_not_available:_4096
     :size: '16'
     :type: UInt16
     :range: 0_-_4095
-    :unit: bitstring
+    :unit: "-"
   - :name: v2x_map_intersection_LaneSet_nodeList
     :comment: Set_to_10_(up_to_63_from_SAE_J2735_201603)
     :size: '16'
@@ -496,13 +487,13 @@
     :size: '160'
     :type: Int32
     :range: "-32768_-32767"
-    :unit: cm
+    :unit: m
   - :name: v2x_map_intersection_LaneSet_nodeList_Yoffset
     :comment: "-"
     :size: '160'
     :type: Int32
     :range: "-32768_-32767"
-    :unit: cm
+    :unit: m
   - :name: v2x_map_intersection_LaneSet_connectsTo
     :comment: Set_to_6_(up_to_16_from_SAE_J2735_201603)
     :size: '16'
@@ -519,10 +510,16 @@
   :subsubtopic: v2x_header_msgID
 :DSS_inputs:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
-    :type: Int32
+    :type: UInt32
     :range: ''
     :unit: ''
   - :name: WarningLevel
@@ -535,10 +532,16 @@
   :subsubtopic: OutputID
 :HMI_inputs:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
-    :type: Int32
+    :type: UInt32
     :range: ''
     :unit: ''
   - :name: WarningLevel
@@ -547,103 +550,15 @@
     :type: Uint8
     :range: 0_÷_3
     :unit: "-"
-  :subtopic: HMI_inputs/
-:FirstManoeuvreParameters:
+  :subtopic: HMI_inputs
+:ObstacleInteractionData:
   :fields:
-  - :name: OutputID
-    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
     :size: '1'
-    :type: Int32
+    :type: Uint64
     :range: ''
-    :unit: ''
-  - :name: TimeHeadwayPolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: LegalSpeedPolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: LegalSpeedLimitf
-    :comment: ''
-    :size: '1'
-    :type: Int32
-    :range: 10_÷_130
-    :unit: Km/h
-  - :name: LandmarkPolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: LandmarkTypef
-    :comment: 0_=_NO_LANDMARK|1_=_STOP_SIGN|2_=_PEDESTRIAN_CROSSING|3_=_YIELD_SIGN|4_=_SEMAPHORE
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_4
-    :unit: "-"
-  - :name: AccelerationPolicyForCurvef
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW_LEFT|3_=_YELLOW_RIGHT|4_=_RED_LEFT|5_=_RED_RIGHT
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_5
-    :unit: "-"
-  - :name: RearTimeHeadwayPolicyLeftf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: LeftThreatTypef
-    :comment: 0_=_SIDE_OBSTACLE;_1_=_RUN_OFF_ROAD
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_1
-    :unit: "-"
-  - :name: RearTimeHeadwayPolicyRightf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: RightThreatTypef
-    :comment: 0_=_SIDE_OBSTACLE;_1_=_RUN_OFF_ROAD
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_1
-    :unit: "-"
-  - :name: LeftLanePolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: RightLanePolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_GREEN|2_=_YELLOW|3_=_RED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: TravelTimePolicyf
-    :comment: 0_=_NOT_COMPUTED|1_=_COMFORT|2_=_NORMAL|3_=_SPORT
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_3
-    :unit: "-"
-  - :name: RecommendedGearf
-    :comment: 0_=_NOT_COMPUTED
-    :size: '1'
-    :type: Int32
-    :range: 0_÷_5
-    :unit: "-"
-  :subtopic: FirstManoeuvreParameters
-  :subsubtopic: OutputID
-:FirstManoeuvreFrontTargetObstacle:
-  :fields:
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
@@ -675,13 +590,13 @@
     :range: ''
     :unit: "-"
   - :name: TargetXf
-    :comment: ''
+    :comment: In_the_host_Reference_Frame
     :size: '1'
     :type: Double
     :range: ''
     :unit: m
   - :name: TargetYf
-    :comment: ''
+    :comment: In_the_host_Reference_Frame
     :size: '1'
     :type: Double
     :range: ''
@@ -715,11 +630,17 @@
     :size: '4'
     :type: Double
     :range: ''
-    :unit: 0.001_s
-  :subtopic: FirstManoeuvreFrontTargetObstacle
+    :unit: s
+  :subtopic: ObstacleInteractionData
   :subsubtopic: OutputID
 :FirstTrajectoryMotorPrimitivesParameters:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
@@ -860,8 +781,14 @@
     :unit: m-1_s-3
   :subtopic: FirstTrajectoryMotorPrimitivesParameters
   :subsubtopic: OutputID
-:ManoeuverTypeLevel2:
+:ManueverTypes:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
@@ -892,20 +819,26 @@
     :type: Uint8
     :range: ''
     :unit: "-"
-  :subtopic: ManoeuverTypeLevel2
+  :subtopic: ManoeuverTypes
   :subsubtopic: OutputID
 :StrainGauge:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: StripID
     :comment: ID_of_the_strip
     :size: '1'
-    :type: Int32
+    :type: UInt32
     :range: ''
     :unit: ''
   - :name: Strain_gauge_Sensor_ID
     :comment: ''
     :size: '1'
-    :type: Int32
+    :type: UInt32
     :range: ''
     :unit: "-"
   - :name: Strain_gauge_Cumulative_time
@@ -936,6 +869,12 @@
   :subsubtopic: StripID
 :AutomationLevel:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: Automation_Level
     :comment: SAE_standard
     :size: '1'
@@ -945,6 +884,12 @@
   :subtopic: AutomationLevel
 :ParkingApplication:
   :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
   - :name: OutputID
     :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
     :size: '1'
@@ -958,10 +903,113 @@
     :range: ''
     :unit: ''
   - :name: Last_vehicle_pass_direction
-    :comment: it_may_contain_come_confidence_level_or_error_(a_list_of_values_must_be_done)
+    :comment: 0_=_no_vehicle_passing_,_1_=_entering_,_2=_exiting_park_slot_,_3=_direction_unclear_,_4_=_sensor_fault_
     :size: '1'
     :type: UInt8
     :range: ''
     :unit: "-"
   :subtopic: ParkingApplication
   :subsubtopic: StripID
+:VirtualToll:
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+  - :name: OutputID
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
+  - :name: StripID
+    :comment: ID_of_the_strip
+    :size: '1'
+    :type: UInt32
+    :range: 0_÷_4294967295
+    :unit: ''
+  - :name: RSB_ID
+    :comment: Unique_indentifier_for_verhicle_or_RSU
+    :size: '1'
+    :type: UInt32
+    :range: 0_÷_4294967295
+    :unit: "-"
+  - :name: RFID_ID
+    :comment: ID_by_RFID
+    :size: '1'
+    :type: UInt32
+    :range: 0_÷_4294967295
+    :unit: "-"
+  :subtopic: VirtualToll
+  :subsubtopic: RSB_ID
+:VMS_VDS:
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+  - :name: OutputID
+    :comment: 1_=_VRU_Cooperative_Safety_App_|_2_=_Merging_Support_|_3_=_Rail_Crossing_and_Roadworks_|_4_=_Personalized_VMS_|_5_=_Virtual_Toll_|_6_=_ParkingBooking
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
+  - :name: VMS_traffic_condition
+    :comment: Cause_cose_=_1,_subcause:_|_0=Unavailable_|_1=Increased_volume_of_traffic_|_2_=_Traffic_jam_slowly_increasing_|_3_=_Traffic_jam_increasing_|_4_=_Traffic_jam_strongly_increasing_|_5_=_Traffic_stationary_|_6_=_Traffic_jam_slightly_decreasing_|_7_=_Traffic_jam_decreasing_|_8_=_Traffic_jam_strongly_decreasing
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_roadworks
+    :comment: cause_code_3,_subcause:_|_0=Unavailable|_1=Major_roadwork_|_2=Road_marking_work_|_3=Slow_moving_road_maintenance_|_4=Winter_service_|_5=Street_cleaning
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_AWC_adhesion
+    :comment: cause_code=6,_subcause_:_|_0=Unavailable_|_1=Heavy_frost_on_road_|_2=Fuel_on_road_|_3=Mud_on_road_|_4=Snow_on_road_|_5=Ice_on_road_|_6=Black_ice_on_road_|7=Oil_on_road_|_8=Loose_chippings_|_9=Instant_black_ice_|_10=Roads_salted
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_HL_surface_condition
+    :comment: cause_code=9,_sub_cause:_|_0=Unavailable_|_1=Rock_falls_|_2=Earthquake_damage_|_3=Sewer_collapse_|_4=Subsidence_|_5=Snow_drifts_|_6=Storm_damage_|_7=Burst_pipe_|_8=Volcano_eruption_|_9=Falling_ice
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_HL_obstacle_on_the_road
+    :comment: cause_code_=_10,_sub_cause_code:_|_0=Unavailable_|_1=Shed_load_|_2=Parts_of_vehicles_|_3=Parts_of_tyres_|_4=Big_objects_|_5=Fallen_trees_|_6=Hub_caps_|_7=Waiting_|_vehicles
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_AWC_extreme_weather_condition
+    :comment: cause_code_=_17_,_subcause:|_0=Unavailable_|_1=Strong_winds_|_2=Damaging_hail_|_3=Hurricane_|_4=Thunderstorm_|_5=Tornado_|_6=Blizzard_|
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_AWC_visibility
+    :comment: cause_code_=_18,_sub_cause:_|_0=Unavailable_|_1=Visibility_reduced_due_to_fog_|_2=Visibility_reduced_due_to_smoke|_3=Visibility_reduced_due_to_heavy_snowfall_|_4=Visibility_reduced_due_to_heavy_rain_|_5=Visibility_reduced_due_to_heavy_hail_|_6=Visibility_reduced_due_to_low_sun_glare_|_7=Visibility_reduced_due_to_sandstorms_|_8=Visibility_reduced_due_to_swarms_of_insects
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_AWC_precipitation
+    :comment: cause_code:_19_,_subcause:_|_0=unavailable_|_1=heavy_rain_|_2=heavy_snowfall_|_3=soft_hail_|
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  - :name: VMS_stationary_vehicle
+    :comment: cause_code:_94_,_subcause:_|_0=Unavailable_|_1=Human_Problem_|_2=Vehicle_breakdown_|_3=Post_crash_|_4=Public_transport_stop_|_5=Carrying_dangerous_goods_|
+    :size: '1'
+    :type: Uint8
+    :range: ''
+    :unit: "-"
+  :subtopic: VMS_VDS
