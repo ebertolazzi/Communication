@@ -36,9 +36,7 @@ main() {
   cout << "Running\n";
   while (_running){
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    al = mqtt_subscriber.get_last_AutomationLevel();
-
+    mqtt_subscriber.get_last_AutomationLevel( al );
     printf("this is your AL: %i\n",al.Automation_Level);
   }
 

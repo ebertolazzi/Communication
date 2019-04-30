@@ -44,13 +44,14 @@ main() {
     denm.v2x_denm_frictionCoefficient_value              = 0;
     denm.v2x_denm_frictionCoefficient_confidence         = 0;
 
+/*
     for(int iii = 0; iii < 10; iii++)
     {
       denm.v2x_denm_EventHistory_deltaLongitude[iii] = iii;
       denm.v2x_denm_EventHistory_deltaLatitude[iii] = 2*iii;
       denm.v2x_denm_EventHistory_deltaAltitude[iii] = 3*iii;
     }
-    
+*/
     mqtt_publisher.publish( denm );
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));

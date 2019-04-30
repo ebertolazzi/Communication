@@ -1,4 +1,7 @@
-
+#
+# Ruby  functions used to serialize data and convert into
+# C/C++/Simulink code
+#
 def type_to_size( t )
   sz = 0
   t.downcase!

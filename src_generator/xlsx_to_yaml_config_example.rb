@@ -8,6 +8,8 @@ class Config
     @input_file_name = '../../signalmap_safestrip_interfaces_v2.0'
     @yaml_file_name  = 'signalmap'
 
+    # name of the columns of the xlsx file to be used.
+    # :XXXX is the name of the imported column
     @columns_map = [
       [ "Name",                 :name                 ],
       [ "Description/subtopic", :description_subtopic ],
@@ -21,6 +23,7 @@ class Config
       [ "Manoeuvre",            :manoeuvre            ]
     ]
 
+    # list ofthe selected columns to be exported in the serialized struct
     @for_structs = [ :name, :comment, :size, :type, :range, :unit ]
 
   end

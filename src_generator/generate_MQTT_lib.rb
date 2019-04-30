@@ -4,15 +4,31 @@ require 'pp'
 require 'erubis'
 require 'yaml'
 require 'fileutils'
-require "./serialize.rb"
+require_relative "./serialize.rb"
 
 data = YAML.load_file("./signalmap.yaml")
 
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
+ #####        #     #
+#     #       #     # ######   ##   #####  ###### #####
+#             #     # #       #  #  #    # #      #    #
+#       ##### ####### #####  #    # #    # #####  #    #
+#             #     # #      ###### #    # #      #####
+#     #       #     # #      #    # #    # #      #   #
+ #####        #     # ###### #    # #####  ###### #    #
 
+#
+# Generation of the C code for the seriazilation
+# C_struct of the data to be serialized
+# buffer_to_C_STRUCTURE -> deserialize
+# C_STRUCTURE_to_buffer -> serialize
+# C_STRUCTURE_print     -> write human readable contents con the structure to the stdout
+#
+# if @data[:main_topic] is present the also MQTT serialization code is generated
+#
+# C_STRUCTURE_MQTT_topic     -> generate the name of the topic related to the structure
+# C_STRUCTURE_MQTT_alltopics -> generate the name of pattern matching all the topic related to the structure
+# C_STRUCTURE_MQTT_compare -> check if the string is the specific topic related to the C-structure
+#
 def generate_c_header( tag, data )
   template = '''
 /*\
@@ -44,6 +60,7 @@ extern
 void
 <%= @tag %>_print( <%= @tag %> const * S );
 
+<% if @data[:main_topic] then %>
 /* build topic for <%= @tag %> struct */
 extern
 void
@@ -58,22 +75,25 @@ int
 extern
 void
 <%= @tag %>_MQTT_alltopics( char topic[], int topic_len );
-
+<% end %>
 #ifdef __cplusplus
 };
 #endif
 
 #endif
 '''
-  context = { :tag => tag, :value => data[tag] }
+  context = { :tag => tag, :value => data[tag], :data => data }
   eruby = Erubis::Eruby.new(template)
   eruby.evaluate(context)
 end
 
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
+ #####        ######
+#     #       #     #  ####  #####  #   #
+#             #     # #    # #    #  # #
+#       ##### ######  #    # #    #   #
+#             #     # #    # #    #   #
+#     #       #     # #    # #    #   #
+ #####        ######   ####  #####    #
 
 def generate_c_body( tag, data )
   template = '''
@@ -99,12 +119,13 @@ def generate_c_body( tag, data )
 /* get buffer and un-serialize to <%= @tag %> struct */
 <%= from_buffer( @tag, @value ) %>
 
+<% if @data[:main_topic] then %>
 /* build topic for <%= @tag %> struct */
 <%= to_MQTT_topic( @tag, @data ) %>
 
 /* build topic for <%= @tag %> struct */
 <%= to_MQTT_alltopics( @tag, @data ) %>
-
+<% end %>
 
 #ifdef __cplusplus
 };
@@ -113,21 +134,34 @@ def generate_c_body( tag, data )
 '''
   context = { :tag => tag, :value => data[tag], :data => data }
   eruby = Erubis::Eruby.new(template)
-  eruby.evaluate(context)  
+  eruby.evaluate(context)
 end
 
-#  ____
-# / ___| _     _
-# | |   _| |_ _| |_
-# | |__|_   _|_   _|
-# \____||_|   |_|
+ #####                    #     #
+#     #   #     #         #     # ######   ##   #####  ###### #####
+#         #     #         #     # #       #  #  #    # #      #    #
+#       ##### ##### ##### ####### #####  #    # #    # #####  #    #
+#         #     #         #     # #      ###### #    # #      #####
+#     #   #     #         #     # #      #    # #    # #      #   #
+ #####                    #     # ###### #    # #####  ###### #    #
+
 #
-
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
-
+#  Generate C++ classes for moquitto interface
+#
+#  class MQTT_MAIN_TOPIC_publisher inherith from mosqpp::mosquittopp
+#  and add the methods
+#
+#  bool publish( C_STRUCT const & S )
+#
+#  one for each C_STRUCT used to publish(not serialied) C-data struct
+#
+#  class MQTT_C_STRUCT_subscriber inherith from  mosqpp::mosquittopp
+#  and add the methods
+#
+#  void get_last_C_STRUCT( C_STRUCT & S )
+#
+#  which copy to the output the last struct readed from the subscriber
+#
 def generate_cpp_header( data )
   template = '''
 /*\
@@ -206,8 +240,8 @@ public:
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  <%= tag %>
-  get_last_<%= tag %>();
+  void
+  get_last_<%= tag %>( <%= tag %> & S ) const;
 
   <% end; end %>
 
@@ -224,18 +258,22 @@ public:
   eruby.evaluate(context)
 end
 
-###########################################################################
-###########################################################################
-###########################################################################
-###########################################################################
+ #####                    ######
+#     #   #     #         #     #  ####  #####  #   #
+#         #     #         #     # #    # #    #  # #
+#       ##### ##### ##### ######  #    # #    #   #
+#         #     #         #     # #    # #    #   #
+#     #   #     #         #     # #    # #    #   #
+ #####                    ######   ####  #####    #
 
-def generate_cpp_body( data )
+ def generate_cpp_body( data )
   template = '''
 /*\
   Automatically generated
 \*/
 
 #include <iostream>
+#include <cstring>
 #include "<%= @main_topic %>.hpp"
 
 MQTT_<%= @main_topic %>_publisher::MQTT_<%= @main_topic %>_publisher( char const _id[], bool clean_session )
@@ -354,7 +392,9 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
 <% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic then %>
   } else if ( <%= tag %>_MQTT_compare( message->topic ) == 0 ) {
     MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_subscriber::on_message TOPIC: " << message->topic );
-    buffer_to_<%= tag %>( ptr, &<%= tag %>_data );
+    // Add mutex for sync
+    buffer_to_<%= tag %>( ptr, &this-><%= tag %>_data );
+    // Add mutex for sync
     #ifdef DEBUG
     <%= tag %>_print( &<%= tag %>_data );
     #endif
@@ -369,10 +409,12 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-<%= tag %>
-MQTT_<%= @main_topic %>_subscriber::get_last_<%= tag %>()
+void
+MQTT_<%= @main_topic %>_subscriber::get_last_<%= tag %>( <%= tag %> & S ) const
 {
-  return this-><%= tag %>_data;
+  // Add mutex for sync
+  std::memcpy( &S, &this-><%= tag %>_data, sizeof( <%= tag %> ) );
+  // Add mutex for sync
 }
 
 <% end; end %>
@@ -396,10 +438,6 @@ FileUtils.cp "../src/buffer_defines_ntoh.c", "./generated"
 data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic then
     value = data[tag];
-    ## puts to_print( tag, value )+sep
-    ## puts to_buffer( tag, value )+sep
-    ## puts from_buffer( tag, value )+sep
-    ## puts to_C_struct( tag, value )+sep
     ## puts to_MATLAB_struct( tag, value )+sep
     ## puts to_SIMULINK_struct( tag, value )+sep
     ## puts to_SIMULINK_busInfo( tag, value )+sep
@@ -410,12 +448,10 @@ data.keys.each do |tag|
     ## puts simulink_from_buffer( tag, value )+sep
     ## puts simulink_set_output_signal( tag, value )+sep
     ## puts simulink_set_input_signal( tag, value )+sep
-    ## puts to_MQTT_topic( tag, data )+sep
 
     prefix = "generated/"+tag.to_s
-
-    File.open( prefix+".h",   "w" ) { |f| f.puts generate_c_header( tag, data )   }
-    File.open( prefix+".c",   "w" ) { |f| f.puts generate_c_body( tag, data )     }
+    File.open( prefix+".h", "w" ) { |f| f.puts generate_c_header( tag, data )   }
+    File.open( prefix+".c", "w" ) { |f| f.puts generate_c_body( tag, data )     }
   end
 end
 

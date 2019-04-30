@@ -3,3 +3,5 @@ DerivedData
 UDP_tests
 lib
 src_generator/generated
+src_mqtt_test/.vscode
+src_mqtt_test/generated
