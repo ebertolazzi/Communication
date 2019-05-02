@@ -1,0 +1,765 @@
+---
+:origin_file: signalmap_virtual_coach_v1.0
+:main_topic: Virtual Coach
+:UpdateRate:
+  :active: false
+  :fields:
+  - :name: Update_rate
+    :comment: ''
+    :size: '1'
+    :type: int32
+    :range: ''
+    :unit: Hz
+    :scenario: ''
+    :manoeuvre: ''
+    :mqtt: true
+  :subtopic: UpdateRate
+:Header:
+  :active: false
+  :fields:
+  - :name: ID
+    :comment: Enumeration_|00=CAN_NETWORK,|01=CAM_V2X,|02=DENM_V2X,|03=MAP_V2X,|04=SPAT_V2X,|11=CAM_LTE,|12=DENM_LTE,|13=MAP_LTE,|14=SPAT_LTE
+    :size: '1'
+    :type: Int32
+    :range: '1'
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: Version
+    :comment: Identifies_data_structure
+    :size: '1'
+    :type: Int32
+    :range: 0_÷_2
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: CycleNumber
+    :comment: ''
+    :size: '1'
+    :type: Int32
+    :range: 0_÷_2
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: TimeStamp
+    :comment: UTC_time_difference_after_1st_January_1970,_obtained_from_GPS_time_with_leap_seconds_(Unix_epoch)
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: Status
+    :comment: 0_=_ACTIVE
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  :subtopic: Header
+:HostVehicle:
+  :active: true
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: abscissa
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: ''
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: lateral_position
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: vertical_position
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: relative_yaw
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: ''
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: relative_slope
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: relative_banking
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: forward_speed
+    :comment: longitudinal_velocity
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: body_slip_angle
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rard
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: long_acc
+    :comment: Filtered_longitudinal_acceleration
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m/s2
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: lat_acc
+    :comment: Filtered_lateral_acceleration
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m/s2
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: yaw_rate
+    :comment: Note_that_yaw-rate_is_the_derivative_of_the_heading,_i.e._chassis_rotation_rate,_not_speed_rotation_rate
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: roll_angle
+    :comment: roll_angle_of_the_sprung_mass_(chassis)_filtered_the_road_banking
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: pitch_angle
+    :comment: pitch_angle_of_the_sprung_mass_(chassis)_filtered_the_road_inclination
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: steering_wheel_angle
+    :comment: steering_wheel_angle
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: steering_wheel_rate
+    :comment: Derivative_of_steering_wheel_angle
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: steering_wheel_torque
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: Nm
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: gas_pedal_pos
+    :comment: Gas_pedal_position
+    :size: '1'
+    :type: Double
+    :range: 0_÷_100
+    :unit: "%"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: engine_torque_transmitted
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: engaged_gear
+    :comment: ''
+    :size: '1'
+    :type: Int32
+    :range: 1_÷_10
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: brake_pedal
+    :comment: brake_pedal_position
+    :size: '1'
+    :type: Double
+    :range: 0_÷_100
+    :unit: Nm
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: rear_right_wheel_rate
+    :comment: from_odometer
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: rear_left_wheel_rate
+    :comment: from_odometer
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_right_wheel_rate
+    :comment: from_odometer
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_left_wheel_rate
+    :comment: from_odometer
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: rad/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: rear_right_vertical_load
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: 0_÷_50000
+    :unit: N
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: rear_left_vertical_load
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: 0_÷_50000
+    :unit: N
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_right_vertical_load
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: 0_÷_50000
+    :unit: N
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_left_vertical_load
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: 0_÷_50000
+    :unit: N
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: rear_right_long_slip
+    :comment: estimation_(optional)
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: rear_left_long_slip
+    :comment: estimation_(optional)
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_right_long_slip
+    :comment: estimation_(optional)
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: front_left_long_slip
+    :comment: estimation_(optional)
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  :subtopic: HostVehicle
+:VehiclePosition:
+  :active: false
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: GpsLongitude
+    :comment: As_measured_by_GPS,_East_positive
+    :size: '1'
+    :type: Double
+    :range: "-180_÷_180"
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: GpsLatitude
+    :comment: As_measured_by_GPS,_North_positive
+    :size: '1'
+    :type: Double
+    :range: "-90_÷_90"
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: GpsSpeed
+    :comment: As_measured_by_GPS
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m/s
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: GpsCourse
+    :comment: With_respect_to_North,_clockwise,_as_measured_by_GPS
+    :size: '1'
+    :type: Double
+    :range: 0_÷_360
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: GpsHdop
+    :comment: Diluition_of_precision_as_indicated_by_GPS
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: EgoLongitude
+    :comment: After_position_filter,_referred_to_barycentre
+    :size: '1'
+    :type: Double
+    :range: "-180_÷_180"
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: EgoLatitude
+    :comment: After_position_filter,_referred_to_barycentre
+    :size: '1'
+    :type: Double
+    :range: "-90_÷_90"
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: EgoCourse
+    :comment: With_respect_to_North,_clockwise,_after_position_filter
+    :size: '1'
+    :type: Double
+    :range: 0_÷_360
+    :unit: deg
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: EgoDop
+    :comment: Diluition_of_precision,_after_position_filter
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  :subtopic: VehiclePosition
+:Road:
+  :active: false
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: origin_x
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: origin_y
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: origin_z
+    :comment: ''
+    :size: ''
+    :type: Double
+    :range: ''
+    :unit: ''
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: origin_heading
+    :comment: ''
+    :size: ''
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: origin_slope
+    :comment: ''
+    :size: ''
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: origin_banking
+    :comment: ''
+    :size: '1'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: Num_valid_points
+    :comment: ''
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: "-"
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: abscissa
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: curvature
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: 1/m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: left_width
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: right_width
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: slope
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: banking
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: true
+  - :name: latitude
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: ''
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: longitude
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: ''
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: altitude
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: ''
+    :scenario: x
+    :manoeuvre: ''
+    :mqtt: false
+  - :name: x
+    :comment: ''
+    :size: ''
+    :type: ''
+    :range: ''
+    :unit: ''
+    :scenario: ''
+    :manoeuvre: ''
+    :mqtt: false
+  :subtopic: RoadDescription
+:ManouevreTypes:
+  :active: true
+  :fields:
+  - :name: UTC_time
+    :comment: Time_at_which_the_signal_is_sent:_Stanrdard_UTC_time_is_used
+    :size: '1'
+    :type: Uint64
+    :range: ''
+    :unit: ms
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: true
+  - :name: OutputID
+    :comment: ''
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: ''
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: true
+  - :name: abscissa
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: time
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: s
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: forward_speed
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m/s
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: long_acc
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m/s2
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: steering_angle
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: gas_pedal
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: 0_÷_100
+    :unit: "-"
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: brake_pedal
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: 0_÷_100
+    :unit: "-"
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: x
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: y
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: z
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: m
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: banking
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: slope
+    :comment: ''
+    :size: '300'
+    :type: Double
+    :range: ''
+    :unit: rad
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  - :name: num_valid_points
+    :comment: ''
+    :size: '1'
+    :type: Int32
+    :range: ''
+    :unit: "-"
+    :scenario: ''
+    :manoeuvre: x
+    :mqtt: false
+  :subtopic: SuggestedManoeuver

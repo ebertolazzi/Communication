@@ -438,24 +438,16 @@ FileUtils.cp "../src/buffer_defines_ntoh.c", "./generated"
 data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic then
     value = data[tag];
-    ## puts to_MATLAB_struct( tag, value )+sep
-    ## puts to_SIMULINK_struct( tag, value )+sep
-    ## puts to_SIMULINK_busInfo( tag, value )+sep
-    ## puts to_SIMULINK_busInfo_in_data( tag, value )+sep
-    ## puts to_SIMULINK_busInfo_in_data_rtw( tag, value )+sep
-    ## puts to_SIMULINK_message( tag, value )+sep
-    ## puts simulink_to_buffer( tag, value )+sep
-    ## puts simulink_from_buffer( tag, value )+sep
-    ## puts simulink_set_output_signal( tag, value )+sep
-    ## puts simulink_set_input_signal( tag, value )+sep
-
-    prefix = "generated/"+tag.to_s
-    File.open( prefix+".h", "w" ) { |f| f.puts generate_c_header( tag, data )   }
-    File.open( prefix+".c", "w" ) { |f| f.puts generate_c_body( tag, data )     }
+    if value[:active] then
+      # elimino campi mqtt == false
+      value[:fields].delete_if { |v| !v[:mqtt] }
+      prefix = "generated/"+tag.to_s
+      File.open( prefix+".h", "w" ) { |f| f.puts generate_c_header( tag, data )   }
+      File.open( prefix+".c", "w" ) { |f| f.puts generate_c_body( tag, data )     }
+    end
   end
 end
 
 prefix = "generated/"+data[:main_topic]
-
 File.open( prefix+".hpp",   "w" ) { |f| f.puts generate_cpp_header( data ) }
 File.open( prefix+".cpp",   "w" ) { |f| f.puts generate_cpp_body( data ) }

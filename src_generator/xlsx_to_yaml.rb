@@ -104,17 +104,19 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
     begin
       case data[:yes_no_x]
       when 'yes', 'no'
-        if $last_struct[:active] then
-          puts "create #{data[:name]}"
+        # save already stored structure
+        if $last_struct[:struct_name] then
+          puts "Save Struct #{$last_struct[:struct_name]}".green
           tmp = {
+            :active   => $last_struct[:active],
             :fields   => $last_struct[:fields],
             :subtopic => $last_struct[:subtopic]
           };
           tmp[:subsubtopic] = $last_struct[:subsubtopic] if $last_struct[:subsubtopic]
           $workbook_data[ $last_struct[:struct_name].to_sym ] = tmp;
-        else
-          puts "skip #{data[:name]}"
         end
+        # initialize for new structure
+        puts "Read Struct #{data[:name]}"
         $last_struct               = {};
         $last_struct[:struct_name] = data[:name];
         $last_struct[:active]      = data[:yes_no_x] == 'yes';
@@ -126,16 +128,28 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
           $last_struct[:subtopic] = data[:description_subtopic];
         end
         $last_struct[:fields] = [];
-      when 'x'
+      when 'x', ''
+        ok = data[:yes_no_x] == 'x';
         data.delete_if { |key, value| !conf.for_structs.include? key }
+        data[:mqtt] = ok;
         $last_struct[:fields] << data;
-      when ''
-        puts "NO DATA=#{data[:name]}".cyan
       end
     rescue => e
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
   end
+end
+
+# save last data
+if $last_struct[:struct_name] then
+  puts "Save Struct #{$last_struct[:struct_name]}".green
+  tmp = {
+    :active   => $last_struct[:active],
+    :fields   => $last_struct[:fields],
+    :subtopic => $last_struct[:subtopic]
+  };
+  tmp[:subsubtopic] = $last_struct[:subsubtopic] if $last_struct[:subsubtopic]
+  $workbook_data[ $last_struct[:struct_name].to_sym ] = tmp;
 end
 
 # Write yaml file
