@@ -184,7 +184,7 @@ def generate_cpp_header( data )
 #endif
 
 <% @data.keys.each do |tag|
-  if tag != :origin_file and tag != :main_topic then %>
+  if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 #include "<%= tag %>.h"
 <% end; end; %>
 
@@ -206,14 +206,14 @@ public:
   using mosqpp::mosquittopp::connect;
 
 <% @data.keys.each do |tag|
-    if tag != :origin_file and tag != :main_topic then %>
+    if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
   bool publish( <%= tag %> const & S, int * mid = nullptr );
 <% end; end; %>
 };
 
 
 class MQTT_<%= @main_topic %>_subscriber : public mosqpp::mosquittopp {
-<% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic then %>
+<% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
   <%= tag %> <%= tag %>_data;
 <% end; end; %>
 public:
@@ -236,7 +236,7 @@ public:
   on_message( const struct mosquitto_message *message );
 
   <% @data.keys.each do |tag|
-    if tag != :origin_file and tag != :main_topic then %>
+    if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -316,7 +316,7 @@ MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
 }
 
 <% @data.keys.each do |tag|
-  if tag != :origin_file and tag != :main_topic then %>
+  if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -371,7 +371,7 @@ void
 MQTT_<%= @main_topic %>_subscriber::on_connect( int result ) {
   if (!result) {
     char topic[1000];
-    <% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic then %>
+    <% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
     <%= tag %>_MQTT_alltopics( topic, 1000 );
     this->subscribe( nullptr, topic );
     <% end; end; %>
@@ -389,7 +389,7 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
   uint8_t * ptr = static_cast<uint8_t *>(message->payload);
   if (!message->payloadlen) {
     std::cerr << "Skipping empty payload!\n";
-<% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic then %>
+<% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
   } else if ( <%= tag %>_MQTT_compare( message->topic ) == 0 ) {
     MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_subscriber::on_message TOPIC: " << message->topic );
     // Add mutex for sync
@@ -405,7 +405,7 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
 }
 
 <% @data.keys.each do |tag|
-  if tag != :origin_file and tag != :main_topic then %>
+  if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

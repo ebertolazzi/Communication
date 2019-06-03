@@ -1,5 +1,5 @@
 
-GEN_FOLDER_REL   = generated#      Folder where the generated headers are (ex: safestrip.hpp)
+GEN_FOLDER_REL   = ../src_generator/generated#      Folder where the generated headers are (ex: safestrip.hpp)
 MOSQUITTO        = -L/usr/local/lib -lmosquitto -lmosquittopp
 SSL_FOLDER       = /usr/local/opt/openssl/lib/libssl.a  /usr/local/opt/openssl/lib/libcrypto.a # command for SSL (found if you try to type brew link --force openssl)
 DEBUG_FLAG       = -DDEBUG#        Default with debug to print structures
@@ -12,17 +12,17 @@ local_test : test_publish test_subscriber # default targets required
 
 
 test_publish_remote: test_publish_remote.cpp
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+	g++ -I$(GEN_FOLDER_REL) -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 test_subscriber_remote: test_subscriber_remote.cpp
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+	g++ -I$(GEN_FOLDER_REL) -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
 test_publish: test_publish.cpp
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+	g++ -I$(GEN_FOLDER_REL) -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 test_subscriber: test_subscriber.cpp
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+	g++ -I$(GEN_FOLDER_REL) -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
 test_publish_virtual_DENM: test_publish_virtual_DENM.cpp
-	g++ -Igenerated -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
+	g++ -I$(GEN_FOLDER_REL) -Wall $(DEBUG_FLAG) $< $(GEN_FOLDER_REL)/*.c* $(MOSQUITTO) -o $@
 
 clean:
 	rm -f test_publish test_subscriber test_publish_remote test_subscriber_remote test_publish_virtual_DENM

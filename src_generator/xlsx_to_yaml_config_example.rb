@@ -5,7 +5,7 @@ class Config
                 :for_structs
 
   def initialize
-    @input_file_name = '../../signalmap_safestrip_interfaces_v2.0'
+    @input_file_name = '../../signalmap_safestrip_interfaces_v2.2'
     @yaml_file_name  = 'signalmap'
 
     # name of the columns of the xlsx file to be used.
