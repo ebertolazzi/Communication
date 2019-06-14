@@ -27,8 +27,10 @@ columns_to_idx = {}
 
 puts conf.input_file_name
 
-$workbook_data = { :origin_file => File.basename(conf.input_file_name) }
-$last_struct   = {}
+$workbook_data    = { :origin_file => File.basename(conf.input_file_name) }
+$last_struct      = {}
+$scenario_struct  = []
+$manoeuvre_struct = []
 
 workbook = RubyXL::Parser.parse(conf.input_file_name+".xlsx")
 
@@ -132,7 +134,27 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
         ok = data[:yes_no_x] == 'x';
         data.delete_if { |key, value| !conf.for_structs.include? key }
         data[:mqtt] = ok;
-        $last_struct[:fields] << data;
+        $last_struct[:fields] << data.dup;
+      end
+    rescue => e
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+    end
+
+    begin
+      if data[:scenario] == 'x' then
+        # dalla riga seleziono le colonne da salvare
+        data.delete_if { |key, value| !conf.for_structs.include? key }
+        $scenario_struct << data.dup;
+      end
+    rescue => e
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+    end
+
+    begin
+      if data[:manoeuvre] == 'x' then
+        # dalla riga seleziono le colonne da salvare
+        data.delete_if { |key, value| !conf.for_structs.include? key }
+        $manoeuvre_struct << data;
       end
     rescue => e
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
@@ -154,10 +176,28 @@ end
 
 # Write yaml file
 # Delete old files in temporary folder (if present)
-FileUtils.rm_f conf.yaml_file_name
-File.open( conf.yaml_file_name + ".yaml", 'w' ) do |f|
+FileUtils.rm_f conf.yaml_file_name_MQTT
+File.open( conf.yaml_file_name_MQTT + ".yaml", 'w' ) do |f|
   f.write($workbook_data.to_yaml(:Indent => 8))
 end
 
-puts "File #{conf.yaml_file_name}.yaml generated"
+puts "File #{conf.yaml_file_name_MQTT}.yaml generated"
 puts "--------------------------------------"
+
+
+# Write yaml file
+$workbook_data = {
+  :origin_file => File.basename(conf.input_file_name),
+  :Scenario => $scenario_struct,
+  :Maneuvre => $manoeuvre_struct
+}
+
+# Delete old files in temporary folder (if present)
+FileUtils.rm_f conf.yaml_file_name_UDP
+File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
+  f.write($workbook_data.to_yaml(:Indent => 8))
+end
+
+puts "File #{conf.yaml_file_name_UDP}.yaml generated"
+puts "--------------------------------------"
+

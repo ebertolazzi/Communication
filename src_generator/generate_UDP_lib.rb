@@ -6,7 +6,7 @@ require 'yaml'
 require 'fileutils'
 require_relative "./serialize.rb"
 
-data = YAML.load_file("./signalmap.yaml")
+data = YAML.load_file("./signalmap_UDP.yaml")
 
  #####        #     #
 #     #       #     # ######   ##   #####  ###### #####
@@ -128,21 +128,29 @@ end
 sep = "\n\n\n\n\n"
 
 FileUtils.mkdir_p "./generated"
-FileUtils.cp "../src/buffer_defines.h",      "./generated"
-FileUtils.cp "../src/buffer_defines_hton.c", "./generated"
-FileUtils.cp "../src/buffer_defines_ntoh.c", "./generated"
+
+base_src = File.expand_path('../src', File.dirname(__FILE__))
+FileUtils.cp "#{base_src}/buffer_defines.h",      "./generated"
+FileUtils.cp "#{base_src}/buffer_defines_hton.c", "./generated"
+FileUtils.cp "#{base_src}/buffer_defines_ntoh.c", "./generated"
 
 # reconstruct field for UDP struct
-udp_data = { :scenario => {:fields => []}, :manoeuvre => {:fields => []} }
+vec = [];
+hsc = {}
+hsc[:fields] = vec.dup;
+udp_data = {
+  :scenario  => hsc.dup,
+  :manoeuvre => hsc.dup
+}
 data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic then
-    value  = data[tag];
-    value[:fields].each do |hsc|
+    value = data[tag];
+    value.each do |hsc|
       hsc1 = hsc.dup;
       hsc1.delete(:scenario);
       hsc1.delete(:manoeuvre);
       hsc1.delete(:mqtt);
-      udp_data[:scenario][:fields]  << hsc1 if hsc[:scenario]  == "x"
+      udp_data[:scenario][:fields] << hsc1 if hsc[:scenario]  == "x"
       udp_data[:manoeuvre][:fields] << hsc1 if hsc[:manoeuvre] == "x"
     end
   end

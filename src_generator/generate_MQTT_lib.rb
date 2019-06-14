@@ -6,7 +6,7 @@ require 'yaml'
 require 'fileutils'
 require_relative "./serialize.rb"
 
-data = YAML.load_file("./signalmap.yaml")
+data = YAML.load_file("./signalmap_MQTT.yaml")
 
  #####        #     #
 #     #       #     # ######   ##   #####  ###### #####
