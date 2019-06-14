@@ -37,6 +37,7 @@ def type_to_C( t )
   case t
   when /^double$/
   when /^single$/
+    t = 'float'
   when /^int8$/
     t += '_t';
   when /^uint8$/
@@ -125,7 +126,7 @@ def type_to_C_simulink2( t )
   when /^double$/
     res = "double"
   when /^single$/
-    res = "single"
+    res = "float"
   when /^int8$/
     res = t;
   when /^uint8$/

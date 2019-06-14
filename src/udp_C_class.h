@@ -24,6 +24,7 @@ extern "C" {
 
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #ifndef UDP_TRUE
   #define UDP_TRUE 1
@@ -36,6 +37,14 @@ extern "C" {
 #ifndef __cplusplus
   #define nullptr NULL
 #endif
+
+/*\
+ |   ____             _        _
+ |  / ___|  ___   ___| | _____| |_
+ |  \___ \ / _ \ / __| |/ / _ \ __|
+ |   ___) | (_) | (__|   <  __/ |_
+ |  |____/ \___/ \___|_|\_\___|\__|
+\*/
 
 typedef struct  {
   int                socket_id;
@@ -102,6 +111,21 @@ Socket_receive(
   uint32_t     message_size,
   uint64_t     start_time
 );
+
+/*\
+ |   __  __       _ _   _               _
+ |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
+ |  | |\/| | | | | | __| |/ __/ _` / __| __|
+ |  | |  | | |_| | | |_| | (_| (_| \__ \ |_
+ |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
+\*/
+
+typedef struct  {
+  struct in_addr localInterface;
+  struct sockaddr_in groupSock;
+  int    socket_dev;
+} MultiCastData;
+
 
 #ifdef __cplusplus
 }
