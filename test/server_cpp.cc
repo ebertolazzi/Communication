@@ -21,10 +21,11 @@ using namespace std;
 int
 main(void) {
 
+  input_data_struct input_msg;
   uint8_t  buffer[10];
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
-  input_data_struct input_msg;
   int32_t  message_id = 0;
+  int      ret;
   
   // Create and set UDP socket
   // Create and set UDP
@@ -44,14 +45,19 @@ main(void) {
     uint8_t input_data_buffer[input_data_struct_size];
 
     cout << "Wait socket.receive\n";
-    if ( socket.receive( message_id,
-                         input_data_buffer,
-                         input_data_struct_size,
-                         0 ) == UDP_TRUE ) {
-
-      if ( socket.send( message_id,
-                        buffer,
-                        buffer_size ) == UDP_FALSE ) {
+    ret = socket.receive(
+      message_id,
+      input_data_buffer,
+      input_data_struct_size,
+      0
+    );
+    if ( ret == UDP_TRUE ) {
+      ret = socket.send(
+        message_id,
+        input_data_buffer,
+        input_data_struct_size
+      );
+      if ( ret == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
         return -1;

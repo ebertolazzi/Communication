@@ -8,11 +8,11 @@ main() {
 
   uint8_t  buffer[10];
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
+  int32_t  message_id = 0;
+  int      ret;
 
   input_data_struct input_msg;
   uint8_t           input_data_buffer[input_data_struct_size];
-
-  int32_t message_id = 0;
   
   // Create and set UDP socket
   // Create and set UDP
@@ -28,18 +28,18 @@ main() {
   while( socket.server_run == UDP_TRUE ) {
     
     // Clear the buffer
+    printf( "Wait Socket_receive\n" );
     memset(buffer, '\0', buffer_size);
-
-    if ( Socket_receive( &socket,
-                         &message_id,
-                         input_data_buffer,
-                         input_data_struct_size,
-                         0 ) == UDP_TRUE ) {
-
-      if ( Socket_send( &socket,
-                        message_id,
-                        buffer,
-                        buffer_size ) == UDP_FALSE ) {
+    ret = Socket_receive(
+      &socket,
+      &message_id,
+      input_data_buffer,
+      input_data_struct_size,
+      0
+    );
+    if ( ret == UDP_TRUE ) {
+      ret = Socket_send( &socket, message_id, buffer, buffer_size );
+      if ( ret == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
         return -1;
@@ -68,6 +68,8 @@ main() {
       printf( "thresholds[1] = %g\n",    input_msg.thresholds[1] );
       printf( "thresholds[2] = %g\n",    input_msg.thresholds[2] );
       printf( "thresholds[3] = %g\n",    input_msg.thresholds[3] );
+    } else {
+      printf( "Socket_receive failed\n" );
     }
   }
   

@@ -88,18 +88,22 @@ public:
 
   // Send message function
   int
-  send( int32_t  buffer_id,
-        uint8_t  buffer[],
-        uint32_t buffer_size ) {
+  send(
+    int32_t  buffer_id,
+    uint8_t  buffer[],
+    uint32_t buffer_size
+  ) {
     return Socket_send( &data, buffer_id, buffer, buffer_size );
   }
 
   // Receive message function
   int
-  receive( int32_t & buffer_id,
-           uint8_t   buffer[],
-           uint32_t  buffer_size,
-           uint64_t  start_time ) {
+  receive(
+    int32_t & buffer_id,
+    uint8_t   buffer[],
+    uint32_t  buffer_size,
+    uint64_t  start_time
+  ) {
     return Socket_receive( &data,
                            &buffer_id,
                            buffer,

@@ -69,7 +69,7 @@ Socket_open_addr(
   pS->sock_addr_len = sizeof(pS->sock_addr);
   /* Set the address structures */
   pS->sock_addr.sin_family = AF_INET;
-  pS->sock_addr.sin_port   = port;
+  pS->sock_addr.sin_port   = (in_port_t)port;
   if ( addr == nullptr ) {
     pS->sock_addr.sin_addr.s_addr = INADDR_ANY;
   } else {

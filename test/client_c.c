@@ -14,6 +14,7 @@ main() {
   uint32_t remaining_bytes;
   uint64_t start_time;
   int32_t  message_id;
+  int      ret;
 
   //=====================
 
@@ -72,10 +73,13 @@ main() {
   // First message --------------------------
   printf("\n\nSocket_send ...\n");
   socket.server_run = UDP_TRUE;
-  if ( Socket_send( &socket,
-                    message_id,
-                    input_data_buffer,
-                    input_data_struct_size ) == UDP_FALSE ) {
+  ret = Socket_send(
+    &socket,
+    message_id,
+    input_data_buffer,
+    input_data_struct_size
+  );
+  if ( ret == UDP_FALSE ) {
     printf( "Warning! Couldn't send the message with ID %d\n", message_id );
     printf( "Output message: manoeuvre not calculated\n");
   } else {
@@ -83,11 +87,14 @@ main() {
     // Clear the buffer: this is to receive data
     printf( "\n\nSocket_receive ...\n" );
     memset(buffer, '\0', buffer_size);
-    if ( Socket_receive( &socket,
-                         &message_id,
-                         buffer,
-                         buffer_size,
-                         start_time ) == UDP_FALSE ) {
+    ret = Socket_receive(
+      &socket,
+      &message_id,
+      buffer,
+      buffer_size,
+      start_time
+    );
+    if ( ret == UDP_FALSE ) {
       printf("Output message: manoeuvre not calculated\n");
     }
   }
