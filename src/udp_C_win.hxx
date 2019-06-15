@@ -164,15 +164,16 @@ Socket_close( SocketData * pS ) {
 
 int
 MultiCast_open(
-  SocketData * pData,
+  SocketData * pS,
   char const   local_address[],
   char const   group_address[],
-  long         group_port
+  int          group_port
 ) {
 
   WORD    wVersionRequested;
   WSADATA wsaData;
   int     err, ret, reuse;
+  char    loopch;
 
   /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
   wVersionRequested = MAKEWORD(2, 2);
@@ -182,24 +183,26 @@ MultiCast_open(
     /* Tell the user that we could not find a usable */
     /* Winsock DLL.                                  */
     printf("WSAStartup failed with error: %d\n", err);
-    exit(0);
+	return UDP_FALSE;
+  } else {
+    printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
 
   /* Create a datagram socket on which to send. */
-  pData->socket_id = socket( AF_INET, SOCK_DGRAM, 0 );
-  if( pData->socket_id < 0) {
+  pS->socket_id = socket( AF_INET, SOCK_DGRAM, 0 );
+  if( pS->socket_id < 0) {
     printf(
       "UDP STREAMING Opening datagram socket error %s(socket dev %li)\n",
-      strerror(errno), pData->socket_id
+      strerror(errno), pS->socket_id
     );
-    exit(1);
+	return UDP_FALSE;
   } else {
     printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
     
   reuse = 1;
-  ret = setsockopt(
-    pData->socket_id,
+  ret   = setsockopt(
+    pS->socket_id,
     SOL_SOCKET,
     SO_REUSEADDR,
     (char *)&reuse,
@@ -207,23 +210,24 @@ MultiCast_open(
   );
   if ( ret < 0 )    {
     printf("Setting SO_REUSEADDR error %s\n",strerror(errno));
-    closesocket(pData->socket_id);
+    closesocket(pS->socket_id);
     exit(1);
   } else {
     printf("Setting SO_REUSEADDR...OK.\n");
   }
 
   /* Initialize the group sockaddr structure  */
-  memset( (char *) &(pData->groupSock), 0, sizeof(pData->groupSock));
-  pData->groupSock.sin_family = AF_INET;
-  pData->groupSock.sin_addr.s_addr = inet_addr( group_address.c_str() );
-  pData->groupSock.sin_port = htons( group_port );
+  memset( (char *) &(pS->sock_addr), 0, sizeof(pS->sock_addr));
+  pS->sock_addr.sin_family = AF_INET;
+  InetPton(AF_INET, group_address, &pS->sock_addr.sin_addr.s_addr);
+  //pS->sock_addr.sin_addr.s_addr = inet_addr( group_address );
+  pS->sock_addr.sin_port = htons( group_port );
     
   // Enable loopback so you do  receive your own datagrams.
 
-  char loopch = 1;
-  int ret = setsockopt(
-    pData->socket_id,
+  loopch = 1;
+  ret = setsockopt(
+    pS->socket_id,
     IPPROTO_IP,
     IP_MULTICAST_LOOP,
     (char *)&loopch,

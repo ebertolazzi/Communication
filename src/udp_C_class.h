@@ -135,7 +135,7 @@ MultiCast_open(
   SocketData * pData,
   char const   local_address[],
   char const   group_address[],
-  long         group_port
+  int          group_port
 );
 
 #ifdef __cplusplus

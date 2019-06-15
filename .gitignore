@@ -10,3 +10,6 @@ src_udp_test/generated
 .vscode
 Icon?
 
+*.exe
+*.ilk
+*.pdb

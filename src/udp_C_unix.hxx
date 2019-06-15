@@ -143,7 +143,7 @@ MultiCast_open(
   SocketData * pS,
   char const   local_address[],
   char const   group_address[],
-  long         group_port
+  int          group_port
 ) {
 
   int            ret, reuse;
