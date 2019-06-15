@@ -22,11 +22,13 @@
  | Open socket
 \*/
 
-int
-Socket_open( SocketData * pS, int bind_port ) {
-
+Socket_open(
+  SocketData * pS,
+  int          bind_port
+) {
   unsigned int   opt_buflen;
   struct timeval timeout;
+  int            ret;
 
   /*\
    | Create UDP socket
@@ -54,21 +56,26 @@ Socket_open( SocketData * pS, int bind_port ) {
   }
 
   rcvbufsize = 40000;
-  setsockopt( pS->socket_id,
-              SOL_SOCKET,
-              SO_RCVBUF,
-              (char*)&rcvbufsize, sizeof(rcvbufsize) );
+  setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_RCVBUF,
+    (char*)&rcvbufsize, sizeof(rcvbufsize)
+  );
 
   /*\
    | Set send buffer size limit
   \*/
 
   opt_buflen = UDP_PACKET_BYTES;
-  if ( setsockopt( pS->socket_id,
-                   SOL_SOCKET,
-                   SO_SNDBUF,
-                   (char *)&opt_buflen,
-                   sizeof(opt_buflen) ) == SOCKET_ERROR ) {
+  ret = setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_SNDBUF,
+    (char *)&opt_buflen,
+    sizeof(opt_buflen)
+  );
+  if ( ret == SOCKET_ERROR ) {
     printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
@@ -83,27 +90,32 @@ Socket_open( SocketData * pS, int bind_port ) {
   timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
   #ifdef WIN_NONBLOCK
   nonblock = 1;
-  if ( ioctlsocket( pS->socket_id,
-                    FIONBIO,
-                    &nonblock) == SOCKET_ERROR ) {
+  ret = ioctlsocket( pS->socket_id, FIONBIO, &nonblock);
+  if ( ret == SOCKET_ERROR ) {
     printf( "ioctlsocket() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
   #else
   timeout_win = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;  // timeout in ms
-  if ( setsockopt( pS->socket_id,
-                   SOL_SOCKET,
-                   SO_SNDTIMEO,
-                   (char const *)&timeout_win,
-                   sizeof(DWORD) ) == SOCKET_ERROR ) {
+  ret = setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_SNDTIMEO,
+    (char const *)&timeout_win,
+    sizeof(DWORD)
+  );
+  if ( ret == SOCKET_ERROR ) {
     printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
-  if ( setsockopt( pS->socket_id,
-                   SOL_SOCKET,
-                   SO_RCVTIMEO,
-                   (char const *)&timeout_win,
-                   sizeof(DWORD) ) == SOCKET_ERROR ) {
+  ret = setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_RCVTIMEO,
+    (char const *)&timeout_win,
+    sizeof(DWORD)
+  );
+  if ( ret == SOCKET_ERROR ) {
     printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
@@ -114,9 +126,12 @@ Socket_open( SocketData * pS, int bind_port ) {
   \*/
 
   if ( bind_port ) {
-    if ( bind( pS->socket_id,
-               (struct sockaddr*) &pS->target_addr,
-               sizeof(pS->target_addr) ) == SOCKET_ERROR ) {
+    ret = bind(
+      pS->socket_id,
+      (struct sockaddr*) &pS->sock_addr,
+      sizeof(pS->sock_addr)
+    );
+    if ( ret == SOCKET_ERROR ) {
       printf( "bind() failed. Error Code: %d\n", WSAGetLastError() );
       return UDP_FALSE;
     }
@@ -149,15 +164,15 @@ Socket_close( SocketData * pS ) {
 
 int
 MultiCast_open(
-  MultiCastData * pData,
-  char const      local_address[],
-  char const      group_address[],
-  long            group_port
+  SocketData * pData,
+  char const   local_address[],
+  char const   group_address[],
+  long         group_port
 ) {
 
   WORD    wVersionRequested;
   WSADATA wsaData;
-  int     err;
+  int     err, ret, reuse;
 
   /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
   wVersionRequested = MAKEWORD(2, 2);
@@ -182,12 +197,15 @@ MultiCast_open(
     printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
     
-  int reuse = 1;
-  if ( setsockopt( pData->socket_id,
-                   SOL_SOCKET,
-                   SO_REUSEADDR,
-                   (char *)&reuse,
-                   sizeof(reuse)) < 0 )    {
+  reuse = 1;
+  ret = setsockopt(
+    pData->socket_id,
+    SOL_SOCKET,
+    SO_REUSEADDR,
+    (char *)&reuse,
+    sizeof(reuse)
+  );
+  if ( ret < 0 )    {
     printf("Setting SO_REUSEADDR error %s\n",strerror(errno));
     closesocket(pData->socket_id);
     exit(1);
@@ -224,20 +242,5 @@ MultiCast_open(
     group_address, group_port, local_address
   );
 
-  return UDP_TRUE;
-}
-
-/*\
- | Close socket
-\*/
-
-int
-MultiCast_close( MultiCastData * pS ) {
-  if ( closesocket(pS->socket_id) == SOCKET_ERROR ) {
-    printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
-    WSACleanup();
-    return UDP_FALSE;
-  }
-  WSACleanup();
   return UDP_TRUE;
 }

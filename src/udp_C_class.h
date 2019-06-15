@@ -49,10 +49,16 @@ extern "C" {
 typedef struct  {
   int                socket_id;
   int                server_run; // bool
-  struct sockaddr_in target_addr;
-  socklen_t          target_addr_len;
+  struct sockaddr_in sock_addr;
+  socklen_t          sock_addr_len;
   uint64_t           timeout_ms;
 } SocketData;
+
+typedef struct  {
+  struct in_addr     localInterface;
+  struct sockaddr_in groupSock;
+  int                socket_id;
+} MultiCastData;
 
 extern
 void
@@ -87,7 +93,10 @@ Socket_open_addr(
 
 extern
 int
-Socket_open( SocketData * pS, int bind_port );
+Socket_open(
+  SocketData * pS,
+  int          bind_port
+);
 
 extern
 int
@@ -120,12 +129,14 @@ Socket_receive(
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
 
-typedef struct  {
-  struct in_addr localInterface;
-  struct sockaddr_in groupSock;
-  int    socket_dev;
-} MultiCastData;
-
+extern
+int
+MultiCast_open(
+  SocketData * pData,
+  char const   local_address[],
+  char const   group_address[],
+  long         group_port
+);
 
 #ifdef __cplusplus
 }
