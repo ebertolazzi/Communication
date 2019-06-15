@@ -55,6 +55,17 @@ public:
   open_as_server( int port )
   { Socket_open_as_server( &data, port ); }
 
+  int
+  open_multicast(
+    char const local_address[],
+    char const group_address[],
+    int        group_port
+  ) {
+    return MultiCast_open(
+      &data, local_address, group_address, group_port
+    );
+  }
+
   void
   server_start()
   { data.server_run = UDP_TRUE; }
