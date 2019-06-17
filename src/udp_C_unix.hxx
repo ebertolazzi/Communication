@@ -205,7 +205,7 @@ MultiCast_open(
     printf("UDP STREAMING enabling the loopback...OK.\n" );
   }
   printf(
-    "Adding multicast group %s:%li on %s...OK.\n",
+    "Adding multicast group %s:%i on %s...OK.\n",
     group_address, group_port, local_address
   );
 

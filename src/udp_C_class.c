@@ -86,6 +86,28 @@ Socket_open_addr(
 \*/
 
 int
+Socket_send_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  int isend = sendto(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    0,
+    (struct sockaddr *) &pS->sock_addr,
+    pS->sock_addr_len
+  );
+  if ( isend != 0 ) return UDP_FALSE;
+  return UDP_TRUE;
+}
+
+/*\
+ | Send message function
+\*/
+
+int
 Socket_send(
   SocketData * pS,
   int32_t      message_id,
@@ -99,8 +121,8 @@ Socket_send(
   ssize_t  isend;
 
   #if defined(WIN_NONBLOCK)
-	uint64_t socket_start_time;
-	uint64_t socket_elapsed_time;
+    uint64_t socket_start_time;
+    uint64_t socket_elapsed_time;
   #endif
 
   n_packets = Packet_Number( message_size );
@@ -175,7 +197,6 @@ Socket_send(
   #endif
   return UDP_TRUE;
 }
-
 /*\
  | Receive message function
 \*/

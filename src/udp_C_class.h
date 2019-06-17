@@ -34,7 +34,9 @@ extern "C" {
   #define UDP_FALSE -1
 #endif
 
-#ifndef __cplusplus
+#ifdef __cplusplus
+  #include <cstddef>
+#else
   #define nullptr NULL
 #endif
 
@@ -107,6 +109,14 @@ int
 Socket_send(
   SocketData * pS,
   int32_t      message_id,
+  uint8_t      message[],
+  uint32_t     message_size
+);
+
+extern
+int
+Socket_send_raw(
+  SocketData * pS,
   uint8_t      message[],
   uint32_t     message_size
 );
