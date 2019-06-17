@@ -103,8 +103,29 @@ Socket_send_raw(
     return UDP_TRUE;
   } else {
     printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
+    printf("[error] %s\n",strerror(errno));
     return UDP_FALSE;
   }
+}
+
+/*\
+ | Send message function
+\*/
+
+int
+Socket_receive_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  return recvfrom(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    0,
+    nullptr,
+    nullptr
+  );
 }
 
 /*\

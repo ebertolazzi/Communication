@@ -163,7 +163,7 @@ Socket_close( SocketData * pS ) {
 \*/
 
 int
-MultiCast_open(
+MultiCast_open_as_client(
   SocketData * pS,
   char const   local_address[],
   char const   group_address[],
@@ -183,7 +183,7 @@ MultiCast_open(
     /* Tell the user that we could not find a usable */
     /* Winsock DLL.                                  */
     printf("WSAStartup failed with error: %d\n", err);
-	return UDP_FALSE;
+	  return UDP_FALSE;
   } else {
     printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
@@ -222,7 +222,8 @@ MultiCast_open(
   InetPton(AF_INET, group_address, &pS->sock_addr.sin_addr.s_addr);
   //pS->sock_addr.sin_addr.s_addr = inet_addr( group_address );
   pS->sock_addr.sin_port = htons( group_port );
-    
+  pS->sock_addr_len      = sizeof( pS->sock_addr );
+
   // Enable loopback so you do  receive your own datagrams.
 
   loopch = 1;

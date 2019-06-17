@@ -56,12 +56,6 @@ typedef struct  {
   uint64_t           timeout_ms;
 } SocketData;
 
-typedef struct  {
-  struct in_addr     localInterface;
-  struct sockaddr_in groupSock;
-  int                socket_id;
-} MultiCastData;
-
 extern
 void
 Socket_new( SocketData * pS );
@@ -123,6 +117,14 @@ Socket_send_raw(
 
 extern
 int
+Socket_receive_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+);
+
+extern
+int
 Socket_receive(
   SocketData * pS,
   int32_t    * message_id,
@@ -141,8 +143,17 @@ Socket_receive(
 
 extern
 int
-MultiCast_open(
-  SocketData * pData,
+MultiCast_open_as_client(
+  SocketData * pS,
+  char const   local_address[],
+  char const   group_address[],
+  int          group_port
+);
+
+extern
+int
+MultiCast_open_as_server(
+  SocketData * pS,
   char const   local_address[],
   char const   group_address[],
   int          group_port

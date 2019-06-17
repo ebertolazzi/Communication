@@ -56,12 +56,23 @@ public:
   { Socket_open_as_server( &data, port ); }
 
   int
-  open_multicast(
+  open_multicast_as_client(
     char const local_address[],
     char const group_address[],
     int        group_port
   ) {
-    return MultiCast_open(
+    return MultiCast_open_as_client(
+      &data, local_address, group_address, group_port
+    );
+  }
+
+  int
+  open_multicast_as_server(
+    char const local_address[],
+    char const group_address[],
+    int        group_port
+  ) {
+    return MultiCast_open_as_server(
       &data, local_address, group_address, group_port
     );
   }
