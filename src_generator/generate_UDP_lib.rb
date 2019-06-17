@@ -135,29 +135,33 @@ FileUtils.cp "#{base_src}/buffer_defines_hton.c", "./generated"
 FileUtils.cp "#{base_src}/buffer_defines_ntoh.c", "./generated"
 
 # reconstruct field for UDP struct
-vec = [];
-hsc = {}
-hsc[:fields] = vec.dup;
+pp data.keys
 udp_data = {
-  :scenario  => hsc.dup,
-  :manoeuvre => hsc.dup
-}
-data.keys.each do |tag|
-  if tag != :origin_file and tag != :main_topic then
-    value = data[tag];
-    value.each do |hsc|
-      hsc1 = hsc.dup;
-      hsc1.delete(:scenario);
-      hsc1.delete(:manoeuvre);
-      hsc1.delete(:mqtt);
-      udp_data[:scenario][:fields] << hsc1 if hsc[:scenario]  == "x"
-      udp_data[:manoeuvre][:fields] << hsc1 if hsc[:manoeuvre] == "x"
-    end
-  end
-end
+  :scenario     => { :fields => data[:Scenario]    },
+  :manoeuvre    => { :fields => data[:Manoeuvre]   },
+  :sim_graphics => { :fields => data[:SimGraphics] }
+};
+
+###data.keys.each do |tag|
+###  if tag != :origin_file and tag != :main_topic then
+###    value = data[tag];
+###    value.each do |hsc|
+###      hsc1 = hsc.dup;
+###      hsc1.delete(:scenario);
+###      hsc1.delete(:manoeuvre);
+###      hsc1.delete(:sim_graphics);
+###      hsc1.delete(:mqtt);
+###      udp_data[:scenario][:fields]     << hsc1 if hsc[:scenario]     == "x"
+###      udp_data[:manoeuvre][:fields]    << hsc1 if hsc[:manoeuvre]    == "x"
+###      udp_data[:sim_graphics][:fields] << hsc1 if hsc[:sim_graphics] == "x"
+###    end
+###  end
+###end
 
 prefix = "generated/"
 udp_data.each do |key,value|
+  puts "key = #{key}"
+  ###puts "value = #{value}"
   File.open( prefix+key.to_s+".h", "w" ) { |f| f.puts generate_c_header( key.to_s, value ) }
   File.open( prefix+key.to_s+".c", "w" ) { |f| f.puts generate_c_body( key.to_s, value )   }
 end
