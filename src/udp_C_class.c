@@ -91,7 +91,7 @@ Socket_send_raw(
   uint8_t      message[],
   uint32_t     message_size
 ) {
-  int isend = sendto(
+  ssize_t n_byte_sent = sendto(
     pS->socket_id,
     message,
     (size_t) message_size,
@@ -99,8 +99,12 @@ Socket_send_raw(
     (struct sockaddr *) &pS->sock_addr,
     pS->sock_addr_len
   );
-  if ( isend != 0 ) return UDP_FALSE;
-  return UDP_TRUE;
+  if ( n_byte_sent == (ssize_t)message_size ) {
+    return UDP_TRUE;
+  } else {
+    printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
+    return UDP_FALSE;
+  }
 }
 
 /*\
