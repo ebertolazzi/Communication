@@ -152,7 +152,7 @@ MultiCast_open_as_client(
   struct in_addr localInterface;
 
   /* Create UDP socket */
-  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, 0);// IPPROTO_UDP);
+  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
     perror("UDP STREAMING Opening datagram socket error");
     return UDP_FALSE;
@@ -189,6 +189,9 @@ MultiCast_open_as_client(
     group_address, group_port, local_address
   );
 
+
+#endif
+
   /* Set local interface for outbound multicast datagrams. */
   /* The IP address specified must be associated with a local, */
   /* multicast capable interface. */
@@ -212,8 +215,6 @@ MultiCast_open_as_client(
     );
   }
 
-#endif
-
   return UDP_TRUE;
 }
 
@@ -230,7 +231,7 @@ MultiCast_open_as_server(
   struct ip_mreq mreq;
 
   /* Create UDP socket */
-  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, 0);// IPPROTO_UDP);
+  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
     perror("UDP STREAMING Opening datagram socket error");
     return UDP_FALSE;
@@ -242,7 +243,13 @@ MultiCast_open_as_server(
   yes = 1;
   ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEADDR, (char*) &yes, sizeof(yes) );
   if ( ret < 0 ) {
-    perror("UDP STREAMING Reusing failed");
+    perror("UDP STREAMING Reusing ADDR failed");
+    return UDP_FALSE;
+  }
+
+  ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEPORT, (char*) &yes, sizeof(yes) );
+  if ( ret < 0 ) {
+    perror("UDP STREAMING Reusing PORT failed");
     return UDP_FALSE;
   }
 
