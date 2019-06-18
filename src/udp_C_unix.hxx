@@ -1,7 +1,9 @@
-#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
+#include <time.h>
 
 #ifndef SOCKET_ERROR
   #define SOCKET_ERROR (-1)
@@ -146,7 +148,7 @@ MultiCast_open_as_client(
   int          group_port
 ) {
 
-  int            ret, reuse;
+  int            ret;
   struct in_addr localInterface;
 
   /* Create UDP socket */
@@ -160,7 +162,7 @@ MultiCast_open_as_client(
 
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
   pS->sock_addr.sin_family      = AF_INET;
-  pS->sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  pS->sock_addr.sin_addr.s_addr = inet_addr(group_address);
   pS->sock_addr.sin_port        = htons(group_port);
   pS->sock_addr_len             = sizeof(pS->sock_addr);
 
@@ -186,7 +188,6 @@ MultiCast_open_as_client(
     "Adding multicast group %s:%i on %s...OK.\n",
     group_address, group_port, local_address
   );
-#endif
 
   /* Set local interface for outbound multicast datagrams. */
   /* The IP address specified must be associated with a local, */
@@ -210,6 +211,9 @@ MultiCast_open_as_client(
       local_address
     );
   }
+
+#endif
+
   return UDP_TRUE;
 }
 
@@ -221,7 +225,7 @@ MultiCast_open_as_server(
   int          group_port
 ) {
 
-  int            ret, reuse;
+  int            ret, yes;
   struct in_addr localInterface;
   struct ip_mreq mreq;
 
@@ -233,6 +237,14 @@ MultiCast_open_as_server(
   } else {
     printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
+  
+  /* allow multiple sockets to use the same PORT number */
+  yes = 1;
+  ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEADDR, (char*) &yes, sizeof(yes) );
+  if ( ret < 0 ) {
+    perror("UDP STREAMING Reusing failed");
+    return UDP_FALSE;
+  }
 
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
   pS->sock_addr.sin_family      = AF_INET;
@@ -240,17 +252,19 @@ MultiCast_open_as_server(
   pS->sock_addr.sin_port        = htons(group_port);
   pS->sock_addr_len             = sizeof(pS->sock_addr);
 
-  /* receive */
+  /* bind to receive address */
   ret = bind( pS->socket_id, (struct sockaddr *) &pS->sock_addr, sizeof(pS->sock_addr) );
   if ( ret < 0 ) {
-    perror("UDP STREAMING Opening datagram socket error");
+    perror("UDP STREAMING bind socket error");
     return UDP_FALSE;
   }
-  mreq.imr_multiaddr.s_addr = inet_addr(group_address);         
+
+  mreq.imr_multiaddr.s_addr = inet_addr(group_address);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   ret = setsockopt(pS->socket_id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+
   if ( ret < 0 ) {
-    perror("setsockopt mreq");
+    perror("UDP STREAMING setsockopt mreq");
     return UDP_FALSE;
   }
   return UDP_TRUE;

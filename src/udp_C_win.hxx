@@ -1,14 +1,13 @@
-#pragma comment (lib, "Ws2_32.lib")
-
-#include <Windows.h>
-
 #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
 #endif
 
+#include <Windows.h>
 #include <stdio.h>
-#include <Winsock.h>
+#include <Winsock2.h>
 #include <Ws2tcpip.h>
+
+#pragma comment (lib, "Ws2_32.lib")
 
 /*\
  |   ____             _        _
