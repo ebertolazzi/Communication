@@ -143,7 +143,7 @@ Socket_receive(
 
 extern
 int
-MultiCast_open_as_client(
+MultiCast_open_as_sender(
   SocketData * pS,
   char const   local_address[],
   char const   group_address[],
@@ -152,7 +152,7 @@ MultiCast_open_as_client(
 
 extern
 int
-MultiCast_open_as_server(
+MultiCast_open_as_listener(
   SocketData * pS,
   char const   local_address[],
   char const   group_address[],

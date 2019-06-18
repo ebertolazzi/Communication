@@ -61,18 +61,18 @@ public:
     char const group_address[],
     int        group_port
   ) {
-    return MultiCast_open_as_client(
+    return MultiCast_open_as_sender(
       &data, local_address, group_address, group_port
     );
   }
 
   int
-  open_multicast_as_server(
+  open_multicast_as_listener(
     char const local_address[],
     char const group_address[],
     int        group_port
   ) {
-    return MultiCast_open_as_server(
+    return MultiCast_open_as_listener(
       &data, local_address, group_address, group_port
     );
   }

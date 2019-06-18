@@ -122,9 +122,7 @@ Socket_receive_raw(
     pS->socket_id,
     message,
     (size_t) message_size,
-    0,
-    (struct sockaddr *) &pS->sock_addr,
-    &pS->sock_addr_len
+    0, NULL, NULL
   );
 }
 
@@ -263,9 +261,7 @@ Socket_receive(
         pS->socket_id,
         packet.data_buffer,
         (size_t) UDP_PACKET_BYTES,
-        0,
-        (struct sockaddr *) &pS->sock_addr,
-        &pS->sock_addr_len
+        0, NULL, NULL
       );
       socket_elapsed_time = get_time_ms() - socket_start_time;
 
@@ -282,9 +278,7 @@ Socket_receive(
       pS->socket_id,
       packet.data_buffer,
       (size_t) UDP_PACKET_BYTES,
-      0,
-      (struct sockaddr *) &pS->sock_addr,
-      &pS->sock_addr_len
+      0, NULL, NULL
     );
     #elif defined(__MACH__) || defined(__linux__)
     pS->sock_addr_len = sizeof(pS->sock_addr);
@@ -292,9 +286,7 @@ Socket_receive(
       pS->socket_id,
       packet.data_buffer,
       (size_t) UDP_PACKET_BYTES,
-      0,
-      (struct sockaddr *) &pS->sock_addr,
-      &pS->sock_addr_len
+      0, NULL, NULL
     );
     #endif
 
