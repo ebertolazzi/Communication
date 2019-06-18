@@ -123,8 +123,8 @@ Socket_receive_raw(
     message,
     (size_t) message_size,
     0,
-    nullptr,
-    nullptr
+    (struct sockaddr *) &pS->sock_addr,
+    &pS->sock_addr_len
   );
 }
 

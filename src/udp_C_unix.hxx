@@ -259,10 +259,10 @@ MultiCast_open_as_server(
     return UDP_FALSE;
   }
 
+  /* Preparatios for using Multicast */ 
   mreq.imr_multiaddr.s_addr = inet_addr(group_address);
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   ret = setsockopt(pS->socket_id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
-
   if ( ret < 0 ) {
     perror("UDP STREAMING setsockopt mreq");
     return UDP_FALSE;
