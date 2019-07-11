@@ -139,7 +139,8 @@ pp data.keys
 udp_data = {
   :scenario     => { :fields => data[:Scenario]    },
   :manoeuvre    => { :fields => data[:Manoeuvre]   },
-  :sim_graphics => { :fields => data[:SimGraphics] }
+  :sim_graphics => { :fields => data[:SimGraphics] },
+  :sim_state    => { :fields => data[:SimState]    }
 };
 
 ###data.keys.each do |tag|
