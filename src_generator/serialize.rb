@@ -356,8 +356,8 @@ def to_SIMULINK_struct( name, hsc )
   end
   res += "} #{name};\n\n"
   res += "#define #{name}_size #{dim}\n"
-  res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
-  res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n\n"
+  #res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
+  #res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n\n"
   return res
 end
 
