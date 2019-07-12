@@ -271,8 +271,25 @@ end
 
 
 
+#     #    #    ####### #          #    ######
+##   ##   # #      #    #         # #   #     #
+# # # #  #   #     #    #        #   #  #     #
+#  #  # #     #    #    #       #     # ######
+#     # #######    #    #       ####### #     #
+#     # #     #    #    #       #     # #     #
+#     # #     #    #    ####### #     # ######
 
-
+ def generate_matlab( tag, value )
+  template = '''
+%
+% Automatically generated
+%
+<%= to_MATLAB_struct( @tag, @value ) %>
+'''
+  context = { :tag => tag, :value => value }
+  eruby = Erubis::Eruby.new(template)
+  eruby.evaluate(context)
+end
 
 
 
@@ -299,7 +316,8 @@ udp_data.each do |key,value|
   puts "key = #{key}"
   ###puts "value = #{value}"
   File.open( prefix+key.to_s+".h", "w" ) { |f| f.puts generate_c_header( key.to_s, value ) }
-  File.open( prefix+key.to_s+".c", "w" ) { |f| f.puts generate_c_body( key.to_s, value )   }
+  File.open( prefix+key.to_s+".c", "w" ) { |f| f.puts generate_c_body( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.h", "w" ) { |f| f.puts generate_simulink_header( key.to_s, value ) }
-  File.open( prefix+key.to_s+"_simulink.c", "w" ) { |f| f.puts generate_simulink_body( key.to_s, value )   }
+  File.open( prefix+key.to_s+"_simulink.c", "w" ) { |f| f.puts generate_simulink_body( key.to_s, value ) }
+  File.open( prefix+key.to_s+".m", "w" ) { |f| f.puts generate_matlab( key.to_s, value ) }
 end
