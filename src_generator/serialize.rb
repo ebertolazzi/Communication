@@ -221,8 +221,8 @@ def to_buffer( name, hsc )
   res += "  int i_count;\n" if maxsz > 1
   res += "  uint8_t * ptr = buffer;\n"
   fds.each do |f|
-    tv  = f[:type];
-    fmt = type_to_C_fmt(tv);
+    tv  = type_to_C_simulink2(f[:type]);
+    fmt = type_to_C_fmt(f[:type]);
     n   = f[:name];
     sz  = f[:size].to_i;
     if sz > 1 then
@@ -244,8 +244,8 @@ def from_buffer( name, hsc )
   res += "  int i_count;\n" if maxsz > 1
   res += "  uint8_t const * ptr = buffer;\n"
   fds.each do |f|
-    tv  = f[:type];
-    fmt = type_to_C_fmt(tv);
+    tv  = type_to_C_simulink2(f[:type]);
+    fmt = type_to_C_fmt(f[:type]);
     n   = f[:name];
     sz  = f[:size].to_i;
     if sz > 1 then
@@ -521,9 +521,9 @@ def simulink_from_buffer( name, hsc )
   res += "  int         i_count = 0;\n" if maxsz > 1
 
   fds.each_with_index do |f,ipos|
-    tv = f[:type];
-    t  = type_to_C_simulink(tv);
-    sz = type_to_size(tv);
+    tv = type_to_C_simulink2(f[:type]);
+    t  = type_to_C_simulink(f[:type]);
+    sz = type_to_size(f[:type]);
     n  = f[:name];
 
     res += "  /* store ``#{n}'' at position #{ipos} */\n"

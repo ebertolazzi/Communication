@@ -40,13 +40,12 @@ def generate_c_header( tag, value )
   using std::int8_t;
   using std::int32_t;
   using std::int64_t;
-  extern "C" {
 #else
   #include <stdint.h>
 #endif
 
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 
 #if defined(_DS1401)
@@ -100,6 +99,14 @@ def generate_c_body( tag, value )
 #include "<%= @tag %>.h"
 #include <stdio.h>
 #include <string.h>
+
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wdouble-promotion"
+#elif __llvm__
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#else
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -226,7 +233,7 @@ def generate_simulink_body( tag, value )
 \*/
 
 #include "buffer_defines.h"
-#include "<%= @tag %>.h"
+#include "<%= @tag %>_simulink.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -260,8 +267,8 @@ def generate_simulink_body( tag, value )
 
 #define NUM_OUTPUTS           1
 /* Output Port  0 */
-#define OUT_PORT_0_NAME       serialized_data        // @@@@@@@@@@@@@@@@@@@@
-#define OUTPUT_0_WIDTH        input_data_struct_size // @@@@@@@@@@@@@@@@@@@@
+#define OUT_PORT_0_NAME       serialized_data  // @@@@@@@@@@@@@@@@@@@@
+#define OUTPUT_0_WIDTH        <%= @tag %>_size // @@@@@@@@@@@@@@@@@@@@
 #define OUTPUT_DIMS_0_COL     1
 #define OUTPUT_0_DTYPE        uint32_T
 #define OUTPUT_0_COMPLEX      COMPLEX_NO
@@ -336,7 +343,7 @@ mdlInitializeSizes(SimStruct *S) {
 
   if (!ssSetNumInputPorts(S, NUM_INPUTS)) return;
 
-  /* Register input_data_str datatype for Input port 0 */
+  /* Register <%= @tag %>_str datatype for Input port 0 */
 
   #if defined(MATLAB_MEX_FILE)
   if (ssGetSimMode(S) != SS_SIMMODE_SIZES_CALL_ONLY) {
@@ -495,9 +502,9 @@ sep = "\n\n\n\n\n"
 FileUtils.mkdir_p "./generated"
 
 base_src = File.expand_path('../src', File.dirname(__FILE__))
-FileUtils.cp "#{base_src}/buffer_defines.h",      "./generated"
-FileUtils.cp "#{base_src}/buffer_defines_hton.c", "./generated"
-FileUtils.cp "#{base_src}/buffer_defines_ntoh.c", "./generated"
+#FileUtils.cp "#{base_src}/buffer_defines.h",      "./generated"
+#FileUtils.cp "#{base_src}/buffer_defines_hton.c", "./generated"
+#FileUtils.cp "#{base_src}/buffer_defines_ntoh.c", "./generated"
 
 # reconstruct field for UDP struct
 pp data.keys
@@ -508,22 +515,6 @@ udp_data = {
   :sim_state    => { :fields => data[:SimState]    }
 };
 
-###data.keys.each do |tag|
-###  if tag != :origin_file and tag != :main_topic then
-###    value = data[tag];
-###    value.each do |hsc|
-###      hsc1 = hsc.dup;
-###      hsc1.delete(:scenario);
-###      hsc1.delete(:manoeuvre);
-###      hsc1.delete(:sim_graphics);
-###      hsc1.delete(:mqtt);
-###      udp_data[:scenario][:fields]     << hsc1 if hsc[:scenario]     == "x"
-###      udp_data[:manoeuvre][:fields]    << hsc1 if hsc[:manoeuvre]    == "x"
-###      udp_data[:sim_graphics][:fields] << hsc1 if hsc[:sim_graphics] == "x"
-###    end
-###  end
-###end
-
 prefix = "generated/"
 udp_data.each do |key,value|
   puts "key = #{key}"
@@ -533,25 +524,3 @@ udp_data.each do |key,value|
   File.open( prefix+key.to_s+"_simulink.h", "w" ) { |f| f.puts generate_simulink_header( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.c", "w" ) { |f| f.puts generate_simulink_body( key.to_s, value )   }
 end
-
-##
-## data.keys.each do |tag|
-##   if tag != :origin_file and tag != :main_topic then
-##     value = data[tag];
-##     ## puts to_MATLAB_struct( tag, value )+sep
-##     ## puts to_SIMULINK_struct( tag, value )+sep
-##     ## puts to_SIMULINK_busInfo( tag, value )+sep
-##     ## puts to_SIMULINK_busInfo_in_data( tag, value )+sep
-##     ## puts to_SIMULINK_busInfo_in_data_rtw( tag, value )+sep
-##     ## puts to_SIMULINK_message( tag, value )+sep
-##     ## puts simulink_to_buffer( tag, value )+sep
-##     ## puts simulink_from_buffer( tag, value )+sep
-##     ## puts simulink_set_output_signal( tag, value )+sep
-##     ## puts simulink_set_input_signal( tag, value )+sep
-## 
-##     prefix = "generated/"+tag.to_s
-##     File.open( prefix+".h", "w" ) { |f| f.puts generate_c_header( tag, data )   }
-##     File.open( prefix+".c", "w" ) { |f| f.puts generate_c_body( tag, data )     }
-##   end
-## end
-##
