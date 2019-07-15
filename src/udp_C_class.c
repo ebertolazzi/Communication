@@ -35,9 +35,9 @@ Socket_new( SocketData * pS ) {
 void
 Socket_check( SocketData * pS ) {
   if ( pS->socket_id >= 0 ) {
-    printf( "Opened socket id = %d\n", pS->socket_id );
+    UDP_printf( "Opened socket id = %d\n", pS->socket_id );
   } else {
-    printf( "Socket not opened\n" );
+    UDP_printf( "Socket not opened\n" );
     exit(-1);
   }
 }
@@ -102,8 +102,8 @@ Socket_send_raw(
   if ( n_byte_sent == (ssize_t)message_size ) {
     return UDP_TRUE;
   } else {
-    printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
-    printf("[error] %s\n",strerror(errno));
+    UDP_printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
+    UDP_printf("[error] %s\n",strerror(errno));
     return UDP_FALSE;
   }
 }
@@ -118,7 +118,7 @@ Socket_receive_raw(
   uint8_t      message[],
   uint32_t     message_size
 ) {
-  return recvfrom(
+  return (int)recvfrom(
     pS->socket_id,
     message,
     (size_t) message_size,
@@ -173,7 +173,7 @@ Socket_send(
         socket_elapsed_time = get_time_ms() - socket_start_time;
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
              socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) {
-          printf(
+          UDP_printf(
             "sendto() failed. Error Code: %d\n", WSAGetLastError()
           );
           return UDP_FALSE;
@@ -192,7 +192,7 @@ Socket_send(
       pS->sock_addr_len
     );
     if ( isend == SOCKET_ERROR ) {
-      printf( "sendto() failed. Error Code: %d\n", WSAGetLastError() );
+      UDP_printf( "sendto() failed. Error Code: %d\n", WSAGetLastError() );
       return UDP_FALSE;
     }
     #elif defined(__MACH__) || defined(__linux__)
@@ -205,14 +205,14 @@ Socket_send(
       pS->sock_addr_len
     );
     if ( isend == SOCKET_ERROR ) {
-      perror("error sendto()");
+      UDP_printf("error sendto: %s\n",strerror(errno));
       return UDP_FALSE;
     }
     #endif
   }
 
   #ifdef DEBUG_UDP
-  printf(
+  UDP_printf(
     "Sent message of %d packets to %s:%d\n",
      n_packets, inet_ntoa(pS->sock_addr.sin_addr),
      pS->sock_addr.sin_port
@@ -316,7 +316,7 @@ Socket_receive(
   if ( pi.received_packets == pi.n_packets ) {
     *p_message_id = pi.datagram_id;
     #ifdef DEBUG_UDP
-    printf(
+    UDP_printf(
       "Received message of %d packets from %s:%d\n",
       pi.n_packets,
       inet_ntoa(pS->sock_addr.sin_addr),
@@ -325,13 +325,13 @@ Socket_receive(
     #endif
     return UDP_TRUE;
   } else if ( elapsed_time_ms >= pS->timeout_ms ) {
-    printf(
+    UDP_printf(
       "Receive Warning: Time-out reached! Timeout is: %llu Time needed: %llu\n",
       pS->timeout_ms, elapsed_time_ms
     );
     return UDP_FALSE;
   } else {
-    printf( "Receive Warning: Server not running'n" );
+    UDP_printf( "Receive Warning: Server not running'n" );
     return UDP_FALSE;
   }
 

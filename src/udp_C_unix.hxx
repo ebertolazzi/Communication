@@ -34,7 +34,7 @@ Socket_open(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
-    perror("error socket()");
+    UDP_printf("error socket %s\n", strerror(errno));
     return UDP_FALSE;
   }
 
@@ -48,7 +48,7 @@ Socket_open(
     sizeof(opt_buflen)
   );
   if ( ret == SOCKET_ERROR ) {
-    perror("error setsockopt()");
+    UDP_printf("error setsockopt: %s\n", strerror(errno));
     return UDP_FALSE;
   }
 
@@ -68,7 +68,7 @@ Socket_open(
     sizeof(timeout)
   );
   if ( ret == SOCKET_ERROR ) {
-    perror("error setsockopt()");
+    UDP_printf("error setsockopt: %s\n", strerror(errno));
     return UDP_FALSE;
   }
   ret = setsockopt(
@@ -79,7 +79,7 @@ Socket_open(
     sizeof(timeout)
   );
   if ( ret == SOCKET_ERROR ) {
-    perror("error setsockopt()");
+    UDP_printf("error setsockopt: %s\n", strerror(errno));
     return UDP_FALSE;
   }
 
@@ -94,16 +94,16 @@ Socket_open(
       pS->sock_addr_len
     );
     if ( ret == SOCKET_ERROR ) {
-      perror("error bind()");
+      UDP_printf("error bind: %s\n", strerror(errno));
       return UDP_FALSE;
     }
   }
 
-  printf("======================================\n");
+  UDP_printf("======================================\n");
   char ipAddress[INET_ADDRSTRLEN];
   if ( bind_port == UDP_TRUE ) {
-    printf("SERVER\n");
-    printf("Server port:%d\n",pS->sock_addr.sin_port);
+    UDP_printf("SERVER\n");
+    UDP_printf("Server port:%d\n",pS->sock_addr.sin_port);
   } else {
     inet_ntop(
       AF_INET,
@@ -111,11 +111,11 @@ Socket_open(
       ipAddress,
       INET_ADDRSTRLEN
     );
-    printf("CLIENT\n");
-    printf("Server address: %s\n", ipAddress);
-    printf("Server port:    %d\n", pS->sock_addr.sin_port);
+    UDP_printf("CLIENT\n");
+    UDP_printf("Server address: %s\n", ipAddress);
+    UDP_printf("Server port:    %d\n", pS->sock_addr.sin_port);
   }
-  printf("======================================\n");
+  UDP_printf("======================================\n");
   return UDP_FALSE;
 }
 
@@ -126,7 +126,7 @@ Socket_open(
 int
 Socket_close( SocketData * pS ) {
   if ( close( pS->socket_id ) != 0 ) {
-    perror("error shutdown(socket_id,...)");
+    UDP_printf("error close: %s\n", strerror(errno));
     return UDP_FALSE;
   }
   return UDP_TRUE;
@@ -154,10 +154,10 @@ MultiCast_open_as_sender(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
-    perror("UDP STREAMING Opening datagram socket error");
+    UDP_printf("erUDP STREAMING Opening datagram socket error: %s\n", strerror(errno));
     return UDP_FALSE;
   } else {
-    printf("UDP STREAMING Opening the datagram socket...OK.\n");
+    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
 
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
@@ -177,19 +177,17 @@ MultiCast_open_as_sender(
     sizeof(loopch)
   );
   if ( ret < 0 ) {
-    printf(
+    UDP_printf(
       "UDP STREAMING Setting IP_MULTICAST_LOOP error %i %s\n",
       ret, strerror(errno)
     );
   } else {
-    printf("UDP STREAMING enabling the loopback...OK.\n" );
+    UDP_printf("UDP STREAMING enabling the loopback...OK.\n" );
   }
-  printf(
+  UDP_printf(
     "Adding multicast group %s:%i on %s...OK.\n",
     group_address, group_port, local_address
   );
-
-
 #endif
 
   /* Set local interface for outbound multicast datagrams. */
@@ -204,19 +202,20 @@ MultiCast_open_as_sender(
     sizeof(localInterface)
   );
   if ( ret < 0 ) {
-    printf(
+    UDP_printf(
       "UDP STREAMING Setting local interface(%s) error(%i) : %s\n",
       local_address, ret, strerror(errno)
     );
   } else {
-    printf(
+    UDP_printf(
       "UDP STREAMING Setting the local interface: %s...OK\n",
       local_address
     );
   }
-
   return UDP_TRUE;
 }
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 int
 MultiCast_open_as_listener(
@@ -232,23 +231,23 @@ MultiCast_open_as_listener(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
-    perror("UDP STREAMING Opening datagram socket error");
+    UDP_printf("UDP STREAMING Opening datagram socket error: %s\n",strerror(errno));
     return UDP_FALSE;
   } else {
-    printf("UDP STREAMING Opening the datagram socket...OK.\n");
+    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
-  
+
   /* allow multiple sockets to use the same PORT number */
   yes = 1;
   ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEADDR, (char*) &yes, sizeof(yes) );
   if ( ret < 0 ) {
-    perror("UDP STREAMING Reusing ADDR failed");
+    UDP_printf("UDP STREAMING Reusing ADDR failed\n");
     return UDP_FALSE;
   }
 
   ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEPORT, (char*) &yes, sizeof(yes) );
   if ( ret < 0 ) {
-    perror("UDP STREAMING Reusing PORT failed");
+    UDP_printf("UDP STREAMING Reusing PORT failed\n");
     return UDP_FALSE;
   }
 
@@ -261,7 +260,7 @@ MultiCast_open_as_listener(
   /* bind to receive address */
   ret = bind( pS->socket_id, (struct sockaddr *) &pS->sock_addr, sizeof(pS->sock_addr) );
   if ( ret < 0 ) {
-    perror("UDP STREAMING bind socket error");
+    UDP_printf("UDP STREAMING bind socket error: %s",strerror(errno));
     return UDP_FALSE;
   }
 
@@ -270,7 +269,7 @@ MultiCast_open_as_listener(
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   ret = setsockopt(pS->socket_id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
   if ( ret < 0 ) {
-    perror("UDP STREAMING setsockopt mreq");
+    UDP_printf("UDP STREAMING setsockopt mreq: %s",strerror(errno));
     return UDP_FALSE;
   }
   return UDP_TRUE;

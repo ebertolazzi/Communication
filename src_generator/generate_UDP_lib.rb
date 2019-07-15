@@ -160,8 +160,8 @@ def generate_simulink_header( tag, value )
   Automatically generated
 \*/
 
-#ifndef <%= @tag.upcase %>_H
-#define <%= @tag.upcase %>_H
+#ifndef <%= @tag.upcase %>_SIMULINK_H
+#define <%= @tag.upcase %>_SIMULINK_H
 
 #ifdef __cplusplus
   #include <cstdint>
@@ -184,22 +184,14 @@ def generate_simulink_header( tag, value )
   #include "ds1401_defines.h"
 #endif
 
-/* C structure for <%= @tag %> */
-<%= to_SIMULINK_struct( @tag, @value ) %>
+#include "<%= @tag %>.h"
 
-/* print <%= @tag %> struct on stdio */
-extern void buffer_to_<%= @tag %>( uint8_t const buffer[], <%= @tag %> * S );
+extern void simulink_input_port_to_<%= @tag %>( SimStruct *S, <%= @tag %> * out );
+extern void <%= @tag %>_to_simulink_output_port( <%= @tag %> * in, SimStruct * S );
+extern void <%= @tag %>_simulink_set_output_signal_ports( SimStruct *S );
+extern void <%= @tag %>_simulink_set_input_signal_ports( SimStruct *S );
 
-/* serialize <%= @tag %> struct to buffer */
-extern void <%= @tag %>_to_buffer( <%= @tag %> const * S, uint8_t buffer[] );
-
-/* get buffer and un-serialize to <%= @tag %> struct */
-extern void <%= @tag %>_print( <%= @tag %> const * S );
-
-extern void simulink_<%= @tag %>_to_buffer( SimStruct *S, uint8_t *buffer );
-extern void simulink_buffer_to_<%= @tag %>( uint8_t const * buffer, SimStruct * S);
-extern void simulink_<%= @tag %>_set_output_signal( SimStruct *S );
-extern void simulink_<%= @tag %>_set_input_signal( SimStruct *S );
+#define <%= @tag.upcase %>_NUM_SIGNALS <%= @value[:fields].size %>
 
 #ifdef __cplusplus
 };
@@ -225,6 +217,7 @@ def generate_simulink_body( tag, value )
   Automatically generated
 \*/
 
+#include "simstruc.h"
 #include "buffer_defines.h"
 #include "<%= @tag %>_simulink.h"
 #include <stdio.h>
@@ -234,30 +227,10 @@ def generate_simulink_body( tag, value )
   extern "C" {
 #endif
 
-<%= simulink_to_buffer(@tag, @value) %>
-<%= simulink_from_buffer(@tag, @value) %>
+<%= simulink_to_struct(@tag, @value) %>
+<%= simulink_from_struct(@tag, @value) %>
 <%= simulink_set_output_signal(@tag, @value) %>
 <%= simulink_set_input_signal(@tag, @value) %>
-
-void
-<%= @tag %>_mdlOutputs( SimStruct *S, int_T tid ) {
-<%= to_SIMULINK_busInfo_in_data_rtw( @tag, @value ) %>
-}
-
-void
-<%= @tag %>_busInfo( SimStruct *S ) {
-<%= to_SIMULINK_busInfo( @tag, @value ) %>
-}
-
-void
-<%= @tag %>_busInfo_in_data( SimStruct *S ) {
-<%= to_SIMULINK_busInfo_in_data( @tag, @value ) %>
-}
-
-void
-<%= @tag %>_message( SimStruct *S ) {
-<%= to_SIMULINK_message( @tag, @value ) %>
-}
 
 #ifdef __cplusplus
 };
@@ -319,5 +292,5 @@ udp_data.each do |key,value|
   File.open( prefix+key.to_s+".c", "w" ) { |f| f.puts generate_c_body( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.h", "w" ) { |f| f.puts generate_simulink_header( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.c", "w" ) { |f| f.puts generate_simulink_body( key.to_s, value ) }
-  File.open( prefix+key.to_s+".m", "w" ) { |f| f.puts generate_matlab( key.to_s, value ) }
+  File.open( prefix+key.to_s+"_matlab_data_struct.m", "w" ) { |f| f.puts generate_matlab( key.to_s, value ) }
 end

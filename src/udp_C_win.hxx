@@ -39,18 +39,18 @@ Socket_open(
   #ifndef WIN_NONBLOCK
   DWORD         timeout_win;
   #endif
- 
+
   pS->socket_id = 0;
 
   if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
-    printf( "WSAStartup() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "WSAStartup() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
 
   pS->socket_id = (int)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
   if ( pS->socket_id == INVALID_SOCKET) {
-    printf( "socket() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "socket() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
 
@@ -75,7 +75,7 @@ Socket_open(
     sizeof(opt_buflen)
   );
   if ( ret == SOCKET_ERROR ) {
-    printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
 
@@ -91,7 +91,7 @@ Socket_open(
   nonblock = 1;
   ret = ioctlsocket( pS->socket_id, FIONBIO, &nonblock);
   if ( ret == SOCKET_ERROR ) {
-    printf( "ioctlsocket() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "ioctlsocket() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
   #else
@@ -104,7 +104,7 @@ Socket_open(
     sizeof(DWORD)
   );
   if ( ret == SOCKET_ERROR ) {
-    printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
   ret = setsockopt(
@@ -115,7 +115,7 @@ Socket_open(
     sizeof(DWORD)
   );
   if ( ret == SOCKET_ERROR ) {
-    printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     return UDP_FALSE;
   }
   #endif
@@ -131,7 +131,7 @@ Socket_open(
       sizeof(pS->sock_addr)
     );
     if ( ret == SOCKET_ERROR ) {
-      printf( "bind() failed. Error Code: %d\n", WSAGetLastError() );
+      UDP_printf( "bind() failed. Error Code: %d\n", WSAGetLastError() );
       return UDP_FALSE;
     }
   }
@@ -145,7 +145,7 @@ Socket_open(
 int
 Socket_close( SocketData * pS ) {
   if ( closesocket(pS->socket_id) == SOCKET_ERROR ) {
-    printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
     WSACleanup();
     return UDP_FALSE;
   }
@@ -181,22 +181,22 @@ MultiCast_open_as_sender(
   if (err != 0) {
     /* Tell the user that we could not find a usable */
     /* Winsock DLL.                                  */
-    printf("WSAStartup failed with error: %d\n", err);
+    UDP_printf("WSAStartup failed with error: %d\n", err);
 	  return UDP_FALSE;
   } else {
-    printf("UDP STREAMING Opening the datagram socket...OK.\n");
+    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
 
   /* Create a datagram socket on which to send. */
   pS->socket_id = socket( AF_INET, SOCK_DGRAM, 0 );
   if( pS->socket_id < 0) {
-    printf(
+    UDP_printf(
       "UDP STREAMING Opening datagram socket error %s(socket dev %li)\n",
       strerror(errno), pS->socket_id
     );
 	return UDP_FALSE;
   } else {
-    printf("UDP STREAMING Opening the datagram socket...OK.\n");
+    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
     
   reuse = 1;
@@ -208,11 +208,11 @@ MultiCast_open_as_sender(
     sizeof(reuse)
   );
   if ( ret < 0 )    {
-    printf("Setting SO_REUSEADDR error %s\n",strerror(errno));
+    UDP_printf("Setting SO_REUSEADDR error %s\n",strerror(errno));
     closesocket(pS->socket_id);
     exit(1);
   } else {
-    printf("Setting SO_REUSEADDR...OK.\n");
+    UDP_printf("Setting SO_REUSEADDR...OK.\n");
   }
 
   /* Initialize the group sockaddr structure  */
@@ -234,14 +234,14 @@ MultiCast_open_as_sender(
     sizeof(loopch)
   );
   if ( ret < 0 ) {
-    printf(
+    UDP_printf(
       "UDP STREAMING Setting IP_MULTICAST_LOOP error %li %s\n",
       ret, strerror(errno)
     );
   } else {
-    printf("UDP STREAMING enabling the loopback...OK.\n" );
+    UDP_printf("UDP STREAMING enabling the loopback...OK.\n" );
   }
-  printf(
+  UDP_printf(
     "Adding multicast group %s:%li on %s...OK.\n",
     group_address, group_port, local_address
   );

@@ -71,7 +71,7 @@ main() {
   input_data_struct_to_buffer( &input_msg, input_data_buffer );
 
   // First message --------------------------
-  printf("\n\nSocket_send ...\n");
+  UDP_printf("\n\nSocket_send ...\n");
   socket.server_run = UDP_TRUE;
   ret = Socket_send(
     &socket,
@@ -80,12 +80,12 @@ main() {
     input_data_struct_size
   );
   if ( ret == UDP_FALSE ) {
-    printf( "Warning! Couldn't send the message with ID %d\n", message_id );
-    printf( "Output message: manoeuvre not calculated\n");
+    UDP_printf( "Warning! Couldn't send the message with ID %d\n", message_id );
+    UDP_printf( "Output message: manoeuvre not calculated\n");
   } else {
-    printf( "Socket_send, done\n" );
+    UDP_printf( "Socket_send, done\n" );
     // Clear the buffer: this is to receive data
-    printf( "\n\nSocket_receive ...\n" );
+    UDP_printf( "\n\nSocket_receive ...\n" );
     memset(buffer, '\0', buffer_size);
     ret = Socket_receive(
       &socket,
@@ -95,15 +95,15 @@ main() {
       start_time
     );
     if ( ret == UDP_FALSE ) {
-      printf("Output message: manoeuvre not calculated\n");
+      UDP_printf("Output message: manoeuvre not calculated\n");
     }
   }
 
   // Close socket
   if ( Socket_close(&socket) == UDP_FALSE ) {
-    printf("Socket_close, failed\n");
+    UDP_printf("Socket_close, failed\n");
     return -1;
   }
-  printf("Done\n");
+  UDP_printf("Done\n");
   return 0;
 }

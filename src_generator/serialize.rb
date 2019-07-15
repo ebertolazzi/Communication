@@ -316,7 +316,8 @@ def to_C_struct( name, hsc )
   end
   res += "} #{name};\n\n"
   res += "/* size of the serialized version of struct #{name} */\n"
-  res += "#define #{name}_size #{dim}\n"
+  res += "#define #{name}_size  #{dim}\n"
+  res += "#define #{name}_n_fields #{fds.size}\n"
   ##res += "\nextern\nvoid\nbuffer_to_#{name}( uint8_t const buffer[], #{name} * S );\n"
   ##res += "\nextern\nvoid\n#{name}_to_buffer( #{name} const * S, uint8_t buffer[] );\n"
   ##res += "\nextern\nvoid\n#{name}_print( #{name} const * S );\n\n"
@@ -421,9 +422,6 @@ def to_SIMULINK_busInfo_in_data( name, hsc )
     res += "  ptr   = payload + busInfo[#{idx}].offset;\n";
     res += "  nbyte = busInfo[#{idx}].elemSize * busInfo[#{idx}].numElems;\n"
     res += "  (void) memcpy( &tmp.#{n}, ptr, nbyte );\n"
-    #res  += "  if ( busInfo[#{idx}].elemSize > 4 ) ssPrintf(\"#{v[1]} = %g\\n\", tmp.#{v[1]} );\n\n"
-    #res  += "  else                                ssPrintf(\"#{v[1]} (I) = %d\\n\", tmp.#{v[1]} );\n\n"
-    res += "\n";
   end
   res += "  #{name}_to_buffer(&tmp, serialized_data);\n"
   return res
@@ -459,82 +457,54 @@ def to_SIMULINK_busInfo_in_data_rtw( name, hsc )
   return res
 end
 
-def to_SIMULINK_message( name, hsc, no_size = false )
-  fds   = hsc[:fields];
-  len   = fds.map { |f| f[:name].length }.max
-  maxsz = fds.map { |f| f[:size].to_i }.max
-  res   = ""
-  fds.each_with_index do |f,ipos|
-    tv   = f[:type];
-    t    = type_to_SIMULINK(tv);
-    sz   = type_to_size(tv);
-    res += "  /* Output Port #{ipos} */\n"
-    res += "  ssSetOutputPortWidth( S, #{ipos}, #{sz} );\n" unless no_size
-    res += "  ssSetOutputPortDataType( S, #{ipos}, #{t} );\n\n"
-  end
-  return res
-end
-
-def simulink_to_buffer( name, hsc )
+def simulink_to_struct( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
   maxsz = fds.map { |f| f[:size].to_i }.max
 
-  res  = "static\nvoid\nsimulink_#{name}_to_buffer(\n"
-  res += "  SimStruct *S,\n"
-  res += "  uint8_t   *buffer\n) {\n"
-  res += "  uint8_t * ptr = buffer;\n"
-  res += "  int   i_count = 0;\n" if maxsz > 1
+  res  = "void\nsimulink_input_port_to_#{name}( SimStruct *S, #{name} * out ) {\n"
+  res += "  int i_count = 0;\n"
 
   fds.each_with_index do |f,ipos|
-    tv   = f[:type];
-    t    = type_to_C_simulink(tv);
-    sz   = type_to_size(tv);
-    n    = f[:name];
+    t  = type_to_C_simulink(f[:type]);
+    tv = type_to_C_simulink2(f[:type]);
+    sz = f[:size].to_i;
+    n  = f[:name];
 
     res += "  /* extract ``#{n}'' at position #{ipos} */\n"
-    if tv[1] then
-      res += "  { #{t} const ** p = (#{t} const **)ssGetInputPortSignalPtrs( S, #{ipos} );\n"
-      res += "    for ( i_count=0; i_count < #{sz}; ++i_count ) {\n"
-      res += "      #{tv[0]}_to_buffer( *p[i_count], ptr ); ptr += #{sz};\n"
-      res += "    }\n"
-      res += "  }\n"
+    res += "  { #{t} const * p = (#{t} const *)ssGetInputPortSignalPtrs( S, #{ipos} );\n"
+    res += "    if ( p == NULL ) {\n      ssPrintf(\"null pointer at port #{ipos} for ``#{n}''\\n\");\n    } else {\n"
+    if sz > 1 then
+      res += "      for ( i_count=0; i_count < #{sz}; ++i_count ) out->#{n} = p[i_count];\n"
     else
-      res += "  { #{t} const ** p = (#{t} const **)ssGetInputPortSignalPtrs( S, #{ipos} );\n"
-      res += "    #{tv[0]}_to_buffer( **p, ptr ); ptr += #{sz};\n"
-      res += "  }\n"
+      res += "      out->#{n} = *p;\n"
     end
+    res += "    }\n  }\n"
   end
   res += "}\n\n"
   return res
 end
 
-def simulink_from_buffer( name, hsc )
+def simulink_from_struct( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max
   maxsz = fds.map { |f| f[:size].to_i }.max
 
-  res  = "static\nvoid\nsimulink_buffer_to_#{name}(\n"
-  res += "  uint8_t const * buffer,\n"
-  res += "  SimStruct     * S\n) {\n"
-  res += "  uint8_t const * ptr = buffer;\n"
-  res += "  int         i_count = 0;\n" if maxsz > 1
+  res  = "void\n#{name}_to_simulink_output_port( #{name} * in, SimStruct * S ) {\n"
+  res += "  int i_count = 0;\n"
 
   fds.each_with_index do |f,ipos|
-    tv = type_to_C_simulink2(f[:type]);
     t  = type_to_C_simulink(f[:type]);
-    sz = type_to_size(f[:type]);
+    tv = type_to_C_simulink2(f[:type]);
+    sz = f[:size].to_i;
     n  = f[:name];
 
-    res += "  /* store ``#{n}'' at position #{ipos} */\n"
-    res += "  { #{t} * p = (#{t} *)ssGetOutputPortSignal( S, #{ipos} );\n"
+    res += "  /* store ``#{n}'' at port #{ipos} */\n"
     if sz > 1 then
-      res += "    for ( i_count=0; i_count < #{sz}; ++i_count )\n"
-      res += "      ptr += buffer_to_#{tv}( ptr, &p[i_count] );\n"
+      res += "  memcpy( ssGetOutputPortSignal( S, #{ipos} ), n->#{n}, sizeof(#{type_to_C(f[:type])})*#{sz} );\n"
     else
-      res += "    ptr += buffer_to_#{tv}( ptr, p );\n"
+      res += "  memcpy( ssGetOutputPortSignal( S, #{ipos} ), (void*)(&in->#{n}), sizeof(#{type_to_C(f[:type])}) );\n"
     end
-    res += "  }\n"
   end
   res += "}\n\n"
   return res
@@ -545,23 +515,23 @@ def simulink_set_output_signal( name, hsc )
   len   = fds.map { |f| f[:name].length }.max
   maxsz = fds.map { |f| f[:size].to_i }.max
 
-  res  = "static\nvoid\nsimulink_#{name}_set_output_signal( SimStruct *S ) {\n"
+  res  = "void\n#{name}_simulink_set_output_signal_ports( SimStruct *S ) {\n"
   ##res += "  int nout = #{vec.size()};\n"
   ##res += "  if (!ssSetNumOutputPorts(S, nout)) return;\n\n"
 
   fds.each_with_index do |f,ipos|
-    tv = f[:type];
-    t  = type_to_SIMULINK(tv);
-    sz = type_to_size(tv);
-    n  = f[:name];
+    tv    = f[:type];
+    t     = type_to_SIMULINK(tv);
+    sz    = type_to_size(tv);
+    n     = f[:name];
+    nelem = f[:size].to_i;
 
     res += "  /* Map Output Port #{ipos} to ``#{n}'' */\n"
-    res += "  ssSetOutputPortWidth( S, #{ipos}, #{sz} );\n"
+    res += "  ssSetOutputPortWidth( S, #{ipos}, #{nelem} );\n"
     res += "  ssSetOutputPortDataType( S, #{ipos}, #{t} );\n"
     res += "  ssSetOutputPortComplexSignal( S, #{ipos}, COMPLEX_NO );\n\n"
   end
-  res += "}\n\n"
-  res += "#define #{name.upcase}_NUM_OUTPUTS #{fds.size}\n\n"
+  res += "}\n"
   return res
 end
 
@@ -570,23 +540,25 @@ def simulink_set_input_signal( name, hsc )
   len   = fds.map { |f| f[:name].length }.max
   maxsz = fds.map { |f| f[:size].to_i }.max
 
-  res  = "static\nvoid\nsimulink_#{name}_set_input_signal( SimStruct *S ) {\n"
+  res  = "void\n#{name}_simulink_set_input_signal_ports( SimStruct *S ) {\n"
   ##res += "  int nout = #{vec.size()};\n"
   ##res += "  if (!ssSetNumInputPorts(S, nout)) return;\n\n"
 
   fds.each_with_index do |f,ipos|
-    tv = f[:type];
-    t  = type_to_SIMULINK(tv);
-    sz = type_to_size(tv);
-    n  = f[:name];
+    tv    = f[:type];
+    t     = type_to_SIMULINK(tv);
+    sz    = type_to_size(tv);
+    n     = f[:name];
+    nelem = f[:size].to_i;
 
     res += "  /* Map Input Port #{ipos} to ``#{n}'' */\n"
-    res += "  ssSetInputPortWidth( S, #{ipos}, #{sz} );\n"
+    res += "  ssSetInputPortWidth( S, #{ipos}, #{nelem} );\n"
+    res += "  ssSetInputPortDirectFeedThrough( S, #{ipos}, 1 );\n\n"
     res += "  ssSetInputPortDataType( S, #{ipos}, #{t} );\n"
     res += "  ssSetInputPortComplexSignal( S, #{ipos}, COMPLEX_NO );\n"
     res += "  ssSetInputPortRequiredContiguous( S, #{ipos}, 1 );\n\n"
+
   end
-  res += "}\n\n"
-  res += "#define #{name.upcase}_NUM_INPUTS #{fds.size}\n\n"
+  res += "}\n"
   return res
 end

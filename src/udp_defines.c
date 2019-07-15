@@ -88,8 +88,8 @@ Packet_Add_to_buffer(
             true_sub_packet_size );
     ++(pi->received_packets);
   } else if ( datagram_id > pi->datagram_id ) {
-    printf("------- Packet lost! --------\n");
-    printf("------- message id %6d ---------\n",pi->datagram_id);
+    UDP_printf("------- Packet lost! --------\n");
+    UDP_printf("------- message id %6d ---------\n",pi->datagram_id);
     pi->datagram_id = (int32_t)ntohl((uint32_t)ds->datagram_id);
     memset( buffer, '0', buffer_size );
     memcpy( buffer + pos * sub_packet_size,
@@ -97,18 +97,18 @@ Packet_Add_to_buffer(
             true_sub_packet_size );
     pi->received_packets = 1;
   } else {
-    printf("------- Old Packet received! -------\n");
-    printf("------- message id %6d -------\n", datagram_id );
+    UDP_printf("------- Old Packet received! -------\n");
+    UDP_printf("------- message id %6d -------\n", datagram_id );
   }
 
   #ifdef DEBUG_UDP
-  printf("Packet received!\n");
-  printf("server_run            = %s\n", ( pi->server_run == UDP_TRUE ?"TRUE":"FALSE" ) );
-  printf("sub_packet_position   = %d\n", pos);
-  printf("sub_packet_size       = %d\n", sub_packet_size);
-  printf("n_packets             = %d\n", pi->n_packets);
-  printf("datagram_id           = %d\n", datagram_id);
-  printf("size of data received = %d\n", true_sub_packet_size);
+  UDP_printf("Packet received!\n");
+  UDP_printf("server_run            = %s\n", ( pi->server_run == UDP_TRUE ?"TRUE":"FALSE" ) );
+  UDP_printf("sub_packet_position   = %d\n", pos);
+  UDP_printf("sub_packet_size       = %d\n", sub_packet_size);
+  UDP_printf("n_packets             = %d\n", pi->n_packets);
+  UDP_printf("datagram_id           = %d\n", datagram_id);
+  UDP_printf("size of data received = %d\n", true_sub_packet_size);
   #endif
 }
 

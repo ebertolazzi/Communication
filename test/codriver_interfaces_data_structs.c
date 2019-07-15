@@ -70,24 +70,24 @@ buffer_to_input_data_struct(
 void
 input_data_struct_print( input_data_struct const * S ) {
   int i_count;
-  printf( "ID = %d\n", S->ID);
-  printf( "Version = %d\n", S->Version);
-  printf( "CycleNumber = %d\n", S->CycleNumber);
-  printf( "ECUupTime = %lg\n", S->ECUupTime);
-  printf( "TimeStamp = %lg\n", S->TimeStamp);
-  printf( "Status = %d\n", S->Status);
-  printf( "x = %lg\n", S->x);
-  printf( "y = %lg\n", S->y);
-  printf( "z = %lg\n", S->z);
-  printf( "yaw = %lg\n", S->yaw);
-  printf( "vel = %lg\n", S->vel);
-  printf( "yaw_rate = %lg\n", S->yaw_rate);
-  printf( "ax = %lg\n", S->ax);
-  printf( "ay = %lg\n", S->ay);
-  printf( "delta = %lg\n", S->delta);
-  printf( "mode = %d\n", S->mode);
+  UDP_printf( "ID = %d\n", S->ID);
+  UDP_printf( "Version = %d\n", S->Version);
+  UDP_printf( "CycleNumber = %d\n", S->CycleNumber);
+  UDP_printf( "ECUupTime = %lg\n", S->ECUupTime);
+  UDP_printf( "TimeStamp = %lg\n", S->TimeStamp);
+  UDP_printf( "Status = %d\n", S->Status);
+  UDP_printf( "x = %lg\n", S->x);
+  UDP_printf( "y = %lg\n", S->y);
+  UDP_printf( "z = %lg\n", S->z);
+  UDP_printf( "yaw = %lg\n", S->yaw);
+  UDP_printf( "vel = %lg\n", S->vel);
+  UDP_printf( "yaw_rate = %lg\n", S->yaw_rate);
+  UDP_printf( "ax = %lg\n", S->ax);
+  UDP_printf( "ay = %lg\n", S->ay);
+  UDP_printf( "delta = %lg\n", S->delta);
+  UDP_printf( "mode = %d\n", S->mode);
   for ( i_count=0; i_count<4; ++i_count )
-    printf( "thresholds[%d] = %lg\n", i_count, S->thresholds[i_count]);
+    UDP_printf( "thresholds[%d] = %lg\n", i_count, S->thresholds[i_count]);
 }
 
 
@@ -148,25 +148,25 @@ buffer_to_output_data_struct(
 
 void
 output_data_struct_print( output_data_struct const * S ) {
-  printf( "ID = %d\n", S->ID);
-  printf( "Version = %d\n", S->Version);
-  printf( "CycleNumber = %d\n", S->CycleNumber);
-  printf( "ECUupTime = %lg\n", S->ECUupTime);
-  printf( "TimeStamp = %lg\n", S->TimeStamp);
-  printf( "Status = %d\n", S->Status);
-  printf( "s = %lg\n", S->s);
-  printf( "n = %lg\n", S->n);
-  printf( "alpha = %lg\n", S->alpha);
-  printf( "yaw = %lg\n", S->yaw);
-  printf( "yawRate = %lg\n", S->yawRate);
-  printf( "velocity = %lg\n", S->velocity);
-  printf( "ax = %lg\n", S->ax);
-  printf( "ay = %lg\n", S->ay);
-  printf( "steerAngle = %lg\n", S->steerAngle);
-  printf( "gasPedal = %lg\n", S->gasPedal);
-  printf( "x = %lg\n", S->x);
-  printf( "y = %lg\n", S->y);
-  printf( "z = %lg\n", S->z);
+  UDP_printf( "ID = %d\n", S->ID);
+  UDP_printf( "Version = %d\n", S->Version);
+  UDP_printf( "CycleNumber = %d\n", S->CycleNumber);
+  UDP_printf( "ECUupTime = %lg\n", S->ECUupTime);
+  UDP_printf( "TimeStamp = %lg\n", S->TimeStamp);
+  UDP_printf( "Status = %d\n", S->Status);
+  UDP_printf( "s = %lg\n", S->s);
+  UDP_printf( "n = %lg\n", S->n);
+  UDP_printf( "alpha = %lg\n", S->alpha);
+  UDP_printf( "yaw = %lg\n", S->yaw);
+  UDP_printf( "yawRate = %lg\n", S->yawRate);
+  UDP_printf( "velocity = %lg\n", S->velocity);
+  UDP_printf( "ax = %lg\n", S->ax);
+  UDP_printf( "ay = %lg\n", S->ay);
+  UDP_printf( "steerAngle = %lg\n", S->steerAngle);
+  UDP_printf( "gasPedal = %lg\n", S->gasPedal);
+  UDP_printf( "x = %lg\n", S->x);
+  UDP_printf( "y = %lg\n", S->y);
+  UDP_printf( "z = %lg\n", S->z);
 }
 
 
