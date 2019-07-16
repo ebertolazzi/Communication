@@ -50,7 +50,6 @@ extern "C" {
 
 typedef struct  {
   int                socket_id;
-  int                server_run; // bool
   struct sockaddr_in sock_addr;
   socklen_t          sock_addr_len;
   uint64_t           timeout_ms;
@@ -109,6 +108,17 @@ Socket_send(
 
 extern
 int
+Socket_receive(
+  SocketData * pS,
+  int32_t    * message_id,
+  int32_t    * message_len,
+  uint8_t      message[],
+  uint32_t     message_max_size,
+  uint64_t     start_time
+);
+
+extern
+int
 Socket_send_raw(
   SocketData * pS,
   uint8_t      message[],
@@ -121,17 +131,6 @@ Socket_receive_raw(
   SocketData * pS,
   uint8_t      message[],
   uint32_t     message_size
-);
-
-extern
-int
-Socket_receive(
-  SocketData * pS,
-  int32_t    * message_id,
-  int32_t    * message_len,
-  uint8_t      message[],
-  uint32_t     message_max_size,
-  uint64_t     start_time
 );
 
 /*\

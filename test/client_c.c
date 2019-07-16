@@ -25,8 +25,6 @@ main() {
 
   // First message --------------------------
   UDP_printf("\n\nSocket_send ...\n");
-  socket.server_run = UDP_TRUE;
-
   for ( int32_t message_id = 1; message_id <= 10; ++message_id ) {
     int ret = Socket_send(
       &socket,

@@ -11,9 +11,6 @@ main() {
   int32_t  message_id = 0, message_len;
   int      ret;
 
-  input_data_struct input_msg;
-  uint8_t           input_data_buffer[input_data_struct_size];
-
   // Create and set UDP socket
   // Create and set UDP
 
@@ -24,8 +21,7 @@ main() {
   // Start server
   UDP_printf("Server ready\n");
 
-  socket.server_run = 1;
-  while( socket.server_run == UDP_TRUE ) {
+  while( 1 ) {
 
     // Clear the buffer
     UDP_printf( "Wait Socket_receive\n" );

@@ -30,6 +30,7 @@ public:
 
 class Socket {
 
+  bool       server_is_running;
   SocketData data;
 
   #ifndef _MSC_VER
@@ -79,15 +80,15 @@ public:
 
   void
   server_start()
-  { data.server_run = UDP_TRUE; }
+  { server_is_running = true; }
 
   void
   server_stop()
-  { data.server_run = UDP_FALSE; }
+  { server_is_running = false; }
 
   bool
   server_running() const
-  { return data.server_run == UDP_TRUE; }
+  { return server_is_running; }
 
   void
   set_timeout_ms( uint64_t tout_ms )

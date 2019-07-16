@@ -35,10 +35,9 @@ datagram_part_to_buffer(
 ) {
   uint8_t * ptr = buffer;
   ptr += int32_to_buffer( D->datagram_id, ptr );
-  ptr += int32_to_buffer( D->server_run, ptr );
   ptr += uint32_to_buffer( D->total_message_size, ptr );
-  ptr += uint32_to_buffer( D->sub_message_size, ptr );
-  ptr += uint32_to_buffer( D->sub_message_position, ptr );
+  ptr += uint16_to_buffer( D->sub_message_size, ptr );
+  ptr += uint16_to_buffer( D->sub_message_position, ptr );
   memcpy( ptr, D->message, D->sub_message_size );
 }
 
@@ -50,10 +49,9 @@ buffer_to_datagram_part(
 ) {
   uint8_t const * ptr = buffer;
   ptr += buffer_to_int32( ptr, &D->datagram_id );
-  ptr += buffer_to_int32 ( ptr, &D->server_run );
   ptr += buffer_to_uint32( ptr, &D->total_message_size );
-  ptr += buffer_to_uint32( ptr, &D->sub_message_size );
-  ptr += buffer_to_uint32( ptr, &D->sub_message_position );
+  ptr += buffer_to_uint16( ptr, &D->sub_message_size );
+  ptr += buffer_to_uint16( ptr, &D->sub_message_position );
   memcpy( D->message, ptr, D->sub_message_size );
 }
 
@@ -95,7 +93,7 @@ Packet_Add_to_buffer(
   }
 
   /* first packet, compute number of packets */
-  pi->server_run         = pk->server_run;
+  /* pi->server_run         = ?????; DA INDAGARE */
   pi->datagram_id        = pk->datagram_id;
   pi->total_message_size = pk->total_message_size;
   ++pi->received_packets;
@@ -113,11 +111,11 @@ Packet_Add_to_buffer(
   #ifdef DEBUG_UDP
   UDP_printf("Packet received!\n");
   UDP_printf("server_run            = %s\n", ( pi->server_run == UDP_TRUE ?"TRUE":"FALSE" ) );
-  UDP_printf("datagram_id           = %d\n", pi->datagram_id);
-  UDP_printf("n_packets             = %d\n", pi->n_packets);
-  UDP_printf("sub_message_position  = %d\n", pk->sub_message_position);
-  UDP_printf("sub_message_size      = %d\n", pk->sub_message_size);
-  UDP_printf("size of data received = %d\n", true_sub_packet_size);
+  UDP_printf("datagram_id           = %d\n",  pi->datagram_id);
+  UDP_printf("n_packets             = %d\n",  pi->n_packets);
+  UDP_printf("sub_message_position  = %hd\n", pk->sub_message_position);
+  UDP_printf("sub_message_size      = %hd\n", pk->sub_message_size);
+  UDP_printf("size of data received = %d\n",  true_sub_packet_size);
   #endif
 }
 
@@ -125,13 +123,11 @@ void
 Packet_Build_from_buffer(
   uint8_t const     buffer[],
   uint32_t          packet_size,
-  uint32_t          pos,
+  uint16_t          pos,
   int32_t           datagram_id,
-  int32_t           run,
   datagram_part_t * pk
 ) {
   uint32_t residual = packet_size - pos * UDP_DATAGRAM_MESSAGE_SIZE;
-  pk->server_run           = run;
   pk->datagram_id          = datagram_id;
   pk->total_message_size   = packet_size;
   pk->sub_message_position = pos;

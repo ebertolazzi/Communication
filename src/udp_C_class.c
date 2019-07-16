@@ -28,7 +28,6 @@ extern "C" {
 void
 Socket_new( SocketData * pS ) {
   pS->socket_id  = -1;
-  pS->server_run = UDP_FALSE;
   pS->timeout_ms = UDP_APP_TIMEOUT_MS;
 }
 
@@ -156,7 +155,7 @@ Socket_send(
 
     /* estrae pacchetto */
     Packet_Build_from_buffer(
-      message, message_size, ipos, message_id, pS->server_run, &packet
+      message, message_size, ipos, message_id, &packet
     );
 
     /* serializza pacchetto */
@@ -249,7 +248,7 @@ Socket_receive(
 
   /* Receive packets */
   elapsed_time_ms = start_time_ms == 0 ? 0 : get_time_ms() - start_time_ms;
-  while ( elapsed_time_ms <= pS->timeout_ms && pS->server_run == UDP_TRUE ) {
+  while ( elapsed_time_ms <= pS->timeout_ms ) {
 
     uint8_t data_buffer[UDP_MTU_MAX_BYTES];
 
@@ -295,7 +294,6 @@ Socket_receive(
       /* deserializza */
       buffer_to_datagram_part( data_buffer, &packet );
       Packet_Add_to_buffer( &pi, &packet, message, message_max_size );
-      pS->server_run = pi.server_run;
     } else {
       sleep_ms(UDP_SLEEP_MS);
     }

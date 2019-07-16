@@ -33,15 +33,14 @@ extern "C" {
   #endif
 #endif
 
-#define UDP_DATAGRAM_PART_HEADER_SIZE 20
+#define UDP_DATAGRAM_PART_HEADER_SIZE 12
 #define UDP_DATAGRAM_MESSAGE_SIZE     (UDP_MTU_MAX_BYTES-UDP_DATAGRAM_PART_HEADER_SIZE)
 
 typedef struct {
-  int32_t  server_run;           // 1: run server, 0: stop server
-  uint32_t total_message_size;   // total length of the packet
-  uint32_t sub_message_position; // sub packet position in the message
-  uint32_t sub_message_size;     // sub packet size
   int32_t  datagram_id;          // message ID
+  uint32_t total_message_size;   // total length of the packet
+  uint16_t sub_message_size;     // sub packet size
+  uint16_t sub_message_position; // sub packet position in the message
   uint8_t  message[UDP_DATAGRAM_MESSAGE_SIZE]; // part of datagram message
 } datagram_part_t;
 
@@ -86,9 +85,8 @@ void
 Packet_Build_from_buffer(
   uint8_t const     buffer[],
   uint32_t          packet_size,
-  uint32_t          pos,
+  uint16_t          pos,
   int32_t           datagram_id,
-  int32_t           run,
   datagram_part_t * pk
 );
 
