@@ -128,8 +128,9 @@ int
 Socket_receive(
   SocketData * pS,
   int32_t    * message_id,
+  int32_t    * message_len,
   uint8_t      message[],
-  uint32_t     message_size,
+  uint32_t     message_max_size,
   uint64_t     start_time
 );
 

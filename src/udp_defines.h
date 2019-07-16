@@ -16,20 +16,9 @@ extern "C" {
   #include "ds1401_defines.h"
 #endif
 
-// Connection settings
-#ifndef UDP_DEFAULT_SERVER_IP
-  #define UDP_DEFAULT_SERVER_IP "127.0.0.1"
+#ifndef UDP_MTU_MAX_BYTES
+  #define UDP_MTU_MAX_BYTES 1472  // Maximum packet bytes
 #endif
-
-#ifndef UDP_SERVER_PORT
-  #define UDP_SERVER_PORT 25000 // Server port
-#endif
-
-#ifndef UDP_PACKET_BYTES
-  #define UDP_PACKET_BYTES 1472  // Maximum packet bytes
-#endif
-
-#define UDP_SUB_PACKET_SIZE (UDP_PACKET_BYTES-20) // UDP_PACKET_BYTES - packet header
 
 // Times
 #define UDP_SLEEP_MS             1
@@ -44,26 +33,36 @@ extern "C" {
   #endif
 #endif
 
+#define UDP_DATAGRAM_PART_HEADER_SIZE 20
+#define UDP_DATAGRAM_MESSAGE_SIZE     (UDP_MTU_MAX_BYTES-UDP_DATAGRAM_PART_HEADER_SIZE)
+
 typedef struct {
-  int32_t  server_run;          // 1: run server, 0: stop server
-  uint32_t total_packet_size;   // total length of the packet
-  uint32_t sub_packet_position; // sub packet position in the message
-  uint32_t sub_packet_size;     // sub packet size
-  int32_t  datagram_id;         // message ID
-  char     datagram_part[UDP_SUB_PACKET_SIZE]; // part of datagram message
+  int32_t  server_run;           // 1: run server, 0: stop server
+  uint32_t total_message_size;   // total length of the packet
+  uint32_t sub_message_position; // sub packet position in the message
+  uint32_t sub_message_size;     // sub packet size
+  int32_t  datagram_id;          // message ID
+  uint8_t  message[UDP_DATAGRAM_MESSAGE_SIZE]; // part of datagram message
 } datagram_part_t;
 
-// Packet union
-typedef union {
-  uint8_t         data_buffer[UDP_SUB_PACKET_SIZE];
-  datagram_part_t data_struct;
-} packet_t;
+extern
+void
+datagram_part_to_buffer(
+  datagram_part_t const * D,
+  uint8_t                 buffer[]
+);
+
+extern
+void
+buffer_to_datagram_part(
+  uint8_t const     buffer[],
+  datagram_part_t * D
+);
 
 typedef struct {
   int32_t  server_run;
   int32_t  datagram_id;
-  uint32_t total_packet_size;
-  uint32_t sub_packet_size;
+  uint32_t total_message_size;
   uint32_t received_packets;
   uint32_t n_packets;
   uint64_t start_time_ms;
@@ -76,21 +75,21 @@ Packet_Init( packet_info_t * pi, uint64_t start_time_ms );
 extern
 void
 Packet_Add_to_buffer(
-  packet_info_t  * pi,
-  packet_t const * pk,
-  uint8_t          buffer[],
-  uint32_t         buffer_size
+  packet_info_t         * pi,
+  datagram_part_t const * pk,
+  uint8_t                 buffer[],
+  uint32_t                buffer_max_size
 );
 
 extern
 void
 Packet_Build_from_buffer(
-  uint8_t const buffer[],
-  uint32_t      packet_size,
-  uint32_t      pos,
-  int32_t       datagram_id,
-  int32_t       run,
-  packet_t    * pk
+  uint8_t const     buffer[],
+  uint32_t          packet_size,
+  uint32_t          pos,
+  int32_t           datagram_id,
+  int32_t           run,
+  datagram_part_t * pk
 );
 
 extern

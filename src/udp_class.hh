@@ -122,12 +122,14 @@ public:
   int
   receive(
     int32_t & buffer_id,
+    int32_t & buffer_len,
     uint8_t   buffer[],
     uint32_t  buffer_size,
     uint64_t  start_time
   ) {
     return Socket_receive( &data,
                            &buffer_id,
+                           &buffer_len,
                            buffer,
                            buffer_size,
                            start_time );

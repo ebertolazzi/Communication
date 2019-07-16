@@ -31,7 +31,7 @@ main(void) {
   // Create and set UDP
 
   Socket socket;
-  socket.open_as_server( UDP_SERVER_PORT );
+  socket.open_as_server( 25000 );
   socket.check();
   
   // Start server

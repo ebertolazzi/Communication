@@ -39,7 +39,7 @@ Socket_open(
   }
 
   /* Set send buffer size limit */
-  opt_buflen = UDP_PACKET_BYTES;
+  opt_buflen = UDP_MTU_MAX_BYTES;
   ret = setsockopt(
     pS->socket_id,
     SOL_SOCKET,

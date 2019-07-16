@@ -6,9 +6,9 @@
 int
 main() {
 
-  uint8_t  buffer[10];
+  uint8_t  buffer[100000];
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
-  int32_t  message_id = 0;
+  int32_t  message_id = 0, message_len;
   int      ret;
 
   input_data_struct input_msg;
@@ -19,7 +19,7 @@ main() {
 
   SocketData socket;
   Socket_new( &socket );
-  Socket_open_as_server( &socket, UDP_SERVER_PORT );
+  Socket_open_as_server( &socket, 25000 );
 
   // Start server
   UDP_printf("Server ready\n");
@@ -33,41 +33,16 @@ main() {
     ret = Socket_receive(
       &socket,
       &message_id,
-      input_data_buffer,
-      input_data_struct_size,
+      &message_len,
+      buffer,
+      buffer_size,
       0
     );
     if ( ret == UDP_TRUE ) {
-      ret = Socket_send( &socket, message_id, buffer, buffer_size );
-      if ( ret == UDP_FALSE ) {
-        perror("error send_message()");
-        exit(EXIT_FAILURE);
-        return -1;
-      }
-      // Print the buffer
-      buffer_to_input_data_struct( input_data_buffer, &input_msg );
-
-      UDP_printf( "Printing received message\n" );
-      UDP_printf( "ID            = %d\n",    input_msg.ID            );
-      UDP_printf( "Version       = %d\n",    input_msg.Version       );
-      UDP_printf( "CycleNumber   = %d\n",    input_msg.CycleNumber   );
-      UDP_printf( "ECUupTime     = %g(s)\n", input_msg.ECUupTime     );
-      UDP_printf( "TimeStamp     = %g(s)\n", input_msg.TimeStamp     );
-      UDP_printf( "Status        = %d\n",    input_msg.Status        );
-      UDP_printf( "vel           = %g\n",    input_msg.vel           );
-      UDP_printf( "x             = %g\n",    input_msg.x             );
-      UDP_printf( "y             = %g\n",    input_msg.y             );
-      UDP_printf( "z             = %g\n",    input_msg.z             );
-      UDP_printf( "yaw           = %g\n",    input_msg.yaw           );
-      UDP_printf( "yaw_rate      = %g\n",    input_msg.yaw_rate      );
-      UDP_printf( "ax            = %g\n",    input_msg.ax            );
-      UDP_printf( "ay            = %g\n",    input_msg.ay            );
-      UDP_printf( "delta         = %g\n",    input_msg.delta         );
-      UDP_printf( "mode          = %d\n",    input_msg.mode          );
-      UDP_printf( "thresholds[0] = %g\n",    input_msg.thresholds[0] );
-      UDP_printf( "thresholds[1] = %g\n",    input_msg.thresholds[1] );
-      UDP_printf( "thresholds[2] = %g\n",    input_msg.thresholds[2] );
-      UDP_printf( "thresholds[3] = %g\n",    input_msg.thresholds[3] );
+      printf("RECEIVED: [id=%d,size=%d]", message_id, message_len);
+      for ( int i = 0; i < message_len; ++i )
+        printf("%02X", (int)buffer[i] );
+      printf("\n" );
     } else {
       UDP_printf( "Socket_receive failed\n" );
     }
