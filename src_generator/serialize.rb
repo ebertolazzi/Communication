@@ -259,44 +259,12 @@ def from_buffer( name, hsc )
   return res
 end
 
-def to_MQTT_topic( name, data )
-  main_topic  = data[:main_topic];
-  subtopic    = data[name][:subtopic];
-  subsubtopic = data[name][:subsubtopic];
-  res  = "void\n#{name}_MQTT_topic(\n"
-  res += "  #{name} const * S,\n"
-  res += "  char topic[],\n"
-  res += "  int topic_max_len\n"
-  res += ") {\n"
-  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
-  if subsubtopic and subsubtopic.length > 0 then
-    res += "  snprintf( topic, topic_max_len, \"%s/%d\", base_topic, S->#{subsubtopic} );\n"
-  else
-    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
-  end
-  res += "}\n\n"
-  res += "int\n#{name}_MQTT_compare( char const topic[] ) {\n"
-  res += "  int topic_len = #{1+main_topic.length+subtopic.length};\n"
-  res += "  char const * topic_ref = \"#{main_topic}/#{subtopic}\";\n"
-  res += "  return strncmp( topic, topic_ref, topic_len );\n"
-  res += "}\n"
-  return res
-end
-
-def to_MQTT_alltopics( name, data )
-  main_topic  = data[:main_topic];
-  subtopic    = data[name][:subtopic];
-  subsubtopic = data[name][:subsubtopic];
-  res  = "void\n#{name}_MQTT_alltopics( char topic[], int topic_max_len ) {\n"
-  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
-  if subtopic and subtopic.length > 0 then
-    res += "  snprintf( topic, topic_max_len, \"%s/#\", base_topic );\n"
-  else
-    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
-  end
-  res += "}\n"
-  return res
-end
+ ####  ##### #####  #    #  ####  #####
+#        #   #    # #    # #    #   #
+ ####    #   #    # #    # #        #
+     #   #   #####  #    # #        #
+#    #   #   #   #  #    # #    #   #
+ ####    #   #    #  ####   ####    #
 
 def to_C_struct( name, hsc )
   fds   = hsc[:fields];
@@ -338,6 +306,61 @@ def to_MATLAB_struct( name, hsc )
   end
   return res
 end
+
+
+#     #  #####  ####### #######
+##   ## #     #    #       #
+# # # # #     #    #       #
+#  #  # #     #    #       #
+#     # #   # #    #       #
+#     # #    #     #       #
+#     #  #### #    #       #
+
+def to_MQTT_topic( name, data )
+  main_topic  = data[:main_topic];
+  subtopic    = data[name][:subtopic];
+  subsubtopic = data[name][:subsubtopic];
+  res  = "void\n#{name}_MQTT_topic(\n"
+  res += "  #{name} const * S,\n"
+  res += "  char topic[],\n"
+  res += "  int topic_max_len\n"
+  res += ") {\n"
+  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
+  if subsubtopic and subsubtopic.length > 0 then
+    res += "  snprintf( topic, topic_max_len, \"%s/%d\", base_topic, S->#{subsubtopic} );\n"
+  else
+    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
+  end
+  res += "}\n\n"
+  res += "int\n#{name}_MQTT_compare( char const topic[] ) {\n"
+  res += "  int topic_len = #{1+main_topic.length+subtopic.length};\n"
+  res += "  char const * topic_ref = \"#{main_topic}/#{subtopic}\";\n"
+  res += "  return strncmp( topic, topic_ref, topic_len );\n"
+  res += "}\n"
+  return res
+end
+
+def to_MQTT_alltopics( name, data )
+  main_topic  = data[:main_topic];
+  subtopic    = data[name][:subtopic];
+  subsubtopic = data[name][:subsubtopic];
+  res  = "void\n#{name}_MQTT_alltopics( char topic[], int topic_max_len ) {\n"
+  res += "  char const * base_topic = \"#{main_topic}/#{subtopic}\";\n"
+  if subtopic and subtopic.length > 0 then
+    res += "  snprintf( topic, topic_max_len, \"%s/#\", base_topic );\n"
+  else
+    res += "  snprintf( topic, topic_max_len, \"%s\", base_topic );\n"
+  end
+  res += "}\n"
+  return res
+end
+
+ ####  # #    # #    # #      # #    # #    #
+#      # ##  ## #    # #      # ##   # #   #
+ ####  # # ## # #    # #      # # #  # ####
+     # # #    # #    # #      # #  # # #  #
+#    # # #    # #    # #      # #   ## #   #
+ ####  # #    #  ####  ###### # #    # #    #
 
 def to_SIMULINK_struct( name, hsc )
   fds   = hsc[:fields];
@@ -558,6 +581,75 @@ def simulink_set_input_signal( name, hsc )
     res += "  ssSetInputPortComplexSignal( S, #{ipos}, COMPLEX_NO );\n"
     res += "  ssSetInputPortRequiredContiguous( S, #{ipos}, 1 );\n\n"
 
+  end
+  res += "}\n"
+  return res
+end
+
+#       #######  #####
+#       #     # #     #
+#       #     # #
+#       #     # #  ####
+#       #     # #     #
+#       #     # #     #
+####### #######  #####
+
+def to_log_header( name, hsc )
+  fds   = hsc[:fields];
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res  = "void\n#{name}_log_header( std::ostream & stream ) {\n"
+  fds.each do |f|
+    n   = f[:name];
+    sz  = f[:size].to_i;
+    if sz > 1 then
+      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "    stream << \"'#{n}_\" << i_count << \"'\\t\";\n"
+    else
+      res += "  stream << \"'#{n}'\\t\";\n"
+    end
+  end
+  res += "  stream << '\\n';\n"
+  res += "}\n"
+  return res
+end
+
+def to_log_write_line( name, hsc )
+  fds   = hsc[:fields];
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res  = "void\n#{name}_log_write_line( std::ostream & stream, #{name} const & S ) {\n"
+  fds.each do |f|
+    n   = f[:name];
+    sz  = f[:size].to_i;
+    if sz > 1 then
+      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "    stream << S.#{n}[i_count] << '\\t';\n"
+    else
+      res += "  stream << S.#{n} << ' \\t';\n"
+    end
+  end
+  res += "  stream << '\\n';\n"
+  res += "}\n"
+  return res
+end
+
+def to_log_read_line( name, hsc )
+  fds   = hsc[:fields];
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res  = "void\n#{name}_log_read_line( std::istream & stream, #{name} & S ) {\n"
+  res += "  std::istringstream iss;\n  std::string str;\n"
+  res += "  getline( stream, str);\n  iss.str(str);\n"
+  fds.each do |f|
+    n   = f[:name];
+    sz  = f[:size].to_i;
+    if sz > 1 then
+      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "    iss >> S.#{n}[i_count];\n"
+    else
+      res += "  iss >> S.#{n};\n"
+    end
   end
   res += "}\n"
   return res

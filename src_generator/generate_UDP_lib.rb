@@ -264,7 +264,63 @@ end
   eruby.evaluate(context)
 end
 
+ #####
+#     #   #     #   #    # ######   ##   #####  ###### #####
+#         #     #   #    # #       #  #  #    # #      #    #
+#       ##### ##### ###### #####  #    # #    # #####  #    #
+#         #     #   #    # #      ###### #    # #      #####
+#     #   #     #   #    # #      #    # #    # #      #   #
+ #####              #    # ###### #    # #####  ###### #    #
 
+ def generate_cpp_header( tag, value )
+  template = '''
+/*\
+  Automatically generated
+\*/
+
+#ifndef <%= @tag.upcase %>_CPP_HH
+#define <%= @tag.upcase %>_CPP_HH
+
+#include "<%= @tag %>.h"
+#include <iostream>
+
+extern void <%=  @tag %>_log_header( std::ostream & stream );
+extern void <%=  @tag %>_log_read_line( std::istream & stream, <%=  @tag %> & S );
+extern void <%=  @tag %>_log_write_line( std::ostream & stream, <%=  @tag %> const & S );
+
+#endif
+'''
+  context = { :tag => tag, :value => value }
+  eruby = Erubis::Eruby.new(template)
+  eruby.evaluate(context)
+end
+
+
+ ####    #     #   #####   ####  #####  #   #
+#    #   #     #   #    # #    # #    #  # #
+#      ##### ##### #####  #    # #    #   #
+#        #     #   #    # #    # #    #   #
+#    #   #     #   #    # #    # #    #   #
+ ####              #####   ####  #####    #
+
+ def generate_cpp_body( tag, value )
+  template = '''
+/*\
+  Automatically generated
+\*/
+
+#include "<%= @tag %>_cpp.hh"
+#include <sstream>
+
+<%= to_log_header( @tag, @value ) %>
+<%= to_log_read_line( @tag, @value ) %>
+<%= to_log_write_line( @tag, @value ) %>
+
+'''
+  context = { :tag => tag, :value => value }
+  eruby = Erubis::Eruby.new(template)
+  eruby.evaluate(context)
+end
 
 sep = "\n\n\n\n\n"
 
@@ -288,8 +344,10 @@ prefix = "generated/"
 udp_data.each do |key,value|
   puts "key = #{key}"
   ###puts "value = #{value}"
-  File.open( prefix+key.to_s+".h", "w" ) { |f| f.puts generate_c_header( key.to_s, value ) }
-  File.open( prefix+key.to_s+".c", "w" ) { |f| f.puts generate_c_body( key.to_s, value ) }
+  File.open( prefix+key.to_s+".h",  "w" ) { |f| f.puts generate_c_header( key.to_s, value ) }
+  File.open( prefix+key.to_s+".c",  "w" ) { |f| f.puts generate_c_body( key.to_s, value ) }
+  File.open( prefix+key.to_s+"_cpp.hh", "w" ) { |f| f.puts generate_cpp_header( key.to_s, value ) }
+  File.open( prefix+key.to_s+"_cpp.cc", "w" ) { |f| f.puts generate_cpp_body( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.h", "w" ) { |f| f.puts generate_simulink_header( key.to_s, value ) }
   File.open( prefix+key.to_s+"_simulink.c", "w" ) { |f| f.puts generate_simulink_body( key.to_s, value ) }
   File.open( prefix+key.to_s+"_matlab_data_struct.m", "w" ) { |f| f.puts generate_matlab( key.to_s, value ) }
