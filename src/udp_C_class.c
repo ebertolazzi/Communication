@@ -86,9 +86,9 @@ Socket_open_addr(
 
 int
 Socket_send_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
+  SocketData *  pS,
+  uint8_t const message[],
+  uint32_t      message_size
 ) {
   ssize_t n_byte_sent = sendto(
     pS->socket_id,

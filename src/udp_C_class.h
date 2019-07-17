@@ -120,9 +120,9 @@ Socket_receive(
 extern
 int
 Socket_send_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
+  SocketData *  pS,
+  uint8_t const message[],
+  uint32_t      message_size
 );
 
 extern

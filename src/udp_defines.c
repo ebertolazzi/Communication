@@ -52,6 +52,13 @@ buffer_to_datagram_part(
   ptr += buffer_to_uint32( ptr, &D->total_message_size );
   ptr += buffer_to_uint16( ptr, &D->sub_message_size );
   ptr += buffer_to_uint16( ptr, &D->sub_message_position );
+  if (  D->sub_message_size >= UDP_DATAGRAM_MESSAGE_SIZE ) {
+    UDP_printf(
+      "buffer_to_datagram_part, sub_message_size (%d) >= UDP_DATAGRAM_MESSAGE_SIZE (%d)\n",
+      D->sub_message_size, UDP_DATAGRAM_MESSAGE_SIZE
+    );
+    exit(1);
+  }
   memcpy( D->message, ptr, D->sub_message_size );
 }
 
@@ -72,6 +79,16 @@ Packet_Add_to_buffer(
   uint8_t                 buffer[],
   uint32_t                buffer_max_size
 ) {
+  // sanity check
+  UDP_printf("Packet_Add_to_buffer 1\n");
+  int32_t offs = pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE;
+  if ( offs < 0 || offs+pk->sub_message_size >= buffer_max_size ) {
+    UDP_printf(
+      "Packet_Add_to_buffer, wrong sub_message_position (%d)\n",
+      pk->sub_message_position
+    );
+    exit(1);
+  }
 
   // copia segmento nel buffer
   memcpy(
