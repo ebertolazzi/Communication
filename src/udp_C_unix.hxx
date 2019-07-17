@@ -143,17 +143,12 @@ Socket_close( SocketData * pS ) {
 int
 MultiCast_open_as_sender(
   SocketData * pS,
-  char const   local_address[],
   char const   group_address[],
   int          group_port
 ) {
-
-  int            ret;
-  struct in_addr localInterface;
-
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if ( pS->socket_id == -1 ) {
+  if ( pS->socket_id < 0 ) {
     UDP_printf("erUDP STREAMING Opening datagram socket error: %s\n", strerror(errno));
     return UDP_FALSE;
   } else {
@@ -166,52 +161,6 @@ MultiCast_open_as_sender(
   pS->sock_addr.sin_port        = htons(group_port);
   pS->sock_addr_len             = sizeof(pS->sock_addr);
 
-  // Enable loopback so you do  receive your own datagrams.
-#if 0
-  char loopch = 1;
-  ret = setsockopt(
-    pS->socket_id,
-    IPPROTO_IP,
-    IP_MULTICAST_LOOP,
-    (char *)&loopch,
-    sizeof(loopch)
-  );
-  if ( ret < 0 ) {
-    UDP_printf(
-      "UDP STREAMING Setting IP_MULTICAST_LOOP error %i %s\n",
-      ret, strerror(errno)
-    );
-  } else {
-    UDP_printf("UDP STREAMING enabling the loopback...OK.\n" );
-  }
-  UDP_printf(
-    "Adding multicast group %s:%i on %s...OK.\n",
-    group_address, group_port, local_address
-  );
-#endif
-
-  /* Set local interface for outbound multicast datagrams. */
-  /* The IP address specified must be associated with a local, */
-  /* multicast capable interface. */
-  localInterface.s_addr = inet_addr(local_address);
-  ret = setsockopt(
-    pS->socket_id,
-    IPPROTO_IP,
-    IP_MULTICAST_IF,
-    (char *)&localInterface,
-    sizeof(localInterface)
-  );
-  if ( ret < 0 ) {
-    UDP_printf(
-      "UDP STREAMING Setting local interface(%s) error(%i) : %s\n",
-      local_address, ret, strerror(errno)
-    );
-  } else {
-    UDP_printf(
-      "UDP STREAMING Setting the local interface: %s...OK\n",
-      local_address
-    );
-  }
   return UDP_TRUE;
 }
 
@@ -220,7 +169,6 @@ MultiCast_open_as_sender(
 int
 MultiCast_open_as_listener(
   SocketData * pS,
-  char const   local_address[],
   char const   group_address[],
   int          group_port
 ) {
@@ -230,7 +178,7 @@ MultiCast_open_as_listener(
 
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  if ( pS->socket_id == -1 ) {
+  if ( pS->socket_id < 0 ) {
     UDP_printf("UDP STREAMING Opening datagram socket error: %s\n",strerror(errno));
     return UDP_FALSE;
   } else {
@@ -245,11 +193,13 @@ MultiCast_open_as_listener(
     return UDP_FALSE;
   }
 
+#if 0
   ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEPORT, (char*) &yes, sizeof(yes) );
   if ( ret < 0 ) {
     UDP_printf("UDP STREAMING Reusing PORT failed\n");
     return UDP_FALSE;
   }
+#endif
 
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
   pS->sock_addr.sin_family      = AF_INET;

@@ -145,7 +145,6 @@ extern
 int
 MultiCast_open_as_sender(
   SocketData * pS,
-  char const   local_address[],
   char const   group_address[],
   int          group_port
 );
@@ -154,7 +153,6 @@ extern
 int
 MultiCast_open_as_listener(
   SocketData * pS,
-  char const   local_address[],
   char const   group_address[],
   int          group_port
 );
