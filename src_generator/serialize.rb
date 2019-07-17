@@ -626,7 +626,7 @@ def to_log_write_line( name, hsc )
       res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
       res += "    stream << S.#{n}[i_count] << '\\t';\n"
     else
-      res += "  stream << S.#{n} << ' \\t';\n"
+      res += "  stream << S.#{n} << '\\t';\n"
     end
   end
   res += "  stream << '\\n';\n"
