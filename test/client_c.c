@@ -21,8 +21,6 @@ main() {
   Socket_open_as_client( &socket, "127.0.0.1", 25000 );
   //Socket_check( &socket );
 
-  uint64_t start_time = get_time_ms();
-
   // First message --------------------------
   UDP_printf("\n\nSocket_send ...\n");
   for ( int32_t message_id = 1; message_id <= 10; ++message_id ) {

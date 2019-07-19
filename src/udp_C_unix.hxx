@@ -34,7 +34,9 @@ Socket_open(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id == -1 ) {
-    UDP_printf("error socket %s\n", strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf("error socket %s\n", error_str);
     return UDP_FALSE;
   }
 
@@ -48,7 +50,13 @@ Socket_open(
     sizeof(opt_buflen)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf("error setsockopt: %s\n", strerror(errno));
+    char error_str[1024];
+    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+    strerror_s( error_str, 1024, errno );
+    #else
+    strerror_r( errno, error_str, 1024 );
+    #endif
+    UDP_printf("error setsockopt: %s\n", error_str);
     return UDP_FALSE;
   }
 
@@ -68,7 +76,9 @@ Socket_open(
     sizeof(timeout)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf("error setsockopt: %s\n", strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf("error setsockopt: %s\n",error_str);
     return UDP_FALSE;
   }
   ret = setsockopt(
@@ -79,7 +89,9 @@ Socket_open(
     sizeof(timeout)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf("error setsockopt: %s\n", strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf("error setsockopt: %s\n", error_str);
     return UDP_FALSE;
   }
 
@@ -94,7 +106,9 @@ Socket_open(
       pS->sock_addr_len
     );
     if ( ret == SOCKET_ERROR ) {
-      UDP_printf("error bind: %s\n", strerror(errno));
+      char error_str[1024];
+      strerror_r( errno, error_str, 1024 );
+      UDP_printf("error bind: %s\n",error_str);
       return UDP_FALSE;
     }
   }
@@ -126,7 +140,9 @@ Socket_open(
 int
 Socket_close( SocketData * pS ) {
   if ( close( pS->socket_id ) != 0 ) {
-    UDP_printf("error close: %s\n", strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf("error close: %s\n",error_str);
     return UDP_FALSE;
   }
   return UDP_TRUE;
@@ -149,7 +165,12 @@ MultiCast_open_as_sender(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id < 0 ) {
-    UDP_printf("erUDP STREAMING Opening datagram socket error: %s\n", strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf(
+      "UDP STREAMING Opening datagram socket error: %s\n",
+      error_str
+    );
     return UDP_FALSE;
   } else {
     UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
@@ -179,7 +200,12 @@ MultiCast_open_as_listener(
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
   if ( pS->socket_id < 0 ) {
-    UDP_printf("UDP STREAMING Opening datagram socket error: %s\n",strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf(
+      "UDP STREAMING Opening datagram socket error: %s\n",
+      error_str
+    );
     return UDP_FALSE;
   } else {
     UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
@@ -210,7 +236,12 @@ MultiCast_open_as_listener(
   /* bind to receive address */
   ret = bind( pS->socket_id, (struct sockaddr *) &pS->sock_addr, sizeof(pS->sock_addr) );
   if ( ret < 0 ) {
-    UDP_printf("UDP STREAMING bind socket error: %s",strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf(
+      "UDP STREAMING bind socket error: %s",
+      error_str
+    );
     return UDP_FALSE;
   }
 
@@ -219,7 +250,12 @@ MultiCast_open_as_listener(
   mreq.imr_interface.s_addr = htonl(INADDR_ANY);         
   ret = setsockopt(pS->socket_id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
   if ( ret < 0 ) {
-    UDP_printf("UDP STREAMING setsockopt mreq: %s",strerror(errno));
+    char error_str[1024];
+    strerror_r( errno, error_str, 1024 );
+    UDP_printf(
+      "UDP STREAMING setsockopt mreq: %s",
+      error_str
+    );
     return UDP_FALSE;
   }
   return UDP_TRUE;

@@ -94,16 +94,6 @@ extern
 uint32_t
 Packet_Number( uint32_t packet_size );
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  #include <Winsock2.h>
-#else
-  #include <arpa/inet.h>
-#endif
-
-#include <string.h>
-
-// --------------------------------------------------
-
 /* Get time function (milliseconds) */
 extern uint64_t get_time_ms( void );
 
@@ -113,5 +103,15 @@ extern void sleep_ms( uint32_t time_sleep_ms );
 #ifdef __cplusplus
 }
 #endif
+
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  #include <Winsock2.h>
+#else
+  #include <arpa/inet.h>
+#endif
+
+#include <string.h>
+
+// --------------------------------------------------
 
 #endif

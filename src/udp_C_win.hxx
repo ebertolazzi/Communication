@@ -190,9 +190,11 @@ MultiCast_open_as_sender(
   /* Create a datagram socket on which to send. */
   pS->socket_id = socket( AF_INET, SOCK_DGRAM, 0 );
   if( pS->socket_id < 0) {
+    char error_str[1024];
+    strerror_s( error_str, 1024, errno );
     UDP_printf(
       "UDP STREAMING Opening datagram socket error %s(socket dev %li)\n",
-      strerror(errno), pS->socket_id
+      error_str, pS->socket_id
     );
 	return UDP_FALSE;
   } else {
@@ -207,8 +209,10 @@ MultiCast_open_as_sender(
     (char *)&reuse,
     sizeof(reuse)
   );
-  if ( ret < 0 )    {
-    UDP_printf("Setting SO_REUSEADDR error %s\n",strerror(errno));
+  if ( ret < 0 ) {
+    char error_str[1024];
+    strerror_s( error_str, 1024, errno );
+    UDP_printf("Setting SO_REUSEADDR error %s\n",error_str);
     closesocket(pS->socket_id);
     exit(1);
   } else {
@@ -234,9 +238,11 @@ MultiCast_open_as_sender(
     sizeof(loopch)
   );
   if ( ret < 0 ) {
+    char error_str[1024];
+    strerror_s( error_str, 1024, errno );
     UDP_printf(
       "UDP STREAMING Setting IP_MULTICAST_LOOP error %li %s\n",
-      ret, strerror(errno)
+      ret, error_str
     );
   } else {
     UDP_printf("UDP STREAMING enabling the loopback...OK.\n" );

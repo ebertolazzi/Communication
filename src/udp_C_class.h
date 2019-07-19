@@ -18,10 +18,6 @@
   #endif
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -38,6 +34,10 @@ extern "C" {
   #include <cstddef>
 #else
   #define nullptr NULL
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /*\

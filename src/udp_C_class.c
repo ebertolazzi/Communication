@@ -101,8 +101,14 @@ Socket_send_raw(
   if ( n_byte_sent == (ssize_t)message_size ) {
     return UDP_TRUE;
   } else {
+    char error_str[1024];
+    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+    strerror_s( error_str, 1024, errno );
+    #else
+    strerror_r( errno, error_str, 1024 );
+    #endif
     UDP_printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
-    UDP_printf("[error] %s\n",strerror(errno));
+    UDP_printf("[error] %s\n",error_str);
     return UDP_FALSE;
   }
 }
@@ -206,7 +212,13 @@ Socket_send(
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
     if ( isend == SOCKET_ERROR ) {
-      UDP_printf("error sendto: %s\n",strerror(errno));
+      char error_str[1024];
+      #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+      strerror_s( error_str, 1024, errno );
+      #else
+      strerror_r( errno, error_str, 1024 );
+      #endif
+      UDP_printf("error sendto: %s\n",error_str);
       return UDP_FALSE;
     }
     #endif

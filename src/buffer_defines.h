@@ -40,6 +40,10 @@ extern uint32_t buffer_to_int64 ( uint8_t const buffer[8], int64_t  * out );
 extern uint32_t buffer_to_float ( uint8_t const buffer[8], float    * out );
 extern uint32_t buffer_to_double( uint8_t const buffer[8], double   * out );
 
+#ifdef __cplusplus
+}
+#endif
+
 #ifdef MATLAB_MEX_FILE
   #include "simstruc.h"
   #ifdef SS_STDIO_AVAILABLE
@@ -51,10 +55,6 @@ extern uint32_t buffer_to_double( uint8_t const buffer[8], double   * out );
 
 #ifndef UDP_printf
   #define UDP_printf printf
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

@@ -1,9 +1,5 @@
 #include "udp_defines.h"
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
 #ifndef UDP_TRUE
   #define UDP_TRUE 1
 #endif
@@ -14,11 +10,16 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #include <Winsock2.h>
 #else
   #include <arpa/inet.h>
+#endif
+
+#ifdef __cplusplus
+  extern "C" {
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
