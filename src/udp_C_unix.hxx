@@ -50,13 +50,13 @@ Socket_open(
     sizeof(opt_buflen)
   );
   if ( ret == SOCKET_ERROR ) {
-    char error_str[1024];
     #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-    strerror_s( error_str, 1024, errno );
+    UDP_CheckError();
     #else
+    char error_str[1024];
     strerror_r( errno, error_str, 1024 );
-    #endif
     UDP_printf("error setsockopt: %s\n", error_str);
+    #endif
     return UDP_FALSE;
   }
 

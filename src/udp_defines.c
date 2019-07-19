@@ -83,7 +83,7 @@ Packet_Add_to_buffer(
   // sanity check
   UDP_printf("Packet_Add_to_buffer 1\n");
   int32_t offs = pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE;
-  if ( offs < 0 || offs+pk->sub_message_size >= buffer_max_size ) {
+  if ( offs < 0 || offs+pk->sub_message_size >= (int32_t)buffer_max_size ) {
     UDP_printf(
       "Packet_Add_to_buffer, wrong sub_message_position (%d)\n",
       pk->sub_message_position

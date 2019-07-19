@@ -84,6 +84,35 @@ Socket_open_addr(
  | Send message function
 \*/
 
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+int
+Socket_send_raw(
+  SocketData *  pS,
+  uint8_t const message[],
+  uint32_t      message_size
+) {
+  int n_byte_sent = sendto(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    0,
+    (struct sockaddr *) &pS->sock_addr,
+    pS->sock_addr_len
+  );
+  if ( n_byte_sent == (ssize_t)message_size ) {
+    return UDP_TRUE;
+  } else {
+    char msg[1024];
+    sprintf_s(
+      msg, 1024,
+      "try to send %i bytes, sendto return %i",
+      message_size,n_byte_sent
+    );
+    UDP_CheckError( msg );
+    return UDP_FALSE;
+  }
+}
+#else
 int
 Socket_send_raw(
   SocketData *  pS,
@@ -102,16 +131,14 @@ Socket_send_raw(
     return UDP_TRUE;
   } else {
     char error_str[1024];
-    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-    strerror_s( error_str, 1024, errno );
-    #else
     strerror_r( errno, error_str, 1024 );
-    #endif
-    UDP_printf("[error] sent %zi bytes of %i\n",n_byte_sent,message_size);
-    UDP_printf("[error] %s\n",error_str);
+    UDP_printf(
+      "[error] sent %li bytes of %i\n%s", n_byte_sent, message_size, error_str
+    );
     return UDP_FALSE;
   }
 }
+#endif
 
 /*\
  | Send message function
@@ -184,9 +211,7 @@ Socket_send(
         socket_elapsed_time = get_time_ms() - socket_start_time;
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
              socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) {
-          UDP_printf(
-            "sendto() failed. Error Code: %d\n", WSAGetLastError()
-          );
+          UDP_CheckError( "sendto() failed" );
           return UDP_FALSE;
         }
       } else {
@@ -201,7 +226,7 @@ Socket_send(
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
     if ( isend == SOCKET_ERROR ) {
-      UDP_printf( "sendto() failed. Error Code: %d\n", WSAGetLastError() );
+      UDP_CheckError( "sendto() failed" );
       return UDP_FALSE;
     }
     #elif defined(__MACH__) || defined(__linux__)
@@ -212,13 +237,13 @@ Socket_send(
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
     if ( isend == SOCKET_ERROR ) {
-      char error_str[1024];
       #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-      strerror_s( error_str, 1024, errno );
+      UDP_CheckError( "error sendto" );
       #else
+      char error_str[1024];
       strerror_r( errno, error_str, 1024 );
-      #endif
       UDP_printf("error sendto: %s\n",error_str);
+      #endif
       return UDP_FALSE;
     }
     #endif

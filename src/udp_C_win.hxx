@@ -9,6 +9,28 @@
 
 #pragma comment (lib, "Ws2_32.lib")
 
+static
+void
+UDP_CheckError( char const msg[] ) {
+  // Get the error message, if any.
+  DWORD errorMessageID = WSAGetLastError();
+  if ( errorMessageID == 0 ) return ; // No error message has been recorded
+  LPSTR messageBuffer = NULL;
+  size_t size = FormatMessageA(
+    FORMAT_MESSAGE_ALLOCATE_BUFFER |
+    FORMAT_MESSAGE_FROM_SYSTEM |
+    FORMAT_MESSAGE_IGNORE_INSERTS,
+    NULL,
+    errorMessageID,
+    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+    (LPSTR)&messageBuffer,
+    0,
+    NULL
+  );
+  UDP_printf("[%s]\n%s", msg, messageBuffer);
+  LocalFree(messageBuffer);
+}
+
 /*\
  |   ____             _        _
  |  / ___|  ___   ___| | _____| |_
@@ -43,14 +65,14 @@ Socket_open(
   pS->socket_id = 0;
 
   if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
-    UDP_printf( "WSAStartup() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: WSAStartup() failed" );
     return UDP_FALSE;
   }
 
   pS->socket_id = (int)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
   if ( pS->socket_id == INVALID_SOCKET) {
-    UDP_printf( "socket() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: socket() failed" );
     return UDP_FALSE;
   }
 
@@ -75,7 +97,7 @@ Socket_open(
     sizeof(opt_buflen)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: setsockopt() failed" );
     return UDP_FALSE;
   }
 
@@ -91,7 +113,7 @@ Socket_open(
   nonblock = 1;
   ret = ioctlsocket( pS->socket_id, FIONBIO, &nonblock);
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf( "ioctlsocket() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: ioctlsocket() failed");
     return UDP_FALSE;
   }
   #else
@@ -104,7 +126,7 @@ Socket_open(
     sizeof(DWORD)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: setsockopt() failed" );
     return UDP_FALSE;
   }
   ret = setsockopt(
@@ -115,7 +137,7 @@ Socket_open(
     sizeof(DWORD)
   );
   if ( ret == SOCKET_ERROR ) {
-    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: setsockopt() failed" );
     return UDP_FALSE;
   }
   #endif
@@ -131,7 +153,7 @@ Socket_open(
       sizeof(pS->sock_addr)
     );
     if ( ret == SOCKET_ERROR ) {
-      UDP_printf( "bind() failed. Error Code: %d\n", WSAGetLastError() );
+      UDP_CheckError( "error: bind() failed" );
       return UDP_FALSE;
     }
   }
@@ -145,7 +167,7 @@ Socket_open(
 int
 Socket_close( SocketData * pS ) {
   if ( closesocket(pS->socket_id) == SOCKET_ERROR ) {
-    UDP_printf( "setsockopt() failed. Error Code: %d\n", WSAGetLastError() );
+    UDP_CheckError( "error: setsockopt() failed" );
     WSACleanup();
     return UDP_FALSE;
   }
@@ -162,9 +184,69 @@ Socket_close( SocketData * pS ) {
 \*/
 
 int
+MultiCast_open_as_listener(
+  SocketData * pS,
+  char const   group_address[],
+  int          group_port
+) {
+
+  int            ret, yes;
+  struct ip_mreq mreq;
+
+  /* Create UDP socket */
+  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  if ( pS->socket_id < 0 ) {
+    UDP_CheckError("UDP STREAMING Opening datagram socket error");
+    return UDP_FALSE;
+  } else {
+    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
+  }
+
+  /* allow multiple sockets to use the same PORT number */
+  yes = 1;
+  ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEADDR, (char*) &yes, sizeof(yes) );
+  if ( ret < 0 ) {
+    UDP_CheckError("UDP STREAMING Reusing ADDR failed");
+    return UDP_FALSE;
+  }
+
+#if 0
+  ret = setsockopt( pS->socket_id, SOL_SOCKET, SO_REUSEPORT, (char*) &yes, sizeof(yes) );
+  if ( ret < 0 ) {
+    UDP_printf("UDP STREAMING Reusing PORT failed\n");
+    return UDP_FALSE;
+  }
+#endif
+
+  memset((char *)&pS->sock_addr, 0, sizeof(pS->sock_addr));
+  pS->sock_addr.sin_family      = AF_INET;
+  pS->sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  pS->sock_addr.sin_port        = htons(group_port);
+  pS->sock_addr_len             = sizeof(pS->sock_addr);
+
+  /* bind to receive address */
+  ret = bind( pS->socket_id, (struct sockaddr *) &pS->sock_addr, sizeof(pS->sock_addr) );
+  if ( ret < 0 ) {
+    UDP_CheckError("UDP STREAMING bind socket error");
+    return UDP_FALSE;
+  }
+
+  /* Preparatios for using Multicast */
+  mreq.imr_multiaddr.s_addr = inet_addr(group_address);
+  mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+  ret = setsockopt(pS->socket_id, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+  if ( ret < 0 ) {
+    UDP_CheckError("UDP STREAMING setsockopt mreq");
+    return UDP_FALSE;
+  }
+  return UDP_TRUE;
+}
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+int
 MultiCast_open_as_sender(
   SocketData * pS,
-  char const   local_address[],
   char const   group_address[],
   int          group_port
 ) {
@@ -190,13 +272,8 @@ MultiCast_open_as_sender(
   /* Create a datagram socket on which to send. */
   pS->socket_id = socket( AF_INET, SOCK_DGRAM, 0 );
   if( pS->socket_id < 0) {
-    char error_str[1024];
-    strerror_s( error_str, 1024, errno );
-    UDP_printf(
-      "UDP STREAMING Opening datagram socket error %s(socket dev %li)\n",
-      error_str, pS->socket_id
-    );
-	return UDP_FALSE;
+    UDP_CheckError("UDP STREAMING Opening datagram socket error");
+    return UDP_FALSE;
   } else {
     UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
   }
@@ -210,9 +287,7 @@ MultiCast_open_as_sender(
     sizeof(reuse)
   );
   if ( ret < 0 ) {
-    char error_str[1024];
-    strerror_s( error_str, 1024, errno );
-    UDP_printf("Setting SO_REUSEADDR error %s\n",error_str);
+    UDP_CheckError("error: Setting SO_REUSEADDR");
     closesocket(pS->socket_id);
     exit(1);
   } else {
@@ -238,18 +313,13 @@ MultiCast_open_as_sender(
     sizeof(loopch)
   );
   if ( ret < 0 ) {
-    char error_str[1024];
-    strerror_s( error_str, 1024, errno );
-    UDP_printf(
-      "UDP STREAMING Setting IP_MULTICAST_LOOP error %li %s\n",
-      ret, error_str
-    );
+    UDP_CheckError("UDP STREAMING Setting IP_MULTICAST_LOOP error");
   } else {
     UDP_printf("UDP STREAMING enabling the loopback...OK.\n" );
   }
   UDP_printf(
-    "Adding multicast group %s:%li on %s...OK.\n",
-    group_address, group_port, local_address
+    "Adding multicast group %s:%li...OK.\n",
+    group_address, group_port
   );
 
   return UDP_TRUE;

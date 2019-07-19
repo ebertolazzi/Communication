@@ -100,12 +100,16 @@ def generate_c_body( tag, value )
 #include <stdio.h>
 #include <string.h>
 
-#ifdef __clang__
-#pragma clang diagnostic ignored "-Wdouble-promotion"
-#elif __llvm__
-#pragma GCC diagnostic ignored "-Wdouble-promotion"
+#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+
 #else
-#pragma GCC diagnostic ignored "-Wdouble-promotion"
+  #ifdef __clang__
+  #pragma clang diagnostic ignored "-Wdouble-promotion"
+  #elif __llvm__
+  #pragma GCC diagnostic ignored "-Wdouble-promotion"
+  #else
+  #pragma GCC diagnostic ignored "-Wdouble-promotion"
+  #endif
 #endif
 
 #ifdef __cplusplus
