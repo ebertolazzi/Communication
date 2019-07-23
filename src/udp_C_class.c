@@ -28,6 +28,7 @@ extern "C" {
 void
 Socket_new( SocketData * pS ) {
   pS->socket_id  = -1;
+  pS->connected  = UDP_FALSE;
   pS->timeout_ms = UDP_APP_TIMEOUT_MS;
 }
 
@@ -39,125 +40,6 @@ Socket_check( SocketData * pS ) {
     UDP_printf( "Socket not opened\n" );
     exit(-1);
   }
-}
-
-void
-Socket_open_as_client(
-  SocketData * pS,
-  char const   addr[],
-  int          port
-) {
-  Socket_open_addr( pS, addr, port );
-  Socket_open( pS, UDP_FALSE );
-}
-
-void
-Socket_open_as_server( SocketData * pS, int port ) {
-  Socket_open_addr( pS, nullptr, port );
-  Socket_open( pS, UDP_TRUE );
-}
-
-void
-Socket_open_addr(
-  SocketData * pS,
-  char const   addr[],
-  int          port
-) {
-  /* Clear the address structures */
-  memset( &pS->sock_addr, 0, sizeof(pS->sock_addr) );
-  pS->sock_addr_len = sizeof(pS->sock_addr);
-  /* Set the address structures */
-  pS->sock_addr.sin_family = AF_INET;
-  pS->sock_addr.sin_port   = port;
-  if ( addr == nullptr ) {
-    pS->sock_addr.sin_addr.s_addr = INADDR_ANY;
-  } else {
-    #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-    InetPton( AF_INET, addr, (PVOID)pS->sock_addr.sin_addr.s_addr );
-    #else
-    pS->sock_addr.sin_addr.s_addr = inet_addr(addr);
-    #endif
-  }
-}
-
-/*\
- | Send message function
-\*/
-
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-int
-Socket_send_raw(
-  SocketData *  pS,
-  uint8_t const message[],
-  uint32_t      message_size
-) {
-  int n_byte_sent = sendto(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    0,
-    (struct sockaddr *) &pS->sock_addr,
-    pS->sock_addr_len
-  );
-  if ( n_byte_sent == (ssize_t)message_size ) {
-    return UDP_TRUE;
-  } else {
-    char msg[1024];
-    sprintf_s(
-      msg, 1024,
-      "try to send %i bytes, sendto return %i",
-      message_size,n_byte_sent
-    );
-    UDP_CheckError( msg );
-    return UDP_FALSE;
-  }
-}
-#else
-int
-Socket_send_raw(
-  SocketData *  pS,
-  uint8_t const message[],
-  uint32_t      message_size
-) {
-  ssize_t n_byte_sent = sendto(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    0,
-    (struct sockaddr *) &pS->sock_addr,
-    pS->sock_addr_len
-  );
-  if ( n_byte_sent == (ssize_t)message_size ) {
-    return UDP_TRUE;
-  } else {
-    char error_str[1024];
-    strerror_r( errno, error_str, 1024 );
-    UDP_printf(
-      "[error] sent %li bytes of %i\n%s", n_byte_sent, message_size, error_str
-    );
-    return UDP_FALSE;
-  }
-}
-#endif
-
-/*\
- | Send message function
-\*/
-
-/* return number of bytes received or -1 */
-int
-Socket_receive_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
-) {
-  return (int)recvfrom(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    0,
-    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
-  );
 }
 
 /*\
@@ -174,7 +56,7 @@ Socket_send(
 
   uint32_t        n_packets;
   datagram_part_t packet;
-  uint32_t        ipos;
+  uint16_t        ipos;
   ssize_t         isend;
 
   #if defined(WIN_NONBLOCK)
@@ -346,7 +228,7 @@ Socket_receive(
 
   if ( pi.received_packets == pi.n_packets ) {
     *p_message_id  = pi.datagram_id;
-    *p_message_len = pi.total_message_size;
+    *p_message_len = (int32_t)pi.total_message_size;
     #ifdef DEBUG_UDP
     UDP_printf(
       "Received message of %d packets from %s:%d\n",
@@ -368,14 +250,6 @@ Socket_receive(
   }
 
 }
-
-/*\
- |   __  __       _ _   _               _
- |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
- |  | |\/| | | | | | __| |/ __/ _` / __| __|
- |  | |  | | |_| | | |_| | (_| (_| \__ \ |_
- |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
-\*/
 
 #ifdef __cplusplus
 }

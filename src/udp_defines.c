@@ -145,12 +145,12 @@ Packet_Build_from_buffer(
   int32_t           datagram_id,
   datagram_part_t * pk
 ) {
-  uint32_t residual = packet_size - pos * UDP_DATAGRAM_MESSAGE_SIZE;
+  uint32_t ppos = pos * UDP_DATAGRAM_MESSAGE_SIZE;
   pk->datagram_id          = datagram_id;
   pk->total_message_size   = packet_size;
   pk->sub_message_position = pos;
   pk->sub_message_size     = UDP_DATAGRAM_MESSAGE_SIZE;
-  if ( pk->sub_message_size > residual ) pk->sub_message_size = residual;
+  if ( pk->sub_message_size + ppos > packet_size ) pk->sub_message_size = (uint16_t)(packet_size - ppos);
   memcpy(
     pk->message,
     buffer + pos * UDP_DATAGRAM_MESSAGE_SIZE,

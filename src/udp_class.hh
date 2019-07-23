@@ -49,8 +49,8 @@ public:
   Socket();
 
   void
-  open_as_client( char const addr[], int port )
-  { Socket_open_as_client( &data, addr, port ); }
+  open_as_client( char const addr[], int port, bool conn )
+  { Socket_open_as_client( &data, addr, port, (conn?UDP_TRUE:UDP_FALSE) ); }
 
   void
   open_as_server( int port )

@@ -16,6 +16,10 @@ extern "C" {
   #include "ds1401_defines.h"
 #endif
 
+#ifndef UDP_MTU_MAX_MAX_BYTES
+  #define UDP_MTU_MAX_MAX_BYTES 65536  // Maximum packet bytes
+#endif
+
 #ifndef UDP_MTU_MAX_BYTES
   #define UDP_MTU_MAX_BYTES 1472  // Maximum packet bytes
 #endif
