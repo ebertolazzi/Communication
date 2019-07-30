@@ -18,7 +18,7 @@ main() {
   // Create and set UDP
   SocketData socket;
   Socket_new( &socket );
-  Socket_open_as_client( &socket, "127.0.0.1", 25000 );
+  Socket_open_as_client( &socket, "127.0.0.1", 25000, UDP_TRUE );
   //Socket_check( &socket );
 
   // First message --------------------------

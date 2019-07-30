@@ -11,11 +11,12 @@
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   typedef int socklen_t;
 #else
-  #ifdef __linux__
-    #include <linux/types.h>
-  #else
-    #include <sys/kernel_types.h>
-  #endif
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #include <time.h>
 #endif
 
 #include <stdlib.h>

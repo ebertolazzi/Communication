@@ -23,10 +23,44 @@
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  #include "udp_defines_win.hxx"
+
+  uint64_t
+  get_time_ms() {
+    uint64_t time_ms;
+    LARGE_INTEGER time_query;
+    LARGE_INTEGER frequency;
+
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&time_query);
+    time_query.QuadPart *= 1000000;
+    time_ms = (time_query.QuadPart / frequency.QuadPart) / 1000;
+    return time_ms;
+  }
+
+  void
+  sleep_ms( uint32_t time_sleep_ms )
+  { Sleep(time_sleep_ms); }
+
   typedef int ssize_t;
+
 #else
-  #include "udp_defines_unix.hxx"
+
+  #include <sys/time.h>
+  #include <unistd.h>
+
+  uint64_t
+  get_time_ms() {
+    uint64_t time_ms;
+    struct timeval time_get;
+    gettimeofday(&time_get, NULL);
+    time_ms = (uint64_t) (time_get.tv_sec*1000 + time_get.tv_usec/1000);
+    return time_ms;
+  }
+
+  void
+  sleep_ms( uint32_t time_sleep_ms )
+  { usleep(time_sleep_ms*1000); }
+
 #endif
 
 void

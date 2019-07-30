@@ -10,11 +10,11 @@ extern "C" {
 #endif
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  #include "udp_C_win.hxx"
+  #include "udp_C_win_code.h"
   #include <Ws2tcpip.h>
   typedef int ssize_t;
 #else
-  #include "udp_C_unix.hxx"
+  #include "udp_C_unix_code.h"
 #endif
 
 /*\
@@ -89,7 +89,7 @@ Socket_send(
         0,
         (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
       );
-      if ( isend == SOCKET_ERROR ) {
+      if ( isend < 0 ) {
         socket_elapsed_time = get_time_ms() - socket_start_time;
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
              socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) {
@@ -107,7 +107,7 @@ Socket_send(
       0,
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
-    if ( isend == SOCKET_ERROR ) {
+    if ( isend < 0 ) {
       UDP_CheckError( "sendto() failed" );
       return UDP_FALSE;
     }
@@ -118,7 +118,7 @@ Socket_send(
       0,
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
-    if ( isend == SOCKET_ERROR ) {
+    if ( isend < 0 ) {
       #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
       UDP_CheckError( "error sendto" );
       #else
@@ -182,7 +182,7 @@ Socket_receive(
       );
       socket_elapsed_time = get_time_ms() - socket_start_time;
 
-      if ( recv_bytes == SOCKET_ERROR ) {
+      if ( recv_bytes < ) {
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
              socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) break;
       } else {
@@ -203,14 +203,7 @@ Socket_receive(
     );
     #endif
 
-    #if defined(WIN_NONBLOCK)
-    if ( recv_bytes != SOCKET_ERROR )
-    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-    if ( recv_bytes != SOCKET_ERROR)
-    #elif defined(__MACH__) || defined(__linux__)
-    if ( recv_bytes > 0 )
-    #endif
-    {
+    if ( recv_bytes > 0 ) {
       /* deserializza */
       buffer_to_datagram_part( data_buffer, &packet );
       Packet_Add_to_buffer( &pi, &packet, message, message_max_size );
