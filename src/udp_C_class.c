@@ -3,13 +3,12 @@
  ============================================================================ */
 
 #include "udp_C_class.h"
-#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+#ifdef UDP_ON_WINDOWS
   #include "udp_C_win_code.h"
   #include <Ws2tcpip.h>
   typedef int ssize_t;
@@ -213,7 +212,7 @@ Socket_receive(
 
     if ( pi.received_packets == pi.n_packets && pi.n_packets > 0 ) break;
 
-    // Calculate elapsed time
+    /* Calculate elapsed time */
     if ( start_time_ms != 0 )
       elapsed_time_ms = get_time_ms() - start_time_ms;
 

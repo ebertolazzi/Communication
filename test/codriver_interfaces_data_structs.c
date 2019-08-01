@@ -6,7 +6,6 @@
 
 #include "udp_defines.h"
 #include "codriver_interfaces_data_structs.h"
-#include <stdio.h>
 
 #ifdef __cplusplus
   extern "C" {

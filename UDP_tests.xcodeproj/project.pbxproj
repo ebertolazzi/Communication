@@ -15,26 +15,26 @@
 		D933D46621AE963B0060EA19 /* server_cpp.cc in Sources */ = {isa = PBXBuildFile; fileRef = D933D43221AE928C0060EA19 /* server_cpp.cc */; };
 		D933D47121AE96890060EA19 /* codriver_interfaces_data_structs.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D43A21AE92D80060EA19 /* codriver_interfaces_data_structs.c */; };
 		D933D47221AE96890060EA19 /* codriver_interfaces_data_structs.c in Sources */ = {isa = PBXBuildFile; fileRef = D933D43A21AE92D80060EA19 /* codriver_interfaces_data_structs.c */; };
-		D98375A722B4526F0057939C /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D983758F22B4526F0057939C /* udp_C_class.c */; };
-		D98375A822B4526F0057939C /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D983758F22B4526F0057939C /* udp_C_class.c */; };
-		D98375A922B4526F0057939C /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D983758F22B4526F0057939C /* udp_C_class.c */; };
-		D98375AA22B4526F0057939C /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D983758F22B4526F0057939C /* udp_C_class.c */; };
-		D98375AB22B4526F0057939C /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759122B4526F0057939C /* buffer_defines_hton.c */; };
-		D98375AC22B4526F0057939C /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759122B4526F0057939C /* buffer_defines_hton.c */; };
-		D98375AD22B4526F0057939C /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759122B4526F0057939C /* buffer_defines_hton.c */; };
-		D98375AE22B4526F0057939C /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759122B4526F0057939C /* buffer_defines_hton.c */; };
-		D98375AF22B4526F0057939C /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D983759322B4526F0057939C /* udp_class.cc */; };
-		D98375B022B4526F0057939C /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D983759322B4526F0057939C /* udp_class.cc */; };
-		D98375B122B4526F0057939C /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D983759322B4526F0057939C /* udp_class.cc */; };
-		D98375B222B4526F0057939C /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D983759322B4526F0057939C /* udp_class.cc */; };
-		D98375B322B4526F0057939C /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759422B4526F0057939C /* udp_defines.c */; };
-		D98375B422B4526F0057939C /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759422B4526F0057939C /* udp_defines.c */; };
-		D98375B522B4526F0057939C /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759422B4526F0057939C /* udp_defines.c */; };
-		D98375B622B4526F0057939C /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759422B4526F0057939C /* udp_defines.c */; };
-		D98375B722B4526F0057939C /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759522B4526F0057939C /* buffer_defines_ntoh.c */; };
-		D98375B822B4526F0057939C /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759522B4526F0057939C /* buffer_defines_ntoh.c */; };
-		D98375B922B4526F0057939C /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759522B4526F0057939C /* buffer_defines_ntoh.c */; };
-		D98375BA22B4526F0057939C /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D983759522B4526F0057939C /* buffer_defines_ntoh.c */; };
+		D9DE0B2822F35B0A00C08382 /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2022F35B0A00C08382 /* udp_C_class.c */; };
+		D9DE0B2922F35B0A00C08382 /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2022F35B0A00C08382 /* udp_C_class.c */; };
+		D9DE0B2A22F35B0A00C08382 /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2022F35B0A00C08382 /* udp_C_class.c */; };
+		D9DE0B2B22F35B0A00C08382 /* udp_C_class.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2022F35B0A00C08382 /* udp_C_class.c */; };
+		D9DE0B2C22F35B0A00C08382 /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */; };
+		D9DE0B2D22F35B0A00C08382 /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */; };
+		D9DE0B2E22F35B0A00C08382 /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */; };
+		D9DE0B2F22F35B0A00C08382 /* buffer_defines_hton.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */; };
+		D9DE0B3022F35B0A00C08382 /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2422F35B0A00C08382 /* udp_class.cc */; };
+		D9DE0B3122F35B0A00C08382 /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2422F35B0A00C08382 /* udp_class.cc */; };
+		D9DE0B3222F35B0A00C08382 /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2422F35B0A00C08382 /* udp_class.cc */; };
+		D9DE0B3322F35B0A00C08382 /* udp_class.cc in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2422F35B0A00C08382 /* udp_class.cc */; };
+		D9DE0B3422F35B0A00C08382 /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2522F35B0A00C08382 /* udp_defines.c */; };
+		D9DE0B3522F35B0A00C08382 /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2522F35B0A00C08382 /* udp_defines.c */; };
+		D9DE0B3622F35B0A00C08382 /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2522F35B0A00C08382 /* udp_defines.c */; };
+		D9DE0B3722F35B0A00C08382 /* udp_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2522F35B0A00C08382 /* udp_defines.c */; };
+		D9DE0B3822F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */; };
+		D9DE0B3922F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */; };
+		D9DE0B3A22F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */; };
+		D9DE0B3B22F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -87,26 +87,17 @@
 		D933D44121AE93710060EA19 /* client_cpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = client_cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		D933D45321AE96090060EA19 /* server_c */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = server_c; sourceTree = BUILT_PRODUCTS_DIR; };
 		D933D45E21AE96260060EA19 /* server_cpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = server_cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		D983758D22B4526F0057939C /* udp_class.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_class.hh; sourceTree = "<group>"; };
-		D983758E22B4526F0057939C /* udp_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_defines.h; sourceTree = "<group>"; };
-		D983758F22B4526F0057939C /* udp_C_class.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udp_C_class.c; sourceTree = "<group>"; };
-		D983759022B4526F0057939C /* buffer_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer_defines.h; sourceTree = "<group>"; };
-		D983759122B4526F0057939C /* buffer_defines_hton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer_defines_hton.c; sourceTree = "<group>"; };
-		D983759222B4526F0057939C /* udp_defines_unix.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_defines_unix.hxx; sourceTree = "<group>"; };
-		D983759322B4526F0057939C /* udp_class.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp_class.cc; sourceTree = "<group>"; };
-		D983759422B4526F0057939C /* udp_defines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udp_defines.c; sourceTree = "<group>"; };
-		D983759522B4526F0057939C /* buffer_defines_ntoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer_defines_ntoh.c; sourceTree = "<group>"; };
-		D983759622B4526F0057939C /* udp_C_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_C_class.h; sourceTree = "<group>"; };
-		D983759722B4526F0057939C /* udp_C_win.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_C_win.hxx; sourceTree = "<group>"; };
-		D983759822B4526F0057939C /* udp_C_unix.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_C_unix.hxx; sourceTree = "<group>"; };
-		D983759922B4526F0057939C /* udp_defines_win.hxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_defines_win.hxx; sourceTree = "<group>"; };
-		D983759D22B4526F0057939C /* udp_C_class.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = udp_C_class.ipch; sourceTree = "<group>"; };
-		D983759E22B4526F0057939C /* mmap_address.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = mmap_address.bin; sourceTree = "<group>"; };
-		D98375A022B4526F0057939C /* mmap_address.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = mmap_address.bin; sourceTree = "<group>"; };
-		D98375A222B4526F0057939C /* udp_class.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = udp_class.ipch; sourceTree = "<group>"; };
-		D98375A322B4526F0057939C /* mmap_address.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = mmap_address.bin; sourceTree = "<group>"; };
-		D98375A522B4526F0057939C /* udp_C_unix.ipch */ = {isa = PBXFileReference; lastKnownFileType = file; path = udp_C_unix.ipch; sourceTree = "<group>"; };
-		D98375A622B4526F0057939C /* mmap_address.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = mmap_address.bin; sourceTree = "<group>"; };
+		D9DE0B1D22F35B0A00C08382 /* udp_class.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = udp_class.hh; sourceTree = "<group>"; };
+		D9DE0B1E22F35B0A00C08382 /* udp_C_win_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_C_win_code.h; sourceTree = "<group>"; };
+		D9DE0B1F22F35B0A00C08382 /* udp_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_defines.h; sourceTree = "<group>"; };
+		D9DE0B2022F35B0A00C08382 /* udp_C_class.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udp_C_class.c; sourceTree = "<group>"; };
+		D9DE0B2122F35B0A00C08382 /* udp_C_unix_code.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_C_unix_code.h; sourceTree = "<group>"; };
+		D9DE0B2222F35B0A00C08382 /* buffer_defines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer_defines.h; sourceTree = "<group>"; };
+		D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer_defines_hton.c; sourceTree = "<group>"; };
+		D9DE0B2422F35B0A00C08382 /* udp_class.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = udp_class.cc; sourceTree = "<group>"; };
+		D9DE0B2522F35B0A00C08382 /* udp_defines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = udp_defines.c; sourceTree = "<group>"; };
+		D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer_defines_ntoh.c; sourceTree = "<group>"; };
+		D9DE0B2722F35B0A00C08382 /* udp_C_class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = udp_C_class.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,7 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				D933D40521AE89BF0060EA19 /* Products */,
-				D983758C22B4526F0057939C /* src */,
+				D9DE0B1C22F35B0A00C08382 /* src */,
 				D933D43121AE928C0060EA19 /* test */,
 			);
 			sourceTree = "<group>";
@@ -174,79 +165,22 @@
 			path = test;
 			sourceTree = SOURCE_ROOT;
 		};
-		D983758C22B4526F0057939C /* src */ = {
+		D9DE0B1C22F35B0A00C08382 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				D983759022B4526F0057939C /* buffer_defines.h */,
-				D983759122B4526F0057939C /* buffer_defines_hton.c */,
-				D983759522B4526F0057939C /* buffer_defines_ntoh.c */,
-				D983758E22B4526F0057939C /* udp_defines.h */,
-				D983759422B4526F0057939C /* udp_defines.c */,
-				D983759822B4526F0057939C /* udp_C_unix.hxx */,
-				D983759722B4526F0057939C /* udp_C_win.hxx */,
-				D983759622B4526F0057939C /* udp_C_class.h */,
-				D983758F22B4526F0057939C /* udp_C_class.c */,
-				D983759222B4526F0057939C /* udp_defines_unix.hxx */,
-				D983759922B4526F0057939C /* udp_defines_win.hxx */,
-				D983758D22B4526F0057939C /* udp_class.hh */,
-				D983759322B4526F0057939C /* udp_class.cc */,
-				D983759A22B4526F0057939C /* .vscode */,
+				D9DE0B2222F35B0A00C08382 /* buffer_defines.h */,
+				D9DE0B1D22F35B0A00C08382 /* udp_class.hh */,
+				D9DE0B2422F35B0A00C08382 /* udp_class.cc */,
+				D9DE0B1F22F35B0A00C08382 /* udp_defines.h */,
+				D9DE0B2522F35B0A00C08382 /* udp_defines.c */,
+				D9DE0B2722F35B0A00C08382 /* udp_C_class.h */,
+				D9DE0B2022F35B0A00C08382 /* udp_C_class.c */,
+				D9DE0B2122F35B0A00C08382 /* udp_C_unix_code.h */,
+				D9DE0B1E22F35B0A00C08382 /* udp_C_win_code.h */,
+				D9DE0B2322F35B0A00C08382 /* buffer_defines_hton.c */,
+				D9DE0B2622F35B0A00C08382 /* buffer_defines_ntoh.c */,
 			);
 			path = src;
-			sourceTree = "<group>";
-		};
-		D983759A22B4526F0057939C /* .vscode */ = {
-			isa = PBXGroup;
-			children = (
-				D983759B22B4526F0057939C /* ipch */,
-			);
-			path = .vscode;
-			sourceTree = "<group>";
-		};
-		D983759B22B4526F0057939C /* ipch */ = {
-			isa = PBXGroup;
-			children = (
-				D983759C22B4526F0057939C /* 7fafce4650c37025 */,
-				D983759F22B4526F0057939C /* 76013276b592a7e */,
-				D98375A122B4526F0057939C /* 63de609d8508a750 */,
-				D98375A422B4526F0057939C /* 78d436688cd38e96 */,
-			);
-			path = ipch;
-			sourceTree = "<group>";
-		};
-		D983759C22B4526F0057939C /* 7fafce4650c37025 */ = {
-			isa = PBXGroup;
-			children = (
-				D983759D22B4526F0057939C /* udp_C_class.ipch */,
-				D983759E22B4526F0057939C /* mmap_address.bin */,
-			);
-			path = 7fafce4650c37025;
-			sourceTree = "<group>";
-		};
-		D983759F22B4526F0057939C /* 76013276b592a7e */ = {
-			isa = PBXGroup;
-			children = (
-				D98375A022B4526F0057939C /* mmap_address.bin */,
-			);
-			path = 76013276b592a7e;
-			sourceTree = "<group>";
-		};
-		D98375A122B4526F0057939C /* 63de609d8508a750 */ = {
-			isa = PBXGroup;
-			children = (
-				D98375A222B4526F0057939C /* udp_class.ipch */,
-				D98375A322B4526F0057939C /* mmap_address.bin */,
-			);
-			path = 63de609d8508a750;
-			sourceTree = "<group>";
-		};
-		D98375A422B4526F0057939C /* 78d436688cd38e96 */ = {
-			isa = PBXGroup;
-			children = (
-				D98375A522B4526F0057939C /* udp_C_unix.ipch */,
-				D98375A622B4526F0057939C /* mmap_address.bin */,
-			);
-			path = 78d436688cd38e96;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -370,12 +304,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D933D43B21AE92D80060EA19 /* codriver_interfaces_data_structs.c in Sources */,
-				D98375AB22B4526F0057939C /* buffer_defines_hton.c in Sources */,
-				D98375B322B4526F0057939C /* udp_defines.c in Sources */,
-				D98375B722B4526F0057939C /* buffer_defines_ntoh.c in Sources */,
-				D98375A722B4526F0057939C /* udp_C_class.c in Sources */,
+				D9DE0B2C22F35B0A00C08382 /* buffer_defines_hton.c in Sources */,
+				D9DE0B3422F35B0A00C08382 /* udp_defines.c in Sources */,
+				D9DE0B3822F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */,
+				D9DE0B2822F35B0A00C08382 /* udp_C_class.c in Sources */,
 				D933D43821AE928C0060EA19 /* client_c.c in Sources */,
-				D98375AF22B4526F0057939C /* udp_class.cc in Sources */,
+				D9DE0B3022F35B0A00C08382 /* udp_class.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,12 +318,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D933D44821AE938C0060EA19 /* client_cpp.cc in Sources */,
-				D98375AC22B4526F0057939C /* buffer_defines_hton.c in Sources */,
-				D98375B422B4526F0057939C /* udp_defines.c in Sources */,
-				D98375B822B4526F0057939C /* buffer_defines_ntoh.c in Sources */,
-				D98375A822B4526F0057939C /* udp_C_class.c in Sources */,
+				D9DE0B2D22F35B0A00C08382 /* buffer_defines_hton.c in Sources */,
+				D9DE0B3522F35B0A00C08382 /* udp_defines.c in Sources */,
+				D9DE0B3922F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */,
+				D9DE0B2922F35B0A00C08382 /* udp_C_class.c in Sources */,
 				D933D44E21AE93D10060EA19 /* codriver_interfaces_data_structs.c in Sources */,
-				D98375B022B4526F0057939C /* udp_class.cc in Sources */,
+				D9DE0B3122F35B0A00C08382 /* udp_class.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,12 +332,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D933D47121AE96890060EA19 /* codriver_interfaces_data_structs.c in Sources */,
-				D98375AD22B4526F0057939C /* buffer_defines_hton.c in Sources */,
-				D98375B522B4526F0057939C /* udp_defines.c in Sources */,
-				D98375B922B4526F0057939C /* buffer_defines_ntoh.c in Sources */,
-				D98375A922B4526F0057939C /* udp_C_class.c in Sources */,
+				D9DE0B2E22F35B0A00C08382 /* buffer_defines_hton.c in Sources */,
+				D9DE0B3622F35B0A00C08382 /* udp_defines.c in Sources */,
+				D9DE0B3A22F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */,
+				D9DE0B2A22F35B0A00C08382 /* udp_C_class.c in Sources */,
 				D933D46521AE96380060EA19 /* server_c.c in Sources */,
-				D98375B122B4526F0057939C /* udp_class.cc in Sources */,
+				D9DE0B3222F35B0A00C08382 /* udp_class.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,12 +346,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D933D46621AE963B0060EA19 /* server_cpp.cc in Sources */,
-				D98375AE22B4526F0057939C /* buffer_defines_hton.c in Sources */,
-				D98375B622B4526F0057939C /* udp_defines.c in Sources */,
-				D98375BA22B4526F0057939C /* buffer_defines_ntoh.c in Sources */,
-				D98375AA22B4526F0057939C /* udp_C_class.c in Sources */,
+				D9DE0B2F22F35B0A00C08382 /* buffer_defines_hton.c in Sources */,
+				D9DE0B3722F35B0A00C08382 /* udp_defines.c in Sources */,
+				D9DE0B3B22F35B0A00C08382 /* buffer_defines_ntoh.c in Sources */,
+				D9DE0B2B22F35B0A00C08382 /* udp_C_class.c in Sources */,
 				D933D47221AE96890060EA19 /* codriver_interfaces_data_structs.c in Sources */,
-				D98375B222B4526F0057939C /* udp_class.cc in Sources */,
+				D9DE0B3322F35B0A00C08382 /* udp_class.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

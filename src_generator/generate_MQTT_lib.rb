@@ -238,20 +238,20 @@ public:
   <% @data.keys.each do |tag|
     if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
   void
   get_last_<%= tag %>( <%= tag %> & S ) const;
 
   <% end; end %>
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 };
 
 #endif
 
-// EOF: <%= @main_topic %>.hpp
+/* EOF: <%= @main_topic %>.hpp */
 '''
   context = { :data => data, :main_topic => data[:main_topic] }
   eruby = Erubis::Eruby.new(template)
@@ -288,7 +288,7 @@ MQTT_<%= @main_topic %>_publisher::~MQTT_<%= @main_topic %>_publisher() {
   mosqpp::lib_cleanup();
 }
 
-// on_connect is called by thread each time we exeperience a server connection
+/* on_connect is called by thread each time we exeperience a server connection */
 
 void
 MQTT_<%= @main_topic %>_publisher::on_connect( int rc ) {
@@ -297,7 +297,7 @@ MQTT_<%= @main_topic %>_publisher::on_connect( int rc ) {
   );
 }
 
-// on_disconnect is called by thread each time we experience a server disconnection
+/* on_disconnect is called by thread each time we experience a server disconnection */
 
 void
 MQTT_<%= @main_topic %>_publisher::on_disconnect( int rc ) {
@@ -306,8 +306,8 @@ MQTT_<%= @main_topic %>_publisher::on_disconnect( int rc ) {
   );
 }
 
-// on_publish is called each time a message succeed to be sent to broker.
-// The parameter is the message id you can set when publish.
+/* on_publish is called each time a message succeed to be sent to broker. */
+/* The parameter is the message id you can set when publish.              */
 void
 MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
   MQTT_MESSAGE_DEBUG(
@@ -318,7 +318,7 @@ MQTT_<%= @main_topic %>_publisher::on_publish( int mid ) {
 <% @data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 bool
 MQTT_<%= @main_topic %>_publisher::publish(
@@ -354,9 +354,11 @@ MQTT_<%= @main_topic %>_publisher::publish(
   case MOSQ_ERR_PAYLOAD_SIZE:
     std::cout << "publish <%= @main_topic %>: payloadlen is too large.";
     break;
-  //case MOSQ_ERR_MALFORMED_UTF8:
-  //  std::cout << "publish <%= @main_topic %>: malformed utf8\n";
-  //  break;
+  /*
+  case MOSQ_ERR_MALFORMED_UTF8:      
+    std::cout << "publish <%= @main_topic %>: malformed utf8\n";
+    break; 
+  */
   default:
     std::cout << "publish <%= @main_topic %>: return = " << ret << "\n";
   }
@@ -365,7 +367,7 @@ MQTT_<%= @main_topic %>_publisher::publish(
 
 <% end; end %>
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 void
 MQTT_<%= @main_topic %>_subscriber::on_connect( int result ) {
@@ -380,7 +382,7 @@ MQTT_<%= @main_topic %>_subscriber::on_connect( int result ) {
   }
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 void
 MQTT_<%= @main_topic %>_subscriber::on_message(
@@ -392,9 +394,9 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
 <% @data.keys.each do |tag| if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
   } else if ( <%= tag %>_MQTT_compare( message->topic ) == 0 ) {
     MQTT_MESSAGE_DEBUG("MQTT_<%= @main_topic %>_subscriber::on_message TOPIC: " << message->topic );
-    // Add mutex for sync
+    /* Add mutex for sync */
     buffer_to_<%= tag %>( ptr, &this-><%= tag %>_data );
-    // Add mutex for sync
+    /* Add mutex for sync */
     #ifdef DEBUG
     <%= tag %>_print( &<%= tag %>_data );
     #endif
@@ -407,21 +409,21 @@ MQTT_<%= @main_topic %>_subscriber::on_message(
 <% @data.keys.each do |tag|
   if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 void
 MQTT_<%= @main_topic %>_subscriber::get_last_<%= tag %>( <%= tag %> & S ) const
 {
-  // Add mutex for sync
+  /* Add mutex for sync */
   std::memcpy( &S, &this-><%= tag %>_data, sizeof( <%= tag %> ) );
-  // Add mutex for sync
+  /* Add mutex for sync */
 }
 
 <% end; end %>
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-// EOF: <%= @main_topic %>.cpp
+/* EOF: <%= @main_topic %>.cpp */
 '''
   context = { :data => data, :main_topic => data[:main_topic] }
   eruby = Erubis::Eruby.new(template)

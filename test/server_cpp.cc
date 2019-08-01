@@ -1,18 +1,5 @@
-
-#if defined(_WIN32)
-  #include <Ws2tcpip.h>
-#elif defined(__MACH__) || defined(__linux__)
-  #include <string.h>
-  #include <unistd.h>
-  #include <arpa/inet.h>
-  #include <sys/socket.h>
-#endif
-
-#include <stdio.h>
-
 #include "udp_class.hh"
 #include "codriver_interfaces_data_structs.h"
-
 #include <iostream>
 #include <iomanip>
 
@@ -27,20 +14,19 @@ main(void) {
   int32_t  message_id = 0;
   int      ret;
   
-  // Create and set UDP socket
-  // Create and set UDP
+  /* Create and set UDP socket */
 
   Socket socket;
   socket.open_as_server( 25000 );
   socket.check();
   
-  // Start server
+  /* Start server */
   cout << "Server ready\n";
 
   socket.server_start();
   while( socket.server_running() ) {
     
-    // Clear the buffer
+    /* Clear the buffer */
     memset(buffer, '\0', buffer_size);
     uint8_t input_data_buffer[input_data_struct_size];
 

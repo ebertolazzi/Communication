@@ -20,10 +20,10 @@ main( int argc, char const * argv[] ) {
 
     cout << "j = " << j << '\n';
 
-    // trigger mosquitto callbacks
+    /* trigger mosquitto callbacks */
     mqtt_publisher.loop(1, 1);
 
-    // Sending
+    /* Sending */
     AutomationLevel al;
     al.Automation_Level = j;
     mqtt_publisher.publish( al );

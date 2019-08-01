@@ -87,11 +87,7 @@ Socket_open_as_client(
     );
     if ( ret < 0 ) {
       UDP_CheckError( "Socket_open_as_client::connect" );
-      #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-      closesocket(pS->socket_id);
-      #else
       close(pS->socket_id);
-      #endif
       pS->socket_id = -1;
       exit(1);
     }
@@ -234,7 +230,7 @@ MultiCast_open_as_sender(
   return UDP_TRUE;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 int
 MultiCast_open_as_listener(
@@ -355,5 +351,5 @@ Socket_receive_raw(
     MSG_WAITALL,
     (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
   );
-  return (int) ret; // if < 0 no data received
+  return (int) ret; /* if < 0 no data received */
 }

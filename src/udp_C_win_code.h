@@ -3,7 +3,6 @@
 #endif
 
 #include <Windows.h>
-#include <stdio.h>
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 
@@ -12,9 +11,9 @@
 static
 void
 UDP_CheckError( char const msg[] ) {
-  // Get the error message, if any.
+  /* Get the error message, if any. */
   DWORD errorMessageID = WSAGetLastError();
-  if ( errorMessageID == 0 ) return ; // No error message has been recorded
+  if ( errorMessageID == 0 ) return ; /* No error message has been recorded */
   LPSTR messageBuffer = NULL;
   size_t size = FormatMessageA(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -329,7 +328,7 @@ MultiCast_open_as_listener(
   return UDP_TRUE;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 int
 MultiCast_open_as_sender(
@@ -472,5 +471,5 @@ Socket_receive_raw(
     0,
     (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
   );
-  return ret; // if < 0 no data received
+  return ret; /* if < 0 no data received */
 }

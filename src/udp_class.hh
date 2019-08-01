@@ -107,7 +107,7 @@ public:
     }
   }
 
-  // Send message function
+  /* Send message function */
   int
   send(
     int32_t  buffer_id,
@@ -117,7 +117,7 @@ public:
     return Socket_send( &data, buffer_id, buffer, buffer_size );
   }
 
-  // Receive message function
+  /* Receive message function */
   int
   receive(
     int32_t & buffer_id,

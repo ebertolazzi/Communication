@@ -8,21 +8,6 @@
 
 #include "udp_defines.h"
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  typedef int socklen_t;
-#else
-  #include <sys/socket.h>
-  #include <sys/types.h>
-  #include <netinet/in.h>
-  #include <arpa/inet.h>
-  #include <unistd.h>
-  #include <time.h>
-#endif
-
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-
 #ifndef UDP_TRUE
   #define UDP_TRUE 1
 #endif
@@ -50,7 +35,7 @@ extern "C" {
 \*/
 
 typedef struct  {
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+#ifdef UDP_ON_WINDOWS
   SOCKET             socket_id;
 #else
   int                socket_id;

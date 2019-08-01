@@ -17,20 +17,20 @@ extern "C" {
 #endif
 
 #ifndef UDP_MTU_MAX_MAX_BYTES
-  #define UDP_MTU_MAX_MAX_BYTES 65536  // Maximum packet bytes
+  #define UDP_MTU_MAX_MAX_BYTES 65536  /* Maximum packet bytes */
 #endif
 
 #ifndef UDP_MTU_MAX_BYTES
-  #define UDP_MTU_MAX_BYTES 1472  // Maximum packet bytes
+  #define UDP_MTU_MAX_BYTES 1472  /* Maximum packet bytes */
 #endif
 
-// Times
+/* Times */
 #define UDP_SLEEP_MS             1
 #define UDP_APP_TIMEOUT_MS      50
-#define UDP_RECV_SND_TIMEOUT_MS  5  // Warning: windows has an undocumented minimum limit of about 500 ms
+#define UDP_RECV_SND_TIMEOUT_MS  5  /* Warning: windows has an undocumented minimum limit of about 500 ms */
 
-// If the timeout is less than 400 ms it creates a non-blocking socket
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+/* If the timeout is less than 400 ms it creates a non-blocking socket */
+#ifdef UDP_ON_WINDOWS
   #pragma warning (disable : 4820)
   #if UDP_RECV_SND_TIMEOUT_MS <= 400
     #define WIN_NONBLOCK
@@ -41,11 +41,11 @@ extern "C" {
 #define UDP_DATAGRAM_MESSAGE_SIZE     (UDP_MTU_MAX_BYTES-UDP_DATAGRAM_PART_HEADER_SIZE)
 
 typedef struct {
-  int32_t  datagram_id;          // message ID
-  uint32_t total_message_size;   // total length of the packet
-  uint16_t sub_message_size;     // sub packet size
-  uint16_t sub_message_position; // sub packet position in the message
-  uint8_t  message[UDP_DATAGRAM_MESSAGE_SIZE]; // part of datagram message
+  int32_t  datagram_id;          /* message ID */
+  uint32_t total_message_size;   /* total length of the packet */
+  uint16_t sub_message_size;     /* sub packet size */
+  uint16_t sub_message_position; /* sub packet position in the message */
+  uint8_t  message[UDP_DATAGRAM_MESSAGE_SIZE]; /* part of datagram message */
 } datagram_part_t;
 
 extern
@@ -108,14 +108,20 @@ extern void sleep_ms( uint32_t time_sleep_ms );
 }
 #endif
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+#ifdef UDP_ON_WINDOWS
   #include <Winsock2.h>
+  typedef int socklen_t;
 #else
+  #include <unistd.h>
   #include <arpa/inet.h>
+  #include <netinet/in.h>
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <sys/time.h>
+  #include <unistd.h>
+  #include <time.h>
 #endif
 
-#include <string.h>
-
-// --------------------------------------------------
+/* -------------------------------------------------- */
 
 #endif

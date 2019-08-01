@@ -8,21 +8,11 @@
   #define UDP_FALSE -1
 #endif
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  #include <Winsock2.h>
-#else
-  #include <arpa/inet.h>
-#endif
-
 #ifdef __cplusplus
   extern "C" {
 #endif
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+#ifdef UDP_ON_WINDOWS
 
   uint64_t
   get_time_ms() {
@@ -44,9 +34,6 @@
   typedef int ssize_t;
 
 #else
-
-  #include <sys/time.h>
-  #include <unistd.h>
 
   uint64_t
   get_time_ms() {
@@ -114,7 +101,7 @@ Packet_Add_to_buffer(
   uint8_t                 buffer[],
   uint32_t                buffer_max_size
 ) {
-  // sanity check
+  /* sanity check */
   UDP_printf("Packet_Add_to_buffer 1\n");
   int32_t offs = pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE;
   if ( offs < 0 || offs+pk->sub_message_size >= (int32_t)buffer_max_size ) {
@@ -125,7 +112,7 @@ Packet_Add_to_buffer(
     exit(1);
   }
 
-  // copia segmento nel buffer
+  /* copia segmento nel buffer */
   memcpy(
     buffer + pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE,
     pk->message,

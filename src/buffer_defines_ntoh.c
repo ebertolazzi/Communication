@@ -1,14 +1,4 @@
 #include "buffer_defines.h"
-#include <string.h>
-
-#if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
-  #include <Ws2tcpip.h>
-#elif defined(__MACH__) || defined(__linux__)
-  #include <string.h>
-  #include <unistd.h>
-  #include <arpa/inet.h>
-  #include <sys/socket.h>
-#endif
 
 static
 uint64_t
@@ -21,7 +11,7 @@ ntohll_local( uint64_t n ) {
   return (hi << 32) + lo;
 }
 
-// ----------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------- */
 
 uint32_t
 buffer_to_uint8( uint8_t const buffer[1], uint8_t * out ) {
@@ -107,7 +97,7 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     uint64_t shift = (i>>significandbits) & maskOfBits(expbits);
     while ( shift > bias ) { res *= 2.0; --shift; }
     while ( shift < bias ) { res /= 2.0; ++shift; }
-    // sign it
+    /* sign it */
     if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res;
     return res;
   }

@@ -1,7 +1,5 @@
 #include "udp_C_class.h"
-#include "codriver_interfaces_data_structs.h" // include with defined data structure
-
-#include <stdio.h>
+#include "codriver_interfaces_data_structs.h" /* include with defined data structure */
 
 int
 main() {
@@ -11,19 +9,18 @@ main() {
   int32_t  message_id = 0, message_len;
   int      ret;
 
-  // Create and set UDP socket
-  // Create and set UDP
+  /* Create and set UDP socket */
 
   SocketData socket;
   Socket_new( &socket );
   Socket_open_as_server( &socket, 25000 );
 
-  // Start server
+  /* Start server */
   UDP_printf("Server ready\n");
 
   while( 1 ) {
 
-    // Clear the buffer
+    /* Clear the buffer */
     UDP_printf( "Wait Socket_receive\n" );
     memset(buffer, '\0', buffer_size);
     ret = Socket_receive(

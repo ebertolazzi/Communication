@@ -32,7 +32,7 @@ main() {
   input_msg.thresholds[2] = 3;
   input_msg.thresholds[3] = 4;
 
-  // Calculate message sizes
+  /* Calculate message sizes */
   uint64_t start_time = get_time_ms();
   int32_t  message_id = 12;
 
@@ -47,7 +47,7 @@ main() {
   buffer[8] = '7';
   buffer[9] = '9';
   
-  // Create and set UDP
+  /* Create and set UDP */
   Socket socket;
   socket.open_as_client( "127.0.0.1", 25000 );
   socket.check();
@@ -89,7 +89,7 @@ main() {
       << "Warning! Couldn't send the message with ID " << message_id
       << "\nOutput message: manoeuvre not calculated\n";
   } else {
-    // Clear the buffer: this is to receive data
+    /* Clear the buffer: this is to receive data */
     cout << "\n\nsocket.receive ...\n";
     memset(buffer, '\0', buffer_size);
     if ( socket.receive( message_id,
@@ -101,7 +101,7 @@ main() {
     cout << "\n\nsocket.receive done\n";
   }
   
-  // Close socket
+  /* Close socket */
   if( socket.close() ) return -1;
   std::cout << "Done\n";
   return 0;
