@@ -35,7 +35,7 @@ Socket_new( SocketData * pS ) {
 void
 Socket_check( SocketData * pS ) {
   if ( pS->socket_id >= 0 ) {
-    UDP_printf( "Opened socket id = %d\n", pS->socket_id );
+    UDP_printf( "Opened socket id = %d\n", (int)pS->socket_id );
   } else {
     UDP_printf( "Socket not opened\n" );
     exit(-1);
@@ -182,7 +182,7 @@ Socket_receive(
       );
       socket_elapsed_time = get_time_ms() - socket_start_time;
 
-      if ( recv_bytes < ) {
+      if ( recv_bytes < 0 ) {
         if ( WSAGetLastError() != WSAEWOULDBLOCK ||
              socket_elapsed_time >= UDP_RECV_SND_TIMEOUT_MS ) break;
       } else {

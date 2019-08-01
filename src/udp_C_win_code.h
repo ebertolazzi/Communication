@@ -340,7 +340,7 @@ MultiCast_open_as_sender(
 
   WORD    wVersionRequested;
   WSADATA wsaData;
-  int     err, ret;
+  int     err;
 
   /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
   wVersionRequested = MAKEWORD(2, 2);
