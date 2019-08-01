@@ -247,12 +247,76 @@ Socket_close( SocketData * pS ) {
 }
 
 /*\
+ |                      _
+ |   ___  ___ _ __   __| |    _ __ __ ___      __
+ |  / __|/ _ \ '_ \ / _` |   | '__/ _` \ \ /\ / /
+ |  \__ \  __/ | | | (_| |   | | | (_| |\ V  V /
+ |  |___/\___|_| |_|\__,_|___|_|  \__,_| \_/\_/
+ |                      |_____|
+\*/
+
+int
+Socket_send_raw(
+  SocketData *  pS,
+  uint8_t const message[],
+  uint32_t      message_size
+) {
+  int n_byte_sent;
+  if ( pS->connected == UDP_TRUE ) {
+    UDP_printf("Socket_send_raw::send\n");
+    n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
+  } else {
+    UDP_printf("Socket_send_raw::sendto\n");
+    n_byte_sent = sendto(
+      pS->socket_id,
+      message,
+      (size_t) message_size,
+      0,
+      (struct sockaddr *) &pS->sock_addr,
+      pS->sock_addr_len
+    );
+  }
+  if ( n_byte_sent == (int) message_size ) {
+    return UDP_TRUE;
+  } else {
+    UDP_CheckError("Socket_send_raw");
+    return UDP_FALSE;
+  }
+}
+
+/*\
+ |                     _
+ |   _ __ ___  ___ ___(_)_   _____     _ __ __ ___      __
+ |  | '__/ _ \/ __/ _ \ \ \ / / _ \   | '__/ _` \ \ /\ / /
+ |  | | |  __/ (_|  __/ |\ V /  __/   | | | (_| |\ V  V /
+ |  |_|  \___|\___\___|_| \_/ \___|___|_|  \__,_| \_/\_/
+ |                               |_____|
+\*/
+
+int
+Socket_receive_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  int ret = recvfrom(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    0,
+    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
+  );
+  return ret; /* if < 0 no data received */
+}
+/*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
  |  | |\/| | | | | | __| |/ __/ _` / __| __|
  |  | |  | | |_| | | |_| | (_| (_| \__ \ |_
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
+
+#ifndef UDP_NO_MULTICAST_SUPPORT
 
 int
 MultiCast_open_as_listener(
@@ -373,103 +437,5 @@ MultiCast_open_as_sender(
   return UDP_TRUE;
 }
 
-/*
-  reuse = 1;
-  ret   = setsockopt(
-    pS->socket_id,
-    SOL_SOCKET,
-    SO_REUSEADDR,
-    (char *)&reuse,
-    sizeof(reuse)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("MultiCast_open_as_sender::setsockopt<SO_REUSEADDR>");
-    closesocket(pS->socket_id);
-    exit(1);
-  } else {
-    UDP_printf("MultiCast_open_as_sender::setsockopt<SO_REUSEADDR>...OK.\n");
-  }
+#endif
 
-  loopch = 1;
-  ret = setsockopt(
-    pS->socket_id,
-    IPPROTO_IP,
-    IP_MULTICAST_LOOP,
-    (char *)&loopch,
-    sizeof(loopch)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("MultiCast_open_as_sender::setsockopt<IP_MULTICAST_LOOP>");
-  } else {
-    UDP_printf("MultiCast_open_as_sender::setsockopt<IP_MULTICAST_LOOP>...OK.\n" );
-  }
-  UDP_printf(
-    "Adding multicast group %s:%li...OK.\n",
-    group_address, group_port
-  );
-
-  return UDP_TRUE;
-*/
-
-/*\
- |                      _
- |   ___  ___ _ __   __| |    _ __ __ ___      __
- |  / __|/ _ \ '_ \ / _` |   | '__/ _` \ \ /\ / /
- |  \__ \  __/ | | | (_| |   | | | (_| |\ V  V /
- |  |___/\___|_| |_|\__,_|___|_|  \__,_| \_/\_/
- |                      |_____|
-\*/
-
-int
-Socket_send_raw(
-  SocketData *  pS,
-  uint8_t const message[],
-  uint32_t      message_size
-) {
-  int n_byte_sent;
-  if ( pS->connected == UDP_TRUE ) {
-    UDP_printf("Socket_send_raw::send\n");
-    n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
-  } else {
-    UDP_printf("Socket_send_raw::sendto\n");
-    n_byte_sent = sendto(
-      pS->socket_id,
-      message,
-      (size_t) message_size,
-      0,
-      (struct sockaddr *) &pS->sock_addr,
-      pS->sock_addr_len
-    );
-  }
-  if ( n_byte_sent == (int) message_size ) {
-    return UDP_TRUE;
-  } else {
-    UDP_CheckError("Socket_send_raw");
-    return UDP_FALSE;
-  }
-}
-
-/*\
- |                     _
- |   _ __ ___  ___ ___(_)_   _____     _ __ __ ___      __
- |  | '__/ _ \/ __/ _ \ \ \ / / _ \   | '__/ _` \ \ /\ / /
- |  | | |  __/ (_|  __/ |\ V /  __/   | | | (_| |\ V  V /
- |  |_|  \___|\___\___|_| \_/ \___|___|_|  \__,_| \_/\_/
- |                               |_____|
-\*/
-
-int
-Socket_receive_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
-) {
-  int ret = recvfrom(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    0,
-    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
-  );
-  return ret; /* if < 0 no data received */
-}

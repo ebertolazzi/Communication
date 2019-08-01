@@ -115,6 +115,7 @@ Socket_receive_raw(
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
 
+#ifndef UDP_NO_MULTICAST_SUPPORT
 extern
 int
 MultiCast_open_as_sender(
@@ -130,6 +131,7 @@ MultiCast_open_as_listener(
   char const   group_address[],
   int          group_port
 );
+#endif
 
 #ifdef __cplusplus
 }

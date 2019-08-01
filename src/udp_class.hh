@@ -56,6 +56,8 @@ public:
   open_as_server( int port )
   { Socket_open_as_server( &data, port ); }
 
+#ifndef UDP_NO_MULTICAST_SUPPORT
+
   int
   open_multicast_as_client(
     char const group_address[],
@@ -75,6 +77,8 @@ public:
       &data, group_address, group_port
     );
   }
+
+#endif
 
   void
   server_start()

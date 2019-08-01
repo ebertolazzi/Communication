@@ -6,6 +6,14 @@
 #ifndef __UDP_DEFINES_HH
 #define __UDP_DEFINES_HH
 
+/*\
+
+uncomment to remove multicast support
+
+#define UDP_NO_MULTICAST_SUPPORT
+
+\*/
+
 #include "buffer_defines.h"
 
 #ifdef __cplusplus
@@ -115,6 +123,12 @@ extern void sleep_ms( uint32_t time_sleep_ms );
   #include <unistd.h>
   #include <arpa/inet.h>
   #include <netinet/in.h>
+  /*
+  DA INGARE SE SERVE
+  #if ! ( defined(__APPLE__) || defined(__MACH__) )
+    #include <linux/in.h>
+  #endif
+  */
   #include <sys/socket.h>
   #include <sys/types.h>
   #include <sys/time.h>

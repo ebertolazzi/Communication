@@ -198,12 +198,75 @@ Socket_close( SocketData * pS ) {
 }
 
 /*\
+ |                      _
+ |   ___  ___ _ __   __| |    _ __ __ ___      __
+ |  / __|/ _ \ '_ \ / _` |   | '__/ _` \ \ /\ / /
+ |  \__ \  __/ | | | (_| |   | | | (_| |\ V  V /
+ |  |___/\___|_| |_|\__,_|___|_|  \__,_| \_/\_/
+ |                      |_____|
+\*/
+
+int
+Socket_send_raw(
+  SocketData *  pS,
+  uint8_t const message[],
+  uint32_t      message_size
+) {
+  ssize_t n_byte_sent;
+  if ( pS->connected == UDP_TRUE ) {
+    n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
+  } else {
+    n_byte_sent = sendto(
+      pS->socket_id,
+      message,
+      (size_t) message_size,
+      0,
+      (struct sockaddr *) &pS->sock_addr,
+      pS->sock_addr_len
+    );
+  }
+  if ( n_byte_sent == (ssize_t)message_size ) {
+    return UDP_TRUE;
+  } else {
+    UDP_CheckError("Socket_send_raw");
+    return UDP_FALSE;
+  }
+}
+
+/*\
+ |                     _
+ |   _ __ ___  ___ ___(_)_   _____     _ __ __ ___      __
+ |  | '__/ _ \/ __/ _ \ \ \ / / _ \   | '__/ _` \ \ /\ / /
+ |  | | |  __/ (_|  __/ |\ V /  __/   | | | (_| |\ V  V /
+ |  |_|  \___|\___\___|_| \_/ \___|___|_|  \__,_| \_/\_/
+ |                               |_____|
+\*/
+
+int
+Socket_receive_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  ssize_t ret = recvfrom(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    MSG_WAITALL,
+    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
+  );
+  return (int) ret; /* if < 0 no data received */
+}
+
+/*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
  |  | |\/| | | | | | __| |/ __/ _` / __| __|
  |  | |  | | |_| | | |_| | (_| (_| \__ \ |_
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
+
+#ifndef UDP_NO_MULTICAST_SUPPORT
 
 int
 MultiCast_open_as_sender(
@@ -293,63 +356,4 @@ MultiCast_open_as_listener(
   return UDP_TRUE;
 }
 
-/*\
- |                      _
- |   ___  ___ _ __   __| |    _ __ __ ___      __
- |  / __|/ _ \ '_ \ / _` |   | '__/ _` \ \ /\ / /
- |  \__ \  __/ | | | (_| |   | | | (_| |\ V  V /
- |  |___/\___|_| |_|\__,_|___|_|  \__,_| \_/\_/
- |                      |_____|
-\*/
-
-int
-Socket_send_raw(
-  SocketData *  pS,
-  uint8_t const message[],
-  uint32_t      message_size
-) {
-  ssize_t n_byte_sent;
-  if ( pS->connected == UDP_TRUE ) {
-    n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
-  } else {
-    n_byte_sent = sendto(
-      pS->socket_id,
-      message,
-      (size_t) message_size,
-      0,
-      (struct sockaddr *) &pS->sock_addr,
-      pS->sock_addr_len
-    );
-  }
-  if ( n_byte_sent == (ssize_t)message_size ) {
-    return UDP_TRUE;
-  } else {
-    UDP_CheckError("Socket_send_raw");
-    return UDP_FALSE;
-  }
-}
-
-/*\
- |                     _
- |   _ __ ___  ___ ___(_)_   _____     _ __ __ ___      __
- |  | '__/ _ \/ __/ _ \ \ \ / / _ \   | '__/ _` \ \ /\ / /
- |  | | |  __/ (_|  __/ |\ V /  __/   | | | (_| |\ V  V /
- |  |_|  \___|\___\___|_| \_/ \___|___|_|  \__,_| \_/\_/
- |                               |_____|
-\*/
-
-int
-Socket_receive_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
-) {
-  ssize_t ret = recvfrom(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    MSG_WAITALL,
-    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
-  );
-  return (int) ret; /* if < 0 no data received */
-}
+#endif

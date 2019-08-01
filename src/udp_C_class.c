@@ -99,7 +99,7 @@ Socket_send(
         break;
       }
     }
-    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+    #elif defined(UDP_ON_WINDOWS)
     isend = sendto(
       socket_id,
       data_buffer, nbytes,
@@ -118,7 +118,7 @@ Socket_send(
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
     if ( isend < 0 ) {
-      #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+      #ifdef UDP_ON_WINDOWS
       UDP_CheckError( "error sendto" );
       #else
       char error_str[1024];
@@ -188,7 +188,7 @@ Socket_receive(
         break;
       }
     }
-    #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+    #elif defined(UDP_ON_WINDOWS)
     pS->sock_addr_len = sizeof(pS->sock_addr);
     recv_bytes = recvfrom(
       pS->socket_id, data_buffer, (size_t) UDP_MTU_MAX_BYTES,
