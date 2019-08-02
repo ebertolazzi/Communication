@@ -496,7 +496,7 @@ def simulink_to_struct( name, hsc )
 
     res += "  /* extract ``#{n}'' at position #{ipos} */\n"
     res += "  { #{t} const * p = (#{t} const *)ssGetInputPortSignalPtrs( S, #{ipos} );\n"
-    res += "    if ( p == NULL ) {\n      ssPrintf(\"null pointer at port #{ipos} for ``#{n}''\\n\");\n    } else {\n"
+    res += "    if ( p == NULL ) {\n      #if defined(SS_STDIO_AVAILABLE) \n ssPrintf(\"null pointer at port #{ipos} for ``#{n}''\\n\");\n #endif\n   } else {\n"
     if sz > 1 then
       res += "      for ( i_count=0; i_count < #{sz}; ++i_count ) out->#{n} = p[i_count];\n"
     else
