@@ -1,5 +1,11 @@
 #include "buffer_defines.h"
 
+#ifdef UDP_ON_WINDOWS
+  #include <Winsock.h>
+#else
+  #include <arpa/inet.h>
+#endif
+
 static
 uint64_t
 ntohll_local( uint64_t n ) {

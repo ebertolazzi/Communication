@@ -56,7 +56,11 @@ Socket_send(
   uint32_t        n_packets;
   datagram_part_t packet;
   uint16_t        ipos;
+  #ifdef UDP_ON_WINDOWS
+  int             isend;
+  #else
   ssize_t         isend;
+  #endif
 
   #if defined(WIN_NONBLOCK)
     uint64_t socket_start_time;
@@ -77,7 +81,11 @@ Socket_send(
     uint8_t data_buffer[UDP_MTU_MAX_BYTES];
     datagram_part_to_buffer( &packet, data_buffer );
 
+    #ifdef UDP_ON_WINDOWS
+    int nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
+    #else
     size_t nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
+    #endif
 
     #if defined(WIN_NONBLOCK)
     socket_start_time = get_time_ms();
