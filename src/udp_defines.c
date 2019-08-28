@@ -74,9 +74,9 @@ buffer_to_datagram_part(
   ptr += buffer_to_uint32( ptr, &D->total_message_size );
   ptr += buffer_to_uint16( ptr, &D->sub_message_size );
   ptr += buffer_to_uint16( ptr, &D->sub_message_position );
-  if (  D->sub_message_size >= UDP_DATAGRAM_MESSAGE_SIZE ) {
+  if ( D->sub_message_size > UDP_DATAGRAM_MESSAGE_SIZE ) {
     UDP_printf(
-      "buffer_to_datagram_part, sub_message_size (%d) >= UDP_DATAGRAM_MESSAGE_SIZE (%d)\n",
+      "buffer_to_datagram_part, sub_message_size (%d) > UDP_DATAGRAM_MESSAGE_SIZE (%d)\n",
       D->sub_message_size, UDP_DATAGRAM_MESSAGE_SIZE
     );
     exit(1);
@@ -102,12 +102,13 @@ Packet_Add_to_buffer(
   uint32_t                buffer_max_size
 ) {
   /* sanity check */
-  UDP_printf("Packet_Add_to_buffer 1\n");
+  // UDP_printf("Packet_Add_to_buffer 1\n");
   int32_t offs = pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE;
-  if ( offs < 0 || offs+pk->sub_message_size >= (int32_t)buffer_max_size ) {
+  int32_t ends = offs+pk->sub_message_size;
+  if ( offs < 0 || ends > (int32_t)buffer_max_size ) {
     UDP_printf(
-      "Packet_Add_to_buffer, wrong sub_message_position (%d)\n",
-      pk->sub_message_position
+      "Packet_Add_to_buffer\noffs = %d\nbuffer_max_size = %d\nends = %d\nwrong sub_message_position (%d)\n",
+      offs, buffer_max_size, ends, pk->sub_message_position
     );
     exit(1);
   }
