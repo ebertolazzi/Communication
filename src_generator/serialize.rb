@@ -607,7 +607,7 @@ def to_log_header( name, hsc )
     n   = f[:name];
     sz  = f[:size].to_i;
     if sz > 1 then
-      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "  for ( int i_count=0; i_count<#{sz}; ++i_count )\n"
       res += "    stream << \"'#{n}_\" << i_count << \"'\\t\";\n"
     else
       res += "  stream << \"'#{n}'\\t\";\n"
@@ -627,7 +627,7 @@ def to_log_write_line( name, hsc )
     n   = f[:name];
     sz  = f[:size].to_i;
     if sz > 1 then
-      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "  for ( int i_count=0; i_count<#{sz}; ++i_count )\n"
       res += "    stream << S.#{n}[i_count] << '\\t';\n"
     else
       res += "  stream << S.#{n} << '\\t';\n"
@@ -649,7 +649,7 @@ def to_log_read_line( name, hsc )
     n   = f[:name];
     sz  = f[:size].to_i;
     if sz > 1 then
-      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "  for ( int i_count=0; i_count<#{sz}; ++i_count )\n"
       res += "    iss >> S.#{n}[i_count];\n"
     else
       res += "  iss >> S.#{n};\n"

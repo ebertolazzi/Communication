@@ -22,7 +22,7 @@ columns_to_idx = {}
 #objects        = { :in_struct => [], :out_struct => [] }
 #tot_bytes      = { :in_struct => 0,  :out_struct => 0  }
 
-# Open and read file: the ".csv" file is obtained from the ".xlsx" file 
+# Open and read file: the ".csv" file is obtained from the ".xlsx" file
 # with "File -> Save as -> Format: "Common formats: Comma Separated Values (.csv)"
 
 puts conf.input_file_name
