@@ -638,6 +638,25 @@ def to_log_write_line( name, hsc )
   return res
 end
 
+def to_log_write_line_pretty_print( name, hsc )
+  fds   = hsc[:fields];
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res  = "void\n#{name}_log_write_line_pretty_print( std::ostream & stream, #{name} const & S ) {\n"
+  fds.each do |f|
+    n   = f[:name];
+    sz  = f[:size].to_i;
+    if sz > 1 then
+      res += "  for ( int i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "    stream <<  \"#{n}[ \" << i_count << \"] = \" << S.#{n}[i_count] << '\\n';\n"
+    else
+      res += "  stream << \"#{n} = \" << S.#{n} << '\\n';\n"
+    end
+  end
+  res += "  stream << '\\n';\n"
+  res += "}\n"
+  return res
+end
 def to_log_read_line( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max

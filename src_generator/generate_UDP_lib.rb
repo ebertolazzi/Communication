@@ -291,6 +291,7 @@ end
 extern void <%=  @tag %>_log_header( std::ostream & stream );
 extern void <%=  @tag %>_log_read_line( std::istream & stream, <%=  @tag %> & S );
 extern void <%=  @tag %>_log_write_line( std::ostream & stream, <%=  @tag %> const & S );
+extern void <%=  @tag %>_log_write_line_pretty_print( std::ostream & stream, <%=  @tag %> const & S );
 
 #endif
 '''
@@ -319,6 +320,7 @@ end
 <%= to_log_header( @tag, @value ) %>
 <%= to_log_read_line( @tag, @value ) %>
 <%= to_log_write_line( @tag, @value ) %>
+<%= to_log_write_line_pretty_print( @tag, @value ) %>
 
 '''
   context = { :tag => tag, :value => value }
