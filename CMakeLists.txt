@@ -5,38 +5,40 @@
 #      Enrico Bertolazzi                                                   #
 #      Dipartimento di Ingegneria Industriale                              #
 #      Universita` degli Studi di Trento                                   #
-#      email: enrico.bertolazzi@ing.unitn.it                               #
+#      <mailto:enrico.bertolazzi@unitn.it>                                 #
 #                                                                          #
 ############################################################################
 
 cmake_minimum_required(VERSION 3.5)
 
-SET( TARGET Communication )
-
-PROJECT( ${TARGET} CXX C )
-
-FILE( GLOB S ./CMakeLists-cflags.txt )
-IF(EXISTS ${S})
-  INCLUDE( ${S} )
+IF ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+  SET( DEBUG_SUFFIX "_debug" )
 ELSE()
-  SET( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
-  SET( CMAKE_VERBOSE_MAKEFILE            TRUE )
-  IF( CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
-    SET( CMAKE_CXX_FLAGS "-std=c++11 " )
-    SET( CMAKE_CXX_FLAGS_RELEASE "-fPIC -Wall -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -funroll-loops -O3 -g0 " )
-    SET( CMAKE_CXX_FLAGS_DEBUG   "-fPIC -Wall -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation -O0 -g3 -DMECHATRONIX_DEBUG " )
-  ELSEIF( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
-    SET( CMAKE_CXX_FLAGS "-std=c++11 -stdlib=libc++ " )
-    SET( CMAKE_CXX_FLAGS_RELEASE "-fPIC -Weverything -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation -msse4.2 -msse4.1 -mssse3 -msse3 -msse2 -msse -mmmx -funroll-loops -O3 -g0 -fPIC -Weverything -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation " )
-    SET( CMAKE_CXX_FLAGS_DEBUG   "-fPIC -Weverything -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation -O0 -gfull -DMECHATRONIX_DEBUG -fPIC -Weverything -Wno-weak-vtables -Wno-implicit-fallthrough -Wno-documentation-unknown-command -Wno-float-equal -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-reserved-id-macro -Wno-documentation " )
-  ELSEIF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    SET( CMAKE_CXX_FLAGS_RELEASE "/nologo /GS /W3 /WX- /Gm- /Gd /fp:precise /EHsc /FS /D_WINDOWS /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /DHAVE_STRING_H /DNO_GETTIMEOFDAY /DYAML_DECLARE_STATIC /DPCRE_STATIC /O2 /MD " )
-    SET( CMAKE_CXX_FLAGS_DEBUG   "/nologo /GS /W3 /WX- /Gm- /Gd /fp:precise /EHsc /FS /D_WINDOWS /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS /DHAVE_STRING_H /DNO_GETTIMEOFDAY /DYAML_DECLARE_STATIC /DPCRE_STATIC /Od /Ob0 /MDd /Zi /RTC1 /D_DEBUG " )
+  SET( DEBUG_SUFFIX )
+ENDIF()
+
+IF ( BUILD_SHARED )
+  IF ( APPLE )
+    SET( TARGET Communication_osx${DEBUG_SUFFIX} )
+  ELSEIF( LINUX OR UNIX )
+    SET( TARGET Communication_linux${DEBUG_SUFFIX} )
   ELSE()
-    MESSAGE( FATAL_ERROR "Unsupported compiler ${CMAKE_CXX_COMPILER_ID}")
+    SET( TARGET Communication_win${BITS}${DEBUG_SUFFIX} )
+    SET( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
   ENDIF()
 ENDIF()
 
+IF ( APPLE )
+  SET( TARGETS Communication_osx_static${DEBUG_SUFFIX} )
+ELSEIF( LINUX OR UNIX )
+  SET( TARGETS Communication_linux_static${DEBUG_SUFFIX} )
+ELSE()
+  SET( TARGETS Communication_win${BITS}_static${DEBUG_SUFFIX} )
+ENDIF()
+
+PROJECT( Communication CXX C )
+
+INCLUDE( ./CMakeLists-cflags.txt )
 MESSAGE( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}")
 
 SET( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
@@ -61,70 +63,44 @@ FOREACH (F ${S})
   LIST( APPEND HEADERS ${RF} )
 ENDFOREACH (F ${S})
 
-add_library( ${TARGET} STATIC ${SOURCES} ${HEADERS} )
-
-SET( EXELISTC   client_c server_c )
-SET( EXELISTCPP client_cpp server_cpp )
-
-MESSAGE( STATUS "YEAR = ${YEAR}" )
-MESSAGE( STATUS "BITS = ${BITS}" )
-
 INCLUDE_DIRECTORIES( src )
 
-IF( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-  INCLUDE_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include" )
-  IF ( "${BITS}" STREQUAL "x64" )
-    set(WINXXBITS Win64)
-    LINK_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/intel64" )
-  ELSE()
-    set(WINXXBITS Win32)
-    LINK_DIRECTORIES( "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/lib/ia32" )
-  ENDIF()
+SET( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/lib )
+
+IF ( BUILD_SHARED )
+  ADD_LIBRARY( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
+  ADD_LIBRARY( ${TARGET}  SHARED ${SOURCES} ${HEADERS} )
+  INSTALL(
+    TARGETS ${TARGET} ${TARGETS}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+  )
+ELSE()
+  ADD_LIBRARY( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
+  INSTALL(
+    TARGETS ${TARGETS}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+  )
 ENDIF()
 
 IF( BUILD_EXECUTABLE )
-
-  ## add_custom_command(OUTPUT tests.txt 
-  ##                    POST_BUILD
-  ##                    COMMAND ctest --output-on-failure)
-  ##
-
-  ADD_CUSTOM_TARGET( all_tests ALL )
-
   SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-  FILE(MAKE_DIRECTORY  ${CMAKE_CURRENT_SOURCE_DIR}/bin )	
-  FOREACH( S ${EXELISTCPP} )
-  	ADD_EXECUTABLE( ${S} test/${S}.cc test/codriver_interfaces_data_structs.c ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
-  	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} )
-    ADD_DEPENDENCIES( all_tests ${S} )
-  ENDFOREACH( S $(EXELIST) )
-
-  FOREACH( S ${EXELISTC} )
-  	ADD_EXECUTABLE( ${S} test/${S}.c test/codriver_interfaces_data_structs.c ${HEADERS} )
-  	TARGET_LINK_LIBRARIES( ${S} ${TARGET} ${lapackblas_libraries} )
-  	ADD_TEST( ${S} COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/bin/${S} )
-    ADD_DEPENDENCIES( all_tests ${S} )
-  ENDFOREACH( S $(EXELIST) )
-
-  ADD_CUSTOM_COMMAND( TARGET all_tests
-                      COMMENT "Run tests"
-                      POST_BUILD COMMAND ctest ARGS --output-on-failure
-                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
-
+  SET( EXECUTABLE client_c server_c )
+  FOREACH ( EXE ${EXECUTABLE} )
+    ADD_EXECUTABLE( ${EXE} test/${EXE}.c test/codriver_interfaces_data_structs.c ${HEADERS} )
+    TARGET_LINK_LIBRARIES( ${EXE} ${TARGETS} )
+  ENDFOREACH ( EXE ${EXECUTABLE} )
+  SET( EXECUTABLE client_cpp server_cpp )
+  FOREACH ( EXE ${EXECUTABLE} )
+    ADD_EXECUTABLE( ${EXE} test/${EXE}.cc test/codriver_interfaces_data_structs.c ${HEADERS} )
+    TARGET_LINK_LIBRARIES( ${EXE} ${TARGETS} )
+  ENDFOREACH ( EXE ${EXECUTABLE} )
 ENDIF()
 
-FILE( GLOB HDRC   ./src/*.h )
-FILE( GLOB HDRCPP ./src/*.hh )
-FILE( GLOB HDRHXX ./src/*.hxx )
-
-INSTALL( TARGETS ${TARGET}
-         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-         ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX} )
-
-INSTALL(FILES ${HDRC} ${HDRCPP} ${HDRHXX} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
-
+INSTALL( FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
 
 MESSAGE( STATUS "Using ${SSE_FLAGS} extensions")
 MESSAGE( STATUS "C compiler                  = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER}" )
@@ -135,16 +111,9 @@ MESSAGE( STATUS "CMAKE_C_FLAGS_RELEASE       = ${CMAKE_C_FLAGS_RELEASE}" )
 MESSAGE( STATUS "CMAKE_C_FLAGS               = ${CMAKE_C_FLAGS}" )
 MESSAGE( STATUS "CMAKE_SYSTEM_NAME           = ${CMAKE_SYSTEM_NAME}" )
 MESSAGE( STATUS "CMAKE_SYSTEM_PROCESSOR      = ${CMAKE_SYSTEM_PROCESSOR}" )
-MESSAGE( STATUS "EXTRA_LIBS                  = ${EXTRA_LIBS}" )
 IF(APPLE)
   MESSAGE( STATUS "CMAKE_OSX_SYSROOT           = ${CMAKE_OSX_SYSROOT}" )
   MESSAGE( STATUS "CMAKE_OSX_ARCHITECTURES     = ${CMAKE_OSX_ARCHITECTURES}" )
   MESSAGE( STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
 ENDIF()
-
-IF( BUILD_EXECUTABLE )
-  MESSAGE( STATUS "lapackblas_libraries        = ${lapackblas_libraries}" )
-ENDIF()
-
-MESSAGE( STATUS "HEADERS = ${HEADERS}" )
-MESSAGE( STATUS "SOURCES = ${SOURCES}" )
+MESSAGE( STATUS "BUILD_EXECUTABLE            = ${BUILD_EXECUTABLE}" )

@@ -31,8 +31,10 @@ main(void) {
     uint8_t input_data_buffer[input_data_struct_size];
 
     cout << "Wait socket.receive\n";
+    int32_t received_bytes;
     ret = socket.receive(
       message_id,
+      received_bytes,
       input_data_buffer,
       input_data_struct_size,
       0
