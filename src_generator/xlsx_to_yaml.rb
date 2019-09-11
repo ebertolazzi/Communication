@@ -22,15 +22,17 @@ columns_to_idx = {}
 #objects        = { :in_struct => [], :out_struct => [] }
 #tot_bytes      = { :in_struct => 0,  :out_struct => 0  }
 
-# Open and read file: the ".csv" file is obtained from the ".xlsx" file 
+# Open and read file: the ".csv" file is obtained from the ".xlsx" file
 # with "File -> Save as -> Format: "Common formats: Comma Separated Values (.csv)"
 
 puts conf.input_file_name
 
-$workbook_data    = { :origin_file => File.basename(conf.input_file_name) }
-$last_struct      = {}
-$scenario_struct  = []
-$manoeuvre_struct = []
+$workbook_data       = { :origin_file => File.basename(conf.input_file_name) }
+$last_struct         = {}
+$scenario_struct     = []
+$manoeuvre_struct    = []
+$sim_graphics_struct = []
+$sim_state_struct    = []
 
 workbook = RubyXL::Parser.parse(conf.input_file_name+".xlsx")
 
@@ -104,7 +106,8 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
       # skipping unmappable row
     end
     begin
-      case data[:yes_no_x]
+      data1 = data.dup
+      case data1[:yes_no_x]
       when 'yes', 'no'
         # save already stored structure
         if $last_struct[:struct_name] then
@@ -120,45 +123,74 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
         # initialize for new structure
         puts "Read Struct #{data[:name]}"
         $last_struct               = {};
-        $last_struct[:struct_name] = data[:name];
-        $last_struct[:active]      = data[:yes_no_x] == 'yes';
+        $last_struct[:struct_name] = data1[:name];
+        $last_struct[:active]      = data1[:yes_no_x] == 'yes';
         m = data[:description_subtopic].match(/^(.*)\/\#\{(.*)\}$/)
         if m then
           $last_struct[:subtopic]    = m[1];
           $last_struct[:subsubtopic] = m[2];
         else
-          $last_struct[:subtopic] = data[:description_subtopic];
+          $last_struct[:subtopic] = data1[:description_subtopic];
         end
         $last_struct[:fields] = [];
       when 'x', ''
-        ok = data[:yes_no_x] == 'x';
-        data.delete_if { |key, value| !conf.for_structs.include? key }
-        data[:mqtt] = ok;
-        $last_struct[:fields] << data.dup;
+        ok = data1[:yes_no_x] == 'x';
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        data1[:mqtt] = ok;
+        $last_struct[:fields] << data1.dup;
       end
     rescue => e
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
     begin
-      if data[:scenario] == 'x' then
+      data1 = data.dup
+      if data1[:scenario] == 'x' then
         # dalla riga seleziono le colonne da salvare
-        data.delete_if { |key, value| !conf.for_structs.include? key }
-        $scenario_struct << data.dup;
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        puts "add to Scenario #{data1}".blue
+        $scenario_struct << data1.dup;
       end
     rescue => e
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
     begin
-      if data[:manoeuvre] == 'x' then
+      data1 = data.dup
+      if data1[:manoeuvre] == 'x' then
         # dalla riga seleziono le colonne da salvare
-        data.delete_if { |key, value| !conf.for_structs.include? key }
-        $manoeuvre_struct << data;
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        puts "add to Manoeuvre #{data1}".green
+        $manoeuvre_struct << data1;
       end
     rescue => e
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
+
+    begin
+      data1 = data.dup
+      if data1[:sim_graphics] == 'x' then
+        # dalla riga seleziono le colonne da salvare
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        puts "add to SimGraphics #{data1}".yellow
+        $sim_graphics_struct << data1;
+      end
+    rescue => e
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+    end
+
+    begin
+      data1 = data.dup
+      if data1[:sim_state] == 'x' then
+        # dalla riga seleziono le colonne da salvare
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        puts "add to SimState #{data1}".yellow
+        $sim_state_struct << data1;
+      end
+    rescue => e
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+    end
+
   end
 end
 
@@ -184,12 +216,21 @@ end
 puts "File #{conf.yaml_file_name_MQTT}.yaml generated"
 puts "--------------------------------------"
 
+## puts "--------------------------------------"
+## pp $scenario_struct
+## puts "--------------------------------------"
+## pp $manoeuvre_struct
+## puts "--------------------------------------"
+## pp $sim_graphics_struct
+## puts "--------------------------------------"
 
 # Write yaml file
 $workbook_data = {
   :origin_file => File.basename(conf.input_file_name),
-  :Scenario => $scenario_struct,
-  :Maneuvre => $manoeuvre_struct
+  :Scenario    => $scenario_struct,
+  :Manoeuvre   => $manoeuvre_struct,
+  :SimGraphics => $sim_graphics_struct,
+  :SimState    => $sim_state_struct
 }
 
 # Delete old files in temporary folder (if present)

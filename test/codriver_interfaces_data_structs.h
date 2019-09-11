@@ -102,7 +102,7 @@ output_data_struct_print( output_data_struct const * S );
 
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
 #endif

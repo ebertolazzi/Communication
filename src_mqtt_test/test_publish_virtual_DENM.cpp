@@ -8,7 +8,7 @@ using namespace std;
 int
 main() {
 
-  // initialize the subscriber object
+  /* initialize the subscriber object */
   MQTT_SafeStrip_publisher  mqtt_publisher("publisher",true);
 
   cout << "Connect ... \n";
@@ -19,12 +19,12 @@ main() {
 
     cout << "j = " << j << '\n';
 
-    // trigger mosquitto callbacks
+    /* trigger mosquitto callbacks */
     mqtt_publisher.loop(1, 1);
 
-    // Sending
+    /* Sending */
     DENM_message denm;
-    
+
     denm.v2x_header_msgID                                = j;
     denm.v2x_header_originationStationID                 = 100;
     denm.v2x_denm_sequenceNumber                         = j;

@@ -1,18 +1,5 @@
-
-#if defined(_WIN32)
-  #include <Ws2tcpip.h>
-#elif defined(__MACH__) || defined(__linux__)
-  #include <string.h>
-  #include <unistd.h>
-  #include <arpa/inet.h>
-  #include <sys/socket.h>
-#endif
-
-#include <stdio.h>
-
 #include "udp_class.hh"
 #include "codriver_interfaces_data_structs.h"
-
 #include <iostream>
 #include <iomanip>
 
@@ -21,37 +8,44 @@ using namespace std;
 int
 main(void) {
 
+  input_data_struct input_msg;
   uint8_t  buffer[10];
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
-  input_data_struct input_msg;
   int32_t  message_id = 0;
+  int      ret;
   
-  // Create and set UDP socket
-  // Create and set UDP
+  /* Create and set UDP socket */
 
   Socket socket;
-  socket.open_as_server( UDP_SERVER_PORT );
+  socket.open_as_server( 25000 );
   socket.check();
   
-  // Start server
+  /* Start server */
   cout << "Server ready\n";
 
   socket.server_start();
   while( socket.server_running() ) {
     
-    // Clear the buffer
+    /* Clear the buffer */
     memset(buffer, '\0', buffer_size);
     uint8_t input_data_buffer[input_data_struct_size];
 
     cout << "Wait socket.receive\n";
-    if ( socket.receive( message_id,
-                         input_data_buffer,
-                         input_data_struct_size,
-                         0 ) == UDP_TRUE ) {
-
-      if ( socket.send( message_id,
-                        buffer,
-                        buffer_size ) == UDP_FALSE ) {
+    int32_t received_bytes;
+    ret = socket.receive(
+      message_id,
+      received_bytes,
+      input_data_buffer,
+      input_data_struct_size,
+      0
+    );
+    if ( ret == UDP_TRUE ) {
+      ret = socket.send(
+        message_id,
+        input_data_buffer,
+        input_data_struct_size
+      );
+      if ( ret == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
         return -1;

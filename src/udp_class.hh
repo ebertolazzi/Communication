@@ -30,6 +30,7 @@ public:
 
 class Socket {
 
+  bool       server_is_running;
   SocketData data;
 
   #ifndef _MSC_VER
@@ -48,24 +49,48 @@ public:
   Socket();
 
   void
-  open_as_client( char const addr[], int port )
-  { Socket_open_as_client( &data, addr, port ); }
+  open_as_client( char const addr[], int port, bool conn )
+  { Socket_open_as_client( &data, addr, port, (conn?UDP_TRUE:UDP_FALSE) ); }
 
   void
   open_as_server( int port )
   { Socket_open_as_server( &data, port ); }
 
+#ifndef UDP_NO_MULTICAST_SUPPORT
+
+  int
+  open_multicast_as_client(
+    char const group_address[],
+    int        group_port
+  ) {
+    return MultiCast_open_as_sender(
+      &data, group_address, group_port
+    );
+  }
+
+  int
+  open_multicast_as_listener(
+    char const group_address[],
+    int        group_port
+  ) {
+    return MultiCast_open_as_listener(
+      &data, group_address, group_port
+    );
+  }
+
+#endif
+
   void
   server_start()
-  { data.server_run = UDP_TRUE; }
+  { server_is_running = true; }
 
   void
   server_stop()
-  { data.server_run = UDP_FALSE; }
+  { server_is_running = false; }
 
   bool
   server_running() const
-  { return data.server_run == UDP_TRUE; }
+  { return server_is_running; }
 
   void
   set_timeout_ms( uint64_t tout_ms )
@@ -86,22 +111,28 @@ public:
     }
   }
 
-  // Send message function
+  /* Send message function */
   int
-  send( int32_t  buffer_id,
-        uint8_t  buffer[],
-        uint32_t buffer_size ) {
+  send(
+    int32_t  buffer_id,
+    uint8_t  buffer[],
+    uint32_t buffer_size
+  ) {
     return Socket_send( &data, buffer_id, buffer, buffer_size );
   }
 
-  // Receive message function
+  /* Receive message function */
   int
-  receive( int32_t & buffer_id,
-           uint8_t   buffer[],
-           uint32_t  buffer_size,
-           uint64_t  start_time ) {
+  receive(
+    int32_t & buffer_id,
+    int32_t & buffer_len,
+    uint8_t   buffer[],
+    uint32_t  buffer_size,
+    uint64_t  start_time
+  ) {
     return Socket_receive( &data,
                            &buffer_id,
+                           &buffer_len,
                            buffer,
                            buffer_size,
                            start_time );

@@ -39,14 +39,14 @@
 Socket::Socket()
 {
   Socket_new( &data );
-  // Taken from answer to "How can I catch a ctrl-c event? (C++)"
+  /* Taken from answer to "How can I catch a ctrl-c event? (C++)" */
   #ifdef _MSC_VER
   if ( SetConsoleCtrlHandler(
          (PHANDLER_ROUTINE)ConsoleHandler,
          UDP_TRUE
        ) == UDP_FALSE ) {
-    // unable to install handler...
-    // display message to the user
+    /* unable to install handler... */
+    /* display message to the user  */
     std::cerr << "Unable to install handler!\n";
     std::exit(-1);
   }
@@ -56,7 +56,7 @@ Socket::Socket()
   sigemptyset(&sigIntHandler.sa_mask);
   sigIntHandler.sa_flags = 0;
   sigaction(SIGINT,&sigIntHandler, nullptr );
-  //sigaction(SIGABRT,&sigIntHandler, nullptr );
+  /* sigaction(SIGABRT,&sigIntHandler, nullptr ); */
   sigaction(SIGTERM,&sigIntHandler, nullptr );
   #endif
 }
