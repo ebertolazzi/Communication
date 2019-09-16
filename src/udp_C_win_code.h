@@ -12,11 +12,14 @@
 static
 void
 UDP_CheckError( char const msg[] ) {
+  LPSTR  messageBuffer;
+  DWORD  errorMessageID;
+  size_t size;
   /* Get the error message, if any. */
-  DWORD errorMessageID = WSAGetLastError();
+  errorMessageID = WSAGetLastError();
   if ( errorMessageID == 0 ) return ; /* No error message has been recorded */
-  LPSTR messageBuffer = NULL;
-  size_t size = FormatMessageA(
+  messageBuffer = NULL;
+  size = FormatMessageA(
     FORMAT_MESSAGE_ALLOCATE_BUFFER |
     FORMAT_MESSAGE_FROM_SYSTEM |
     FORMAT_MESSAGE_IGNORE_INSERTS,
