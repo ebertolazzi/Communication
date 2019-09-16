@@ -32,8 +32,9 @@ main() {
       0
     );
     if ( ret == UDP_TRUE ) {
+      int i;
       printf("RECEIVED: [id=%d,size=%d]", message_id, message_len);
-      for ( int i = 0; i < message_len; ++i )
+      for ( i = 0; i < message_len; ++i )
         printf("%02X", (int)buffer[i] );
       printf("\n" );
     } else {

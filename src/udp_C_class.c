@@ -175,6 +175,7 @@ Socket_receive(
   #endif
 
   packet_info_t pi;
+
   Packet_Init( &pi, start_time_ms );
 
   /* Receive packets */

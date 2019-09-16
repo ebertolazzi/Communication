@@ -6,23 +6,26 @@
 int
 main() {
 
-  #define NSIZE 256
-  uint8_t  buffer[NSIZE];
-  uint32_t buffer_size = NSIZE;
+  int i;
 
-  for ( int i = 0; i < NSIZE; ++i )
+  #define NSIZE 256
+  uint8_t    buffer[NSIZE];
+  uint32_t   buffer_size = NSIZE;
+  int32_t    message_id;
+  SocketData socket;
+
+  for ( i = 0; i < NSIZE; ++i )
     buffer[i] = (i%0x100);
 
   /*=====================*/
   /* Create and set UDP */
-  SocketData socket;
   Socket_new( &socket );
   Socket_open_as_client( &socket, "127.0.0.1", 25000, UDP_TRUE );
   /* Socket_check( &socket ); */
 
   /* First message -------------------------- */
   UDP_printf("\n\nSocket_send ...\n");
-  for ( int32_t message_id = 1; message_id <= 10; ++message_id ) {
+  for ( message_id = 1; message_id <= 10; ++message_id ) {
     int ret = Socket_send(
       &socket,
       message_id,

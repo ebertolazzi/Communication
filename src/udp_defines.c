@@ -105,6 +105,7 @@ Packet_Add_to_buffer(
   // UDP_printf("Packet_Add_to_buffer 1\n");
   int32_t offs = pk->sub_message_position * UDP_DATAGRAM_MESSAGE_SIZE;
   int32_t ends = offs+pk->sub_message_size;
+  int32_t ok;
   if ( offs < 0 || ends > (int32_t)buffer_max_size ) {
     UDP_printf(
       "Packet_Add_to_buffer\noffs = %d\nbuffer_max_size = %d\nends = %d\nwrong sub_message_position (%d)\n",
@@ -120,7 +121,7 @@ Packet_Add_to_buffer(
     pk->sub_message_size
   );
 
-  int32_t ok = UDP_TRUE;
+  ok = UDP_TRUE;
   if ( pi->received_packets > 0 ) {
     /* check that datagram_id is not changed */
     if ( pi->datagram_id        != pk->datagram_id ||

@@ -19,7 +19,18 @@
   using std::uint64_t;
   extern "C" {
 #else
-  #include <stdint.h>
+  #ifdef MATLAB_MEX_FILE
+    #define int8_t   int0_T
+    #define int16_t  int16_T
+    #define int32_t  int32_T
+    #define int32_t  int32_T
+    #define uint8_t  uint0_T
+    #define uint16_t uint16_T
+    #define uint32_t uint32_T
+    #define uint32_t uint32_T
+  #else
+    #include <stdint.h>
+  #endif
 #endif
 
 #include <stdlib.h>
