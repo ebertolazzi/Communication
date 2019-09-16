@@ -28,11 +28,13 @@ columns_to_idx = {}
 puts conf.input_file_name
 
 $workbook_data       = { :origin_file => File.basename(conf.input_file_name) }
-$last_struct         = {}
-$scenario_struct     = []
-$manoeuvre_struct    = []
-$sim_graphics_struct = []
-$sim_state_struct    = []
+$last_struct                   = {}
+$scenario_struct               = []
+$manoeuvre_struct              = []
+$sim_graphics_struct           = []
+$sim_state_struct              = []
+$virtual_coach_output_struct   = []
+
 
 workbook = RubyXL::Parser.parse(conf.input_file_name+".xlsx")
 
@@ -191,6 +193,18 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
+    begin
+      data1 = data.dup
+      if data1[:virtual_coach_output] == 'x' then
+        # dalla riga seleziono le colonne da salvare
+        data1.delete_if { |key, value| !conf.for_structs.include? key }
+        puts "add to SimState #{data1}".yellow
+        $virtual_coach_output_struct << data1;
+      end
+    rescue => e
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+    end
+
   end
 end
 
@@ -226,11 +240,12 @@ puts "--------------------------------------"
 
 # Write yaml file
 $workbook_data = {
-  :origin_file => File.basename(conf.input_file_name),
-  :Scenario    => $scenario_struct,
-  :Manoeuvre   => $manoeuvre_struct,
-  :SimGraphics => $sim_graphics_struct,
-  :SimState    => $sim_state_struct
+  :origin_file        => File.basename(conf.input_file_name),
+  :Scenario           => $scenario_struct,
+  :Manoeuvre          => $manoeuvre_struct,
+  :SimGraphics        => $sim_graphics_struct,
+  :SimState           => $sim_state_struct,
+  :VirtualCoachOutput => $virtual_coach_output_struct
 }
 
 # Delete old files in temporary folder (if present)

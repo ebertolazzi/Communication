@@ -340,10 +340,11 @@ base_src = File.expand_path('../src', File.dirname(__FILE__))
 # reconstruct field for UDP struct
 pp data.keys
 udp_data = {
-  :scenario     => { :fields => data[:Scenario]    },
-  :manoeuvre    => { :fields => data[:Manoeuvre]   },
-  :sim_graphics => { :fields => data[:SimGraphics] },
-  :sim_state    => { :fields => data[:SimState]    }
+  :scenario             => { :fields => data[:Scenario]    },
+  :manoeuvre            => { :fields => data[:Manoeuvre]   },
+  :sim_graphics         => { :fields => data[:SimGraphics] },
+  :sim_state            => { :fields => data[:SimState]    },
+  :virtual_coach_output => { :fields => data[:VirtualCoachOutput]    },
 };
 
 prefix = "generated/"
