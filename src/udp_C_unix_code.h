@@ -1,9 +1,13 @@
 static
 void
 UDP_CheckError( char const msg[] ) {
+  #ifdef UDP_HAVE_STRERROR_R
   char error_str[1024];
   strerror_r( errno, error_str, 1024 );
   UDP_printf( "[%s] %s\n", msg, error_str );
+  #else
+  UDP_printf( "[%s] %s\n", msg, strerror(errno) );
+  #endif
 }
 
 /*\
@@ -157,7 +161,11 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
    | If it is a server, bind socket to port
   \*/
 
+  #ifdef UDP_HAVE_BZERO
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
+  #else
+  memset((char *)&pS->sock_addr, 0, sizeof(pS->sock_addr));
+  #endif
   pS->sock_addr.sin_family      = AF_INET;
   pS->sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   pS->sock_addr.sin_port        = htons(bind_port);
@@ -266,7 +274,7 @@ Socket_receive_raw(
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
 
-#ifndef UDP_NO_MULTICAST_SUPPORT
+#ifdef UDP_HAVE_MULTICAST_SUPPORT
 
 int
 MultiCast_open_as_sender(
@@ -284,7 +292,12 @@ MultiCast_open_as_sender(
     UDP_printf("MultiCast_open_as_sender::socket...OK.\n");
   }
 
+  #ifdef UDP_HAVE_BZERO
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
+  #else
+  memset((char *)&pS->sock_addr, 0, sizeof(pS->sock_addr));
+  #endif
+
   pS->sock_addr.sin_family      = AF_INET;
   pS->sock_addr.sin_addr.s_addr = inet_addr(group_address);
   pS->sock_addr.sin_port        = htons(group_port);
@@ -340,7 +353,12 @@ MultiCast_open_as_listener(
   }
 #endif
 
+  #ifdef UDP_HAVE_BZERO
   bzero((char *)&pS->sock_addr, sizeof(pS->sock_addr));
+  #else
+  memset((char *)&pS->sock_addr, 0, sizeof(pS->sock_addr));
+  #endif
+
   pS->sock_addr.sin_family      = AF_INET;
   pS->sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   pS->sock_addr.sin_port        = htons(group_port);

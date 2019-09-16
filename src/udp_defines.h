@@ -7,11 +7,10 @@
 #define __UDP_DEFINES_HH
 
 /*\
-
-uncomment to remove multicast support
-
-#define UDP_NO_MULTICAST_SUPPORT
-
+uncomment to have multicast support
+#define UDP_HAVE_MULTICAST_SUPPORT
+#define UDP_HAVE_BZERO
+#define UDP_HAVE_STRERROR_R
 \*/
 
 #include "buffer_defines.h"

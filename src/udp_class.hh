@@ -56,7 +56,7 @@ public:
   open_as_server( int port )
   { Socket_open_as_server( &data, port ); }
 
-#ifndef UDP_NO_MULTICAST_SUPPORT
+#ifdef UDP_HAVE_MULTICAST_SUPPORT
 
   int
   open_multicast_as_client(

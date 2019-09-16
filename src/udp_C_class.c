@@ -129,9 +129,13 @@ Socket_send(
       #ifdef UDP_ON_WINDOWS
       UDP_CheckError( "error sendto" );
       #else
-      char error_str[1024];
-      strerror_r( errno, error_str, 1024 );
-      UDP_printf("error sendto: %s\n",error_str);
+        #ifdef UDP_HAVE_STRERROR_R
+        char error_str[1024];
+        strerror_r( errno, error_str, 1024 );
+        UDP_printf("error sendto: %s\n",error_str);
+        #else
+        UDP_printf("error sendto: %s\n",strerror(errno));
+        #endif
       #endif
       return UDP_FALSE;
     }

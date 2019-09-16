@@ -115,7 +115,7 @@ Socket_receive_raw(
  |  |_|  |_|\__,_|_|\__|_|\___\__,_|___/\__|
 \*/
 
-#ifndef UDP_NO_MULTICAST_SUPPORT
+#ifdef UDP_HAVE_MULTICAST_SUPPORT
 extern
 int
 MultiCast_open_as_sender(
