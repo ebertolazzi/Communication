@@ -71,6 +71,12 @@ Socket_send(
 
   /* Send packets */
   for ( ipos = 0; ipos < n_packets; ++ipos ) {
+    uint8_t data_buffer[UDP_MTU_MAX_BYTES];
+    #ifdef UDP_ON_WINDOWS
+    int nbytes;
+    #else
+    size_t nbytes;
+    #endif
 
     /* estrae pacchetto */
     Packet_Build_from_buffer(
@@ -78,13 +84,12 @@ Socket_send(
     );
 
     /* serializza pacchetto */
-    uint8_t data_buffer[UDP_MTU_MAX_BYTES];
     datagram_part_to_buffer( &packet, data_buffer );
 
     #ifdef UDP_ON_WINDOWS
-    int nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
+    nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
     #else
-    size_t nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
+    nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
     #endif
 
     #if defined(WIN_NONBLOCK)

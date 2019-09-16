@@ -24,10 +24,12 @@
     #define int16_t  int16_T
     #define int32_t  int32_T
     #define int32_t  int32_T
+    #define int64_t  int64_T
     #define uint8_t  uint0_T
     #define uint16_t uint16_T
     #define uint32_t uint32_T
     #define uint32_t uint32_T
+    #define uint64_t uint64_T
   #else
     #include <stdint.h>
   #endif
