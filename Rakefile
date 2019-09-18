@@ -79,8 +79,8 @@ task :build_win, [:year, :bits] do |t, args|
   FileUtils.mkdir_p "../lib/include"
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --quiet ..'
+    sh 'cmake --build . --config Debug --target install --quiet '+PARALLEL
     FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
     Dir['./lib/bin/*'].each do |f|
       FileUtils.cp f, '../lib/bin/'+args.bits+'/'+File.basename(f)
@@ -94,8 +94,8 @@ task :build_win, [:year, :bits] do |t, args|
     end
   end
 
-  sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
-  sh 'cmake  --build . --config Release  --target install '+PARALLEL
+  sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --quiet ..'
+  sh 'cmake  --build . --config Release  --target install --quiet '+PARALLEL
   FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
   Dir['./lib/bin/*'].each do |f|
     FileUtils.cp f, '../lib/bin/'+args.bits+'/'+File.basename(f)
@@ -135,11 +135,11 @@ task :build_osx do
   end
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --quiet ..'
+    sh 'cmake --build . --config Debug --target install --quiet '+PARALLEL
   end
-  sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release ..'
-  sh 'cmake --build . --config Release --target install '+PARALLEL
+  sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --quiet ..'
+  sh 'cmake --build . --config Release --target install --quiet '+PARALLEL
   FileUtils.cd '..'
 end
 
