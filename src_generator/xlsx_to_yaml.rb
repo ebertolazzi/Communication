@@ -145,17 +145,18 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
     end
 
     conf.structs.each do |key_struct,value_struct|
-      data1 = data.dup
-      if data1[key_struct] == 'x' then
-        # dalla riga seleziono le colonne da salvare
-        data1.delete_if { |key, value| !conf.for_structs.include? key }
-        puts "add to #{value_struct} #{data1}".blue
-        eval( "$#{key_struct}_struct << data1.dup");
+      begin
+        data1 = data.dup
+        if data1[key_struct] == 'x' then
+          # dalla riga seleziono le colonne da salvare
+          data1.delete_if { |key, value| !conf.for_structs.include? key }
+          puts "add to #{value_struct} #{data1}".blue
+          eval( "$#{key_struct}_struct << data1.dup");
+        end
+      rescue => e
+        puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
       end
-    rescue => e
-      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
-
   end
 end
 
