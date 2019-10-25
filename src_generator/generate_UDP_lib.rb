@@ -6,7 +6,16 @@ require 'yaml'
 require 'fileutils'
 require_relative "./serialize.rb"
 
+if ARGV.size != 1 then
+  raise ArgumentError, "usage: #{File.basename(__FILE__)} CONFIG.rb"
+end
+
+require_relative ARGV[0]
+
+conf = Config.new
+
 data = YAML.load_file("./signalmap_UDP.yaml")
+
 
  #####        #     #
 #     #       #     # ######   ##   #####  ###### #####
@@ -338,14 +347,12 @@ base_src = File.expand_path('../src', File.dirname(__FILE__))
 #FileUtils.cp "#{base_src}/buffer_defines_ntoh.c", "./generated"
 
 # reconstruct field for UDP struct
-pp data.keys
-udp_data = {
-  :scenario             => { :fields => data[:Scenario]    },
-  :manoeuvre            => { :fields => data[:Manoeuvre]   },
-  :sim_graphics         => { :fields => data[:SimGraphics] },
-  :sim_state            => { :fields => data[:SimState]    },
-  :virtual_coach_output => { :fields => data[:VirtualCoachOutput]    },
-};
+
+udp_data = {}
+conf.structs.each do |key,value|
+  cmd = "udp_data[:#{key.to_s}] = { :fields => data[:#{value}] }";
+  eval(cmd)
+end
 
 prefix = "generated/"
 udp_data.each do |key,value|
