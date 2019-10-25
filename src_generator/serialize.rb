@@ -502,7 +502,7 @@ def simulink_to_struct( name, hsc )
     res += "      #endif\n"
     res += "    } else {\n"
     if sz > 1 then
-      res += "      for ( i_count=0; i_count < #{sz}; ++i_count ) out->#{n} = p[i_count];\n"
+      res += "      for ( i_count=0; i_count < #{sz}; ++i_count ) out->#{n}[i_count] = p[i_count];\n"
     else
       res += "      out->#{n} = *p;\n"
     end
@@ -528,7 +528,7 @@ def simulink_from_struct( name, hsc )
 
     res += "  /* store ``#{n}'' at port #{ipos} */\n"
     if sz > 1 then
-      res += "  memcpy( ssGetOutputPortSignal( S, #{ipos} ), n->#{n}, sizeof(#{type_to_C(f[:type])})*#{sz} );\n"
+      res += "  memcpy( ssGetOutputPortSignal( S, #{ipos} ), in->#{n}, sizeof(#{type_to_C(f[:type])})*#{sz} );\n"
     else
       res += "  memcpy( ssGetOutputPortSignal( S, #{ipos} ), (void*)(&in->#{n}), sizeof(#{type_to_C(f[:type])}) );\n"
     end
