@@ -267,6 +267,31 @@ Socket_receive_raw(
 }
 
 /*\
+ |                   _
+ |   _ __   ___  ___| | __    _ __ __ ___      __
+ |  | '_ \ / _ \/ _ \ |/ /   | '__/ _` \ \ /\ / /
+ |  | |_) |  __/  __/   <    | | | (_| |\ V  V /
+ |  | .__/ \___|\___|_|\_\___|_|  \__,_| \_/\_/
+ |  |_|                 |_____|
+\*/
+
+int
+Socket_peek_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  ssize_t ret = recvfrom(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    MSG_PEEK,
+    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
+  );
+  return (int) ret; /* if < 0 no data received */
+}
+
+/*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
  |  | |\/| | | | | | __| |/ __/ _` / __| __|

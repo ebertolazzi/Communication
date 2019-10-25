@@ -107,6 +107,28 @@ Socket_receive_raw(
   uint32_t     message_size
 );
 
+extern
+int
+Socket_peek_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+);
+
+extern
+int
+Socket_set_in_buffer_size(
+  SocketData * pS,
+  int          buffer_size
+);
+
+extern
+int
+Socket_set_out_buffer_size(
+  SocketData * pS,
+  int          buffer_size
+);
+
 /*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_

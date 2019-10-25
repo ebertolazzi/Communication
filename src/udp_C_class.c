@@ -155,6 +155,7 @@ Socket_send(
   #endif
   return UDP_TRUE;
 }
+
 /*\
  | Receive message function
 \*/
@@ -259,6 +260,44 @@ Socket_receive(
     return UDP_FALSE;
   }
 
+}
+
+/*\
+ |   _   _ _____ ___ _     ____
+ |  | | | |_   _|_ _| |   / ___|
+ |  | | | | | |  | || |   \___ \
+ |  | |_| | | |  | || |___ ___) |
+ |   \___/  |_| |___|_____|____/
+\*/
+
+int
+Socket_set_in_buffer_size(
+  SocketData * pS,
+  int          buffer_size
+) {
+  return setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_RCVBUF,
+    &buffer_size,
+    sizeof(int)
+  );
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+int
+Socket_set_out_buffer_size(
+  SocketData * pS,
+  int          buffer_size
+) {
+  return setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_SNDBUF,
+    &buffer_size,
+    sizeof(int)
+  );
 }
 
 #ifdef __cplusplus
