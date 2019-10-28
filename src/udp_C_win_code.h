@@ -267,10 +267,10 @@ Socket_send_raw(
 ) {
   int n_byte_sent;
   if ( pS->connected == UDP_TRUE ) {
-    UDP_printf("Socket_send_raw::send\n");
+    /* UDP_printf("Socket_send_raw::send\n"); */
     n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
   } else {
-    UDP_printf("Socket_send_raw::sendto\n");
+    /* UDP_printf("Socket_send_raw::sendto\n"); */
     n_byte_sent = sendto(
       pS->socket_id,
       message,
@@ -333,6 +333,22 @@ Socket_peek_raw(
     message,
     (int) message_size,
     MSG_PEEK,
+    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
+  );
+  return ret; /* if < 0 no data received */
+}
+
+int
+Socket_receive_nb_raw(
+  SocketData * pS,
+  uint8_t      message[],
+  uint32_t     message_size
+) {
+  int ret = recvfrom(
+    pS->socket_id,
+    message,
+    (size_t) message_size,
+    MSG_DONTWAIT,
     (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
   );
   return ret; /* if < 0 no data received */
