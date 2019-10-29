@@ -34,6 +34,30 @@ UDP_CheckError( char const msg[] ) {
   LocalFree(messageBuffer);
 }
 
+int
+Socket_set_timeout(
+  SocketData * pS,
+  uint64_t     mus // timeout in microsecondi
+) {
+  struct timeval timeout;
+  int ret;
+  timeout.tv_sec  = mus / 1000000;
+  timeout.tv_usec = mus % 1000000;
+
+  ret = setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_SNDTIMEO,
+    (char *)&timeout,
+    sizeof(timeout)
+  );
+  if ( ret < 0 ) {
+    UDP_CheckError("Socket_set_timeout::setsockopt<timeout>");
+    return UDP_FALSE;
+  }
+  return UDP_TRUE;
+}
+
 /*\
  |   ____             _        _
  |  / ___|  ___   ___| | _____| |_
@@ -41,6 +65,21 @@ UDP_CheckError( char const msg[] ) {
  |   ___) | (_) | (__|   <  __/ |_
  |  |____/ \___/ \___|_|\_\___|\__|
 \*/
+
+static WSADATA wsa;
+static int     wsa_startup = UDP_FALSE;
+
+int
+Socket_startup() {
+  if ( wsa_startup == UDP_FALSE ) {
+    if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
+      UDP_CheckError( "error: WSAStartup() failed" );
+      return UDP_FALSE;
+    }
+    wsa_startup = UDP_TRUE;
+  }
+  return UDP_TRUE;
+}
 
 int
 Socket_open_as_client(
@@ -51,20 +90,15 @@ Socket_open_as_client(
 ) {
   int      ret;
   unsigned opt_buflen;
-  struct timeval timeout;
-  char ipAddress[INET_ADDRSTRLEN];
+  char     ipAddress[INET_ADDRSTRLEN];
 
-  WSADATA wsa;
+  ret = Socket_startup();
+  if ( res == UDP_FALSE ) return UDP_FALSE;
 
   pS->socket_id = 0;
 
-  if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
-    UDP_CheckError( "error: WSAStartup() failed" );
-    return UDP_FALSE;
-  }
-
   /* Create UDP socket */
-  pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  pS->socket_id = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // (SOCKET)
   if ( pS->socket_id < 0 ) {
     UDP_CheckError("Socket_open_as_client::socket");
     return UDP_FALSE;
@@ -89,21 +123,8 @@ Socket_open_as_client(
    | Windows: it is used a non-blocking
    | socket if defined time-out <= 400 ms
   \*/
-
-  timeout.tv_sec = 0;
-  timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
-
-  ret = setsockopt(
-    pS->socket_id,
-    SOL_SOCKET,
-    SO_SNDTIMEO,
-    (char *)&timeout,
-    sizeof(timeout)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("Socket_open_as_client::setsockopt<timeout>");
-    return UDP_FALSE;
-  }
+  ret = Socket_set_timeout( pS, UDP_RECV_SND_TIMEOUT_MS * 1000 );
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /* Clear the address structures */
   memset( &pS->sock_addr, 0, sizeof(pS->sock_addr) );
@@ -151,20 +172,16 @@ Socket_open_as_client(
 int
 Socket_open_as_server( SocketData * pS, int bind_port ) {
 
-  int ret, yes;
-  struct timeval timeout;
-  char ipAddress[INET_ADDRSTRLEN];
-  WSADATA wsa;
+  int     ret, yes;
+  char    ipAddress[INET_ADDRSTRLEN];
 
-  pS->socket_id = 0;
+  pS->socket_id = INVALID_SOCKET;
 
-  if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
-    UDP_CheckError( "error: WSAStartup() failed" );
-    return UDP_FALSE;
-  }
+  ret = Socket_startup();
+  if ( res == UDP_FALSE ) return UDP_FALSE;
 
   /* Create UDP socket */
-  pS->socket_id = (int32_t)socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
+  pS->socket_id = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP ); // (SOCKET)
   if ( pS->socket_id < 0 ) {
     UDP_CheckError("Socket_open_as_server::socket");
     return UDP_FALSE;
@@ -189,20 +206,8 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
    | socket if defined time-out <= 400 ms
   \*/
 
-  timeout.tv_sec = 0;
-  timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
-
-  ret = setsockopt(
-    pS->socket_id,
-    SOL_SOCKET,
-    SO_RCVTIMEO,
-    (char *)&timeout,
-    sizeof(timeout)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("Socket_open_as_server::setsockopt<timeout>");
-    return UDP_FALSE;
-  }
+  ret = Socket_set_timeout( pS, UDP_RECV_SND_TIMEOUT_MS * 1000 );
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /*\
    | If it is a server, bind socket to port
@@ -226,6 +231,7 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
     ipAddress,
     INET_ADDRSTRLEN
   );
+
   UDP_printf("======================================\n");
   UDP_printf("SERVER\n");
   UDP_printf("address: %s\n", ipAddress);
@@ -357,15 +363,12 @@ MultiCast_open_as_listener(
 
   int ret, yes;
   struct ip_mreq mreq;
-  WSADATA wsa;
 
   pS->connected = UDP_FALSE;
   pS->socket_id = 0;
 
-  if ( WSAStartup(MAKEWORD(2, 2), &wsa) != 0 ) {
-    UDP_CheckError( "error: WSAStartup() failed" );
-    return UDP_FALSE;
-  }
+  ret = Socket_startup();
+  if ( res == UDP_FALSE ) return UDP_FALSE;
 
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -431,22 +434,10 @@ MultiCast_open_as_sender(
   int          group_port
 ) {
 
-  WORD    wVersionRequested;
-  WSADATA wsaData;
-  int     err;
+  int ret;
 
-  /* Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h */
-  wVersionRequested = MAKEWORD(2, 2);
-
-  err = WSAStartup(wVersionRequested, &wsaData);
-  if (err != 0) {
-    /* Tell the user that we could not find a usable */
-    /* Winsock DLL.                                  */
-    UDP_printf("WSAStartup failed with error: %d\n", err);
-	  return UDP_FALSE;
-  } else {
-    UDP_printf("UDP STREAMING Opening the datagram socket...OK.\n");
-  }
+  ret = Socket_startup();
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /* Create UDP socket */
   pS->connected = UDP_FALSE;

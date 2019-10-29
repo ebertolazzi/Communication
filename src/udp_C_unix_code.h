@@ -10,6 +10,30 @@ UDP_CheckError( char const msg[] ) {
   #endif
 }
 
+int
+Socket_set_timeout(
+  SocketData * pS,
+  uint64_t     mus // timeout in microsecondi
+) {
+  struct timeval timeout;
+  int ret;
+  timeout.tv_sec  = mus / 1000000;
+  timeout.tv_usec = mus % 1000000;
+
+  ret = setsockopt(
+    pS->socket_id,
+    SOL_SOCKET,
+    SO_SNDTIMEO,
+    (char *)&timeout,
+    sizeof(timeout)
+  );
+  if ( ret < 0 ) {
+    UDP_CheckError("Socket_set_timeout::setsockopt<timeout>");
+    return UDP_FALSE;
+  }
+  return UDP_TRUE;
+}
+
 /*\
  |   ____             _        _
  |  / ___|  ___   ___| | _____| |_
@@ -27,8 +51,7 @@ Socket_open_as_client(
 ) {
   int      ret;
   unsigned opt_buflen;
-  struct timeval timeout;
-  char ipAddress[INET_ADDRSTRLEN];
+  char     ipAddress[INET_ADDRSTRLEN];
 
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -56,21 +79,8 @@ Socket_open_as_client(
    | Windows: it is used a non-blocking
    | socket if defined time-out <= 400 ms
   \*/
-
-  timeout.tv_sec = 0;
-  timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
-
-  ret = setsockopt(
-    pS->socket_id,
-    SOL_SOCKET,
-    SO_SNDTIMEO,
-    (char *)&timeout,
-    sizeof(timeout)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("Socket_open_as_client::setsockopt<timeout>");
-    return UDP_FALSE;
-  }
+  ret = Socket_set_timeout( pS, UDP_RECV_SND_TIMEOUT_MS * 1000 );
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /* Clear the address structures */
   memset( &pS->sock_addr, 0, sizeof(pS->sock_addr) );
@@ -118,8 +128,7 @@ Socket_open_as_client(
 int
 Socket_open_as_server( SocketData * pS, int bind_port ) {
 
-  int ret, yes;
-  struct timeval timeout;
+  int  ret, yes;
   char ipAddress[INET_ADDRSTRLEN];
 
   /* Create UDP socket */
@@ -142,20 +151,8 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
    | socket if defined time-out <= 400 ms
   \*/
 
-  timeout.tv_sec = 0;
-  timeout.tv_usec = UDP_RECV_SND_TIMEOUT_MS * 1000;
-
-  ret = setsockopt(
-    pS->socket_id,
-    SOL_SOCKET,
-    SO_RCVTIMEO,
-    (char *)&timeout,
-    sizeof(timeout)
-  );
-  if ( ret < 0 ) {
-    UDP_CheckError("Socket_open_as_server::setsockopt<timeout>");
-    return UDP_FALSE;
-  }
+  ret = Socket_set_timeout( pS,  UDP_RECV_SND_TIMEOUT_MS * 1000 );
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /*\
    | If it is a server, bind socket to port

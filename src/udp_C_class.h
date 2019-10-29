@@ -129,6 +129,12 @@ Socket_set_out_buffer_size(
   int          buffer_size
 );
 
+int
+Socket_set_timeout(
+  SocketData * pS,
+  uint64_t     mus // timeout in microsecondi
+);
+
 /*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
