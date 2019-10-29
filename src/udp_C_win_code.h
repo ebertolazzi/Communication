@@ -93,7 +93,7 @@ Socket_open_as_client(
   char     ipAddress[INET_ADDRSTRLEN];
 
   ret = Socket_startup();
-  if ( res == UDP_FALSE ) return UDP_FALSE;
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   pS->socket_id = 0;
 
@@ -178,7 +178,7 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
   pS->socket_id = INVALID_SOCKET;
 
   ret = Socket_startup();
-  if ( res == UDP_FALSE ) return UDP_FALSE;
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /* Create UDP socket */
   pS->socket_id = socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP ); // (SOCKET)

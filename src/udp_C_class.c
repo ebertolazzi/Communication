@@ -279,7 +279,7 @@ Socket_set_in_buffer_size(
     pS->socket_id,
     SOL_SOCKET,
     SO_RCVBUF,
-    &buffer_size,
+    (void const *)&buffer_size,
     sizeof(int)
   );
 }
@@ -295,7 +295,7 @@ Socket_set_out_buffer_size(
     pS->socket_id,
     SOL_SOCKET,
     SO_SNDBUF,
-    &buffer_size,
+    (void const *)&buffer_size,
     sizeof(int)
   );
 }
