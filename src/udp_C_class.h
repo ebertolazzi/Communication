@@ -117,14 +117,6 @@ Socket_peek_raw(
 
 extern
 int
-Socket_receive_nb_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
-);
-
-extern
-int
 Socket_set_in_buffer_size(
   SocketData * pS,
   int          buffer_size

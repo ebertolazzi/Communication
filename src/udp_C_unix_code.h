@@ -291,22 +291,6 @@ Socket_peek_raw(
   return (int) ret; /* if < 0 no data received */
 }
 
-int
-Socket_receive_nb_raw(
-  SocketData * pS,
-  uint8_t      message[],
-  uint32_t     message_size
-) {
-  ssize_t ret = recvfrom(
-    pS->socket_id,
-    message,
-    (size_t) message_size,
-    MSG_DONTWAIT,
-    (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
-  );
-  return (int) ret; /* if < 0 no data received */
-}
-
 /*\
  |   __  __       _ _   _               _
  |  |  \/  |_   _| | |_(_) ___ __ _ ___| |_
