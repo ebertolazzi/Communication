@@ -368,7 +368,7 @@ MultiCast_open_as_listener(
   pS->socket_id = 0;
 
   ret = Socket_startup();
-  if ( res == UDP_FALSE ) return UDP_FALSE;
+  if ( ret == UDP_FALSE ) return UDP_FALSE;
 
   /* Create UDP socket */
   pS->socket_id = (int32_t)socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
