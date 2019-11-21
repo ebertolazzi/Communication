@@ -212,6 +212,28 @@ def to_print( name, hsc )
   return res
 end
 
+def to_fileprint( name, hsc )
+  fds   = hsc[:fields];
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res  = "void\n#{name}_fileprint( #{name} const * S , FILE * file_stream ) {\n"
+  res += "  int i_count;\n" if maxsz > 1
+  fds.each do |f|
+    fmt = type_to_C_fmt(f[:type])
+    n   = f[:name];
+    sz  = f[:size].to_i;
+    if sz > 1 then
+      nn = n+'[%d]';
+      res += "  for ( i_count=0; i_count<#{sz}; ++i_count )\n"
+      res += "    fprintf( file_stream , \"#{nn.ljust(len)} = %#{fmt}\\n\", i_count, S->#{n}[i_count]);\n"
+    else
+      res += "  fprintf( file_stream , \"#{n.ljust(len)} = %#{fmt}\\n\", S->#{n});\n"
+    end
+  end
+  res += "}\n"
+  return res
+end
+
 def to_buffer( name, hsc )
   fds   = hsc[:fields];
   len   = fds.map { |f| f[:name].length }.max

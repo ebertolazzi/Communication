@@ -185,19 +185,19 @@ puts "File #{conf.yaml_file_name_MQTT}.yaml generated"
 puts "--------------------------------------"
 
 
-# Write yaml file
-$workbook_data = {
-  :origin_file => File.basename(conf.input_file_name),
-  :Scenario => $scenario_struct,
-  :Maneuvre => $manoeuvre_struct
-}
+# # Write yaml file
+# $workbook_data = {
+#   :origin_file => File.basename(conf.input_file_name),
+#   :Scenario => $scenario_struct,
+#   :Maneuvre => $manoeuvre_struct
+# }
 
-# Delete old files in temporary folder (if present)
-FileUtils.rm_f conf.yaml_file_name_UDP
-File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
-  f.write($workbook_data.to_yaml(:Indent => 8))
-end
+# # Delete old files in temporary folder (if present)
+# FileUtils.rm_f conf.yaml_file_name_UDP
+# File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
+#   f.write($workbook_data.to_yaml(:Indent => 8))
+# end
 
-puts "File #{conf.yaml_file_name_UDP}.yaml generated"
-puts "--------------------------------------"
+# puts "File #{conf.yaml_file_name_UDP}.yaml generated"
+# puts "--------------------------------------"
 
