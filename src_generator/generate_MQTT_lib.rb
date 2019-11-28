@@ -21,7 +21,8 @@ data = YAML.load_file("./signalmap_MQTT.yaml")
 # C_struct of the data to be serialized
 # buffer_to_C_STRUCTURE -> deserialize
 # C_STRUCTURE_to_buffer -> serialize
-# C_STRUCTURE_print     -> write human readable contents con the structure to the stdout
+# C_STRUCTURE_print     -> write human readable contents on the structure to the stdout
+# C_STRUCTURE_fileprint -> write human readable contents on a file (open in appending mode)
 #
 # if @data[:main_topic] is present the also MQTT serialization code is generated
 #
@@ -42,6 +43,8 @@ def generate_c_header( tag, data )
   extern "C" {
 #endif
 
+#include<stdio.h> /* Necessary to recognize FILE type */
+
 /* C structure for <%= @tag %> */
 <%= to_C_struct( @tag, @value ) %>
 
@@ -59,6 +62,11 @@ void
 extern
 void
 <%= @tag %>_print( <%= @tag %> const * S );
+
+/* get buffer and un-serialize to <%= @tag %> struct */
+extern
+void
+<%= @tag %>_fileprint( <%= @tag %> const * S , FILE * file_stream );
 
 <% if @data[:main_topic] then %>
 /* build topic for <%= @tag %> struct */
@@ -112,6 +120,9 @@ def generate_c_body( tag, data )
 
 /* print <%= @tag %> struct on stdio */
 <%= to_print( @tag, @value ) %>
+
+/* print <%= @tag %> struct on file_stream */
+<%= to_fileprint( @tag, @value ) %>
 
 /* serialize <%= @tag %> struct to buffer */
 <%= to_buffer( @tag, @value ) %>
