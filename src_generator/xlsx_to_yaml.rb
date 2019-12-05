@@ -30,7 +30,7 @@ puts conf.input_file_name
 $workbook_data = { :origin_file => File.basename(conf.input_file_name) }
 $last_struct   = {}
 
-conf.structs.each do |key,value|
+conf.for_structs.each do |key,value|
   cmd = "$#{key}_struct = []"
   eval(cmd)
 end
@@ -144,12 +144,12 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
       puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
-    conf.structs.each do |key_struct,value_struct|
+    conf.for_structs.each do |key_struct,value_struct|
       begin
         data1 = data.dup
         if data1[key_struct] == 'x' then
           # dalla riga seleziono le colonne da salvare
-          data1.delete_if { |key, value| !conf.for_structs.include? key }
+          data1.delete_if { |key, value| !conf.for_.include? key }
           puts "add to #{value_struct} #{data1}".blue
           eval( "$#{key_struct}_struct << data1.dup");
         end
@@ -190,19 +190,18 @@ puts "--------------------------------------"
 ## pp $sim_graphics_struct
 ## puts "--------------------------------------"
 
-# Write yaml file
-$workbook_data = { :origin_file => File.basename(conf.input_file_name) }
+# # Write yaml file
+# $workbook_data = {
+#   :origin_file => File.basename(conf.input_file_name),
+#   :Scenario => $scenario_struct,
+#   :Maneuvre => $manoeuvre_struct
+# }
 
-conf.structs.each do |key,value|
-  cmd = "$workbook_data[:#{value}] = $#{key}_struct";
-  eval(cmd)
-end
+# # Delete old files in temporary folder (if present)
+# FileUtils.rm_f conf.yaml_file_name_UDP
+# File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
+#   f.write($workbook_data.to_yaml(:Indent => 8))
+# end
 
-# Delete old files in temporary folder (if present)
-FileUtils.rm_f conf.yaml_file_name_UDP
-File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
-  f.write($workbook_data.to_yaml(:Indent => 8))
-end
-
-puts "File #{conf.yaml_file_name_UDP}.yaml generated"
-puts "--------------------------------------"
+# puts "File #{conf.yaml_file_name_UDP}.yaml generated"
+# puts "--------------------------------------"
