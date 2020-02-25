@@ -7,8 +7,6 @@
 #include <Winsock2.h>
 #include <Ws2tcpip.h>
 
-#pragma comment (lib, "Ws2_32.lib")
-
 static
 void
 UDP_CheckError( char const msg[] ) {
