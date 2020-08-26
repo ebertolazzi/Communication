@@ -14,9 +14,16 @@ content1 = spm.CAM_message_decode( payload )
 # type unknow - use the topic
 content2 = spm.all_MQTT_decoding( topic , payload )
 
+# knowing the type of the message
+content3 = spm.CAM_message_decode_true_values( payload )
+
+# type unknow - use the topic
+content4 = spm.all_MQTT_decoding_true_values( topic , payload )
+
 print(content1)
 print(content2)
-
+print(content3)
+print(content4)
 # pack to send
 
 packed_lunch = spm.CAM_message_encode( content1 )
@@ -26,8 +33,8 @@ topic_lunch  = spm.CAM_message_MQTT_topic( content1 )
 
 content2 = spm.all_MQTT_decoding( topic_lunch , packed_lunch )
 
-print(packed_lunch)
-print(content2)
+#print(packed_lunch)
+#print(content2)
 
 # TRY MAP/PARKING in order to verify vector arguments...
 
@@ -37,5 +44,4 @@ payload = binascii.unhexlify(sample_data['hex_payload'])
 
 contentMappo = spm.all_MQTT_decoding( sample_data['topic'] , payload )
 
-print(contentMappo)
-
+#print(contentMappo)

@@ -40,6 +40,14 @@ import struct
 <%= to_Python_dict( tag , @data[tag] ) %>
 <% end; end; %>
 
+# DECODING (true values)
+
+<% @data.keys.each do |tag|
+  if tag != :origin_file and tag != :main_topic and @data[tag][:active] then %>
+    <% @data[tag][:fields].delete_if { |v| !v[:mqtt] } %>
+<%= to_Python_dict_true_values( tag , @data[tag] ) %>
+<% end; end; %>
+
 # ENCODING
 
 <% @data.keys.each do |tag|
@@ -69,6 +77,8 @@ import struct
 # decode from payload and topic
 
 <%= to_Python_dict_universal( @data ) %>
+
+<%= to_Python_dict_universal_true_values( @data ) %>
 
 '''
   context = { :data => data, :main_topic => data[:main_topic] }
