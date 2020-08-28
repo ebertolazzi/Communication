@@ -73,10 +73,12 @@ task :build_win, [:year, :bits] do |t, args|
 
   tmp = " -DBITS=#{args.bits} -DYEAR=#{args.year} " + ' -DCMAKE_INSTALL_PREFIX:PATH=lib ..'
 
-  win32_64 = ''
-  case args.bits
+  win32_64  = ''
+  win32_64_ = '-A x64'
+  case bits
   when /x64/
-    win32_64 = ' Win64'
+    win32_64  = ' Win64'
+    win32_64_ = ' -A Win64'
   end
 
   case args.year
@@ -91,7 +93,7 @@ task :build_win, [:year, :bits] do |t, args|
   when "2017"
     sh 'cmake -G "Visual Studio 15 2017' + win32_64 +'" ' + tmp
   when "2019"
-    tmp = 'cmake -G "Visual Studio 16 2019' + win32_64 +'" ' + tmp
+    sh 'cmake -G "Visual Studio 16 2019"' + win32_64_ + tmp
   else
     puts "Visual Studio year #{year} not supported!\n";
   end
