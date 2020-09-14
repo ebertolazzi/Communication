@@ -20,11 +20,12 @@ class Config
       [ "Unit",                 :unit                 ],
       [ "yes/no/x",             :yes_no_x             ],
       [ "Scenario",             :scenario             ],
-      [ "Manoeuvre",            :manoeuvre            ]
+      [ "Manoeuvre",            :manoeuvre            ],
+      [ "Gain",                 :gain            ],
     ]
 
-    # list ofthe selected columns to be exported in the serialized struct
-    @for_structs = [ :name, :comment, :size, :type, :range, :unit ]
+    # list of the selected columns to be exported in the serialized struct
+    @for_structs = [ :name, :comment, :size, :type, :range, :gain ,:unit ]
 
   end
 end

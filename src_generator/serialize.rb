@@ -1,6 +1,6 @@
 #
 # Ruby  functions used to serialize data and convert into
-# C/C++/Simulink code
+# C/C++/Simulink/Python code
 #
 def type_to_size( t )
   sz = 0
@@ -177,6 +177,36 @@ def type_to_SIMULINK( t )
   puts "type_to_SIMULINK: unknown name of #{t}"
   end
   return res
+end
+
+def type_to_Python_struct( t )
+  # refer to https://docs.python.org/2/library/struct.html
+  t.downcase!
+  case t
+  when /^double$/
+    t = 'd'
+  when /^single$/
+    t = 'f'
+  when /^int8$/
+    t = 'b';
+  when /^uint8$/
+    t = 'B';
+  when /^int16$/
+    t = 'h';
+  when /^uint16$/
+    t = 'H';
+  when /^int32$/
+    t = 'i';
+  when /^uint32$/
+    t = 'I';
+  when /^int64$/
+    t = 'q';
+  when /^uint64$/
+    t = 'Q';
+  else
+    puts "type_to_Python_struct: unknown name of #{t}"
+  end
+  return t
 end
 
 def to_dim( vec )
@@ -698,4 +728,266 @@ def to_log_read_line( name, hsc )
   end
   res += "}\n"
   return res
+end
+
+#####  #  #  ####  #  #  ####  #   #
+#   #  # #    #    #  #  #  #  ##  #
+####    #     #    ####  #  #  # # #
+#      #      #    #  #  ####  #  ## (module struck pack/unpack)
+
+def to_Python_decoding_key( name, hsc )
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  # first part of decoding key (name + !)
+  res   = "#{name}_DK = '" 
+  res   += "!"; # network standard for byte order in python struct module
+  dim   = 0;   # initialize dimension
+  fds.each do |f|
+    tv = f[:type];
+    n  = f[:name];
+    sz = f[:size].to_i;
+    for i in 1..sz
+      res += "#{type_to_Python_struct(tv)}"
+      dim += sz*type_to_size(tv);
+    end
+  end
+  res += "'"
+  res += "\n    # size of the serialized version of struct #{name}\n"
+  res += "    # #{name} size  #{dim}\n"
+  res += "    # #{name} n fields #{fds.size}\n"
+  return res
+end
+
+def to_Python_dict( name, hsc )
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res   = "def #{name}_decode( payload ):\n" # network standard for byte order in python struct module
+  res   += "    # decode #{name} from packed binary data to python dictonary\n"
+  res   += "    " 
+  res   += to_Python_decoding_key( name, hsc )
+  i = 0
+  index_field = 0
+  res   += "\n    msg = struct.unpack( #{name}_DK , payload )"
+  res   += "\n    return { '_message_type_' : '#{name}' , "
+  fds.each do |f|
+    # get properties
+    tv = f[:type];
+    n  = f[:name];
+    sz = f[:size].to_i;
+    # add field name
+    res += "'#{f[:name]}' : "
+    # add field content (scalar or vector)
+    if sz <= 1 then
+      res += "msg[#{i}]"
+       i += 1
+    else
+      res += " ["
+      for j in 1..sz
+        res += " msg[#{i}] "
+        res += "," unless j == sz
+        i += 1
+      end
+      res += "] "
+    end
+    index_field += 1
+    res += " , " unless index_field == (fds.length)  # coma is needed till the last
+  end
+  res += " } "
+  res += " \n\n\n "
+  return res
+end
+
+def to_Python_dict_true_values( name, hsc )
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res   = "def #{name}_decode_true_values( payload ):\n" # network standard for byte order in python struct module
+  res   += "    # decode #{name} from packed binary data to python dictonary, returning true values (no gain/offset)\n"
+  res   += "    " 
+  res   += to_Python_decoding_key( name, hsc )
+  i = 0
+  index_field = 0
+  res   += "\n    msg = struct.unpack( #{name}_DK , payload )"
+  res   += "\n    return { '_message_type_' : '#{name}' , "
+  fds.each do |f|
+    # get properties
+    tv = f[:type];
+    n  = f[:name];
+    sz = f[:size].to_i;
+    # add field name
+    res += "'#{f[:name]}' : "
+    # add field content (scalar or vector)
+    if sz <= 1 then
+      res += "msg[#{i}] / #{f[:gain]}" # in future add offset
+       i += 1
+    else
+      res += " ["
+      for j in 1..sz
+        res += " msg[#{i}] / #{f[:gain]} " # in future add offset
+        res += "," unless j == sz
+        i += 1
+      end
+      res += "] "
+    end
+    index_field += 1
+    res += " , " unless index_field == (fds.length)  # coma is needed till the last
+  end
+  res += " } "
+  res += " \n\n\n "
+  return res
+end
+
+def from_Python_dict( name, hsc )
+
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res   = "def #{name}_encode( dict ):\n" # network standard for byte order in python struct module
+  res   += "    # encode #{name} from python dictonary to packed binary data\n"
+  res   += "    " 
+  res   += to_Python_decoding_key( name, hsc )
+  i = 0
+  index_field = 0
+  res   += "\n    return struct.pack( #{name}_DK , " # start writing the function
+  fds.each do |f|
+    # get properties
+    tv = f[:type];
+    n  = f[:name];
+    sz = f[:size].to_i;
+    # extract field content (scalar or vector)
+    if sz <= 1 then
+      res += "dict['#{f[:name]}']"
+      i += 1
+    else
+      for j in 0..sz-1
+        res += " dict['#{f[:name]}'][#{j}] "
+        res += "," unless j == (sz-1)
+        i += 1
+      end
+    end
+    index_field += 1
+    res += " , " unless index_field == (fds.length)  # coma is needed till the last
+  end
+  res += " ) "
+  res += " \n\n\n "
+  return res
+
+end
+
+def from_Python_dict_true_values( name, hsc )
+
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res   = "def #{name}_encode_true_values( dict ):\n" # network standard for byte order in python struct module
+  res   += "    # encode #{name} from python dictonary to packed binary data, using gain/offset free values\n"
+  res   += "    " 
+  res   += to_Python_decoding_key( name, hsc )
+  i = 0
+  index_field = 0
+  res   += "\n    return struct.pack( #{name}_DK , " # start writing the function
+  fds.each do |f|
+    # get properties
+    tv = f[:type];
+    n  = f[:name];
+    sz = f[:size].to_i;
+    # extract field content (scalar or vector)
+    if sz <= 1 then
+      res += "dict['#{f[:name]}'] * #{f[:gain]} " # add offset in future
+      i += 1
+    else
+      for j in 0..sz-1
+        res += " dict['#{f[:name]}'][#{j}] * #{f[:gain]} " # add offset in future
+        res += "," unless j == (sz-1)
+        i += 1
+      end
+    end
+    index_field += 1
+    res += " , " unless index_field == (fds.length)  # coma is needed till the last
+  end
+  res += " ) "
+  res += " \n\n\n "
+  return res
+
+end
+
+#####  #  #  ####  #  #  ####  #   #
+#   #  # #    #    #  #  #  #  ##  #
+####    #     #    ####  #  #  # # #
+#      #      #    #  #  ####  #  ## MQTT utlities
+
+def to_Python_MQTT_topic( name, hsc, data )
+
+  fds   = hsc[:fields]; 
+  len   = fds.map { |f| f[:name].length }.max
+  maxsz = fds.map { |f| f[:size].to_i }.max
+  res   = "def #{name}_MQTT_topic( dict ):\n" # network standard for byte order in python struct module
+  res   += "    # from #{name} from python dictonary to mqtt topic\n"
+  res   += "    " 
+  main_topic  = data[:main_topic]
+  subtopic    = data[name][:subtopic]
+  subsubtopic = data[name][:subsubtopic]
+
+  if subsubtopic and subsubtopic.length > 0 then
+    res += "    return '#{main_topic}/#{subtopic}/' + str(dict['#{subsubtopic}'])\n"
+  else
+    res += "    return '#{main_topic}/#{subtopic}'\n"
+  end
+
+  return res
+end
+
+def compare_Python_MQTT_topic( name , data )
+
+  res   = "def #{name}_MQTT_topic_compare( topic ):\n" 
+  res   += "    # return true if the topic is the one of #{name}\n"
+  res   += "    " 
+  main_topic  = data[:main_topic]
+  subtopic    = data[name][:subtopic]
+  
+  res += "    return '#{main_topic}/#{subtopic}' in topic\n"
+
+  return res
+end
+
+def to_Python_dict_universal( data )
+
+  res   = "def all_MQTT_decoding( topic , payload ):\n" 
+  res   += "    # return the proper decoded dictionary based on the base topic\n"
+  res   += "    dict = {}\n"
+  res   += "    if not topic: # null string return false\n"
+  res   += "        print('empty topic')\n"
+  data.keys.each do |tag|
+    if tag != :origin_file and tag != :main_topic and data[tag][:active] then
+      res += "    elif #{tag}_MQTT_topic_compare( topic ):\n"
+      res += "        dict = #{tag}_decode( payload )\n"
+    end
+  end
+  res   += "    else:\n"
+  res   += "        print('unmanaged topic:' + topic + ' - message discarderd')\n"
+  res   += "    return dict\n"
+  return res
+
+end
+
+def to_Python_dict_universal_true_values( data )
+
+  res   = "def all_MQTT_decoding_true_values( topic , payload ):\n" 
+  res   += "    # return the proper decoded dictionary based on the base topic\n"
+  res   += "    dict = {}\n"
+  res   += "    if not topic: # null string return false\n"
+  res   += "        print('empty topic')\n"
+  data.keys.each do |tag|
+    if tag != :origin_file and tag != :main_topic and data[tag][:active] then
+      res += "    elif #{tag}_MQTT_topic_compare( topic ):\n"
+      res += "        dict = #{tag}_decode_true_values( payload )\n"
+    end
+  end
+  res   += "    else:\n"
+  res   += "        print('unmanaged topic:' + topic + ' - message discarderd')\n"
+  res   += "    return dict\n"
+  return res
+
 end
