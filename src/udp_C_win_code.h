@@ -39,8 +39,8 @@ Socket_set_timeout(
 ) {
   struct timeval timeout;
   int ret;
-  timeout.tv_sec  = mus / 1000000;
-  timeout.tv_usec = mus % 1000000;
+  timeout.tv_sec  = mus / uint64_t(1000000);
+  timeout.tv_usec = mus % uint64_t(1000000);
 
   ret = setsockopt(
     pS->socket_id,
