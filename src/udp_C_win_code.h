@@ -39,7 +39,7 @@ Socket_set_timeout(
 ) {
   struct timeval timeout;
   int ret;
-  uint64_t tmp    = 1000000;
+  uint64_t tmp    = 1000000UL;
   timeout.tv_sec  = mus / tmp;
   timeout.tv_usec = mus % tmp;
 
