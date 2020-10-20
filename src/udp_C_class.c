@@ -226,7 +226,7 @@ Socket_receive(
       buffer_to_datagram_part( data_buffer, &packet );
       Packet_Add_to_buffer( &pi, &packet, message, message_max_size );
     } else {
-      sleep_ms(UDP_SLEEP_MS);
+      sleep_100ns(10*UDP_SLEEP_MS);
     }
 
     if ( pi.received_packets == pi.n_packets && pi.n_packets > 0 ) break;

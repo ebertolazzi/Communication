@@ -109,7 +109,7 @@ Packet_Number( uint32_t packet_size );
 extern uint64_t get_time_ms( void );
 
 /* Sleep function (milliseconds) */
-extern void sleep_ms( uint32_t time_sleep_ms );
+extern void sleep_100ns( uint32_t time_sleep_100ns );
 
 #ifdef __cplusplus
 }
