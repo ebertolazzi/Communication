@@ -27,9 +27,30 @@
     return time_ms;
   }
 
+  // Windows sleep in 100ns units
+  BOOLEAN
+  nanosleep( long ns ){
+    LARGE_INTEGER li;   // Time definition
+    // Create timer
+    HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL); // Timer handle
+    if ( !timer ) return FALSE;
+    // Set timer properties
+    li.QuadPart = -ns;
+    if (!SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE)) {
+      CloseHandle(timer);
+      return FALSE;
+    }
+    // Start & wait for timer
+    WaitForSingleObject(timer, INFINITE);
+    // Clean resources
+    CloseHandle(timer);
+    // Slept without problems
+    return TRUE;
+  }
+
   void
   sleep_ms( uint32_t time_sleep_ms )
-  { Sleep(time_sleep_ms); }
+  { nanosleep( long(10*time_sleep_ms) ); }
 
   typedef int ssize_t;
 
