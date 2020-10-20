@@ -49,8 +49,10 @@
   }
 
   void
-  sleep_ms( uint32_t time_sleep_ms )
-  { nanosleep( long(10*time_sleep_ms) ); }
+  sleep_ms( uint32_t time_sleep_ms ) {
+    long ns100 = 10*time_sleep_m;
+    nanosleep( ns100 );
+  }
 
   typedef int ssize_t;
 
