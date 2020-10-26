@@ -9,6 +9,7 @@ src_udp_test/.vscode
 src_udp_test/generated
 .vscode
 Icon?
+/bin
 
 *.exe
 *.ilk
