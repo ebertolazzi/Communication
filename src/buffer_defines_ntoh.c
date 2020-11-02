@@ -1,8 +1,5 @@
 #include "buffer_defines.h"
 
-#ifdef __GNUC__
-#pragma GCC diagnostic ignored "-Wunreachable-code-return"
-#endif
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wunreachable-code-return"
 #endif
