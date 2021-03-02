@@ -14,8 +14,8 @@ main() {
   input_msg.ID            = 1;
   input_msg.Version       = 1;
   input_msg.CycleNumber   = 1;
-  input_msg.ECUupTime     = get_time_ms()*1000;
-  input_msg.TimeStamp     = get_time_ms()*1000;
+  input_msg.ECUupTime     = static_cast<double>(get_time_ms()*1000);
+  input_msg.TimeStamp     = static_cast<double>(get_time_ms()*1000);
   input_msg.Status        = 1;
   input_msg.vel           = 10;
   input_msg.x             = 1;
@@ -49,7 +49,7 @@ main() {
   
   /* Create and set UDP */
   Socket socket;
-  socket.open_as_client( "127.0.0.1", 25000, UDP_FALSE );
+  socket.open_as_client( "127.0.0.1", 25000, false );
   socket.check();
 
   start_time = get_time_ms();

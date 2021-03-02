@@ -10,6 +10,8 @@ src_udp_test/generated
 .vscode
 Icon?
 /bin
+/vs_2017*
+/vs_2019*
 
 *.exe
 *.ilk
