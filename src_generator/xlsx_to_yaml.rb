@@ -27,10 +27,12 @@ columns_to_idx = {}
 
 puts conf.input_file_name
 
+#puts conf.for_structs
+
 $workbook_data = { :origin_file => File.basename(conf.input_file_name) }
 $last_struct   = {}
 
-conf.for_structs.each do |key,value|
+conf.for_structs.each do |key|
   cmd = "$#{key}_struct = []"
   eval(cmd)
 end
@@ -141,20 +143,22 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
         $last_struct[:fields] << data1.dup;
       end
     rescue => e
-      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+      puts "(1) skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
-    conf.for_structs.each do |key_struct,value_struct|
+    conf.for_structs.each do |key_struct|
+ #      puts "parsing key = #{key_struct}"
       begin
         data1 = data.dup
         if data1[key_struct] == 'x' then
           # dalla riga seleziono le colonne da salvare
-          data1.delete_if { |key, value| !conf.for_.include? key }
-          puts "add to #{value_struct} #{data1}".blue
+          data1.delete_if { |key, value| !conf.for_structs.include? key }
+          #puts "add to #{value_struct} #{data1}".blue
           eval( "$#{key_struct}_struct << data1.dup");
         end
       rescue => e
-        puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
+        # puts "key #{key_struct} = #{value_struct}"
+        puts "(2) skipping row `#{lineNumber}` due to `#{e}`".yellow
       end
     end
   end
