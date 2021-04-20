@@ -320,7 +320,6 @@ end
 
 def to_C_struct( name, hsc )
   fds   = hsc[:fields];
-  puts "name = #{name} fds = #{fds}"
   len   = fds.map { |f| f[:name].length }.max
   maxsz = fds.map { |f| f[:size].to_i }.max
   res   = "typedef struct {\n";

@@ -2,8 +2,10 @@
 
 require 'pp'
 require 'erubis'
+require 'colorize'
 require 'yaml'
 require 'fileutils'
+
 require_relative "./serialize.rb"
 
 if ARGV.size != 1 then
@@ -350,14 +352,14 @@ base_src = File.expand_path('../src', File.dirname(__FILE__))
 
 udp_data = {}
 conf.structs.each do |key,value|
-  cmd = "udp_data[:#{key.to_s}] = { :fields => data[:#{value}] }";
-  eval(cmd)
+  puts "key = #{key.to_s}".green
+  udp_data[key] = { :fields => data[key] };
 end
 
 prefix = "generated/"
 udp_data.each do |key,value|
-  puts "key = #{key}"
-  ###puts "value = #{value}"
+  puts "key = #{key}".green
+  #puts "value = #{value}".yellow
   File.open( prefix+key.to_s+".h",  "w" ) { |f| f.puts generate_c_header( key.to_s, value ) }
   File.open( prefix+key.to_s+".c",  "w" ) { |f| f.puts generate_c_body( key.to_s, value ) }
   File.open( prefix+key.to_s+"_cpp.hh", "w" ) { |f| f.puts generate_cpp_header( key.to_s, value ) }

@@ -27,14 +27,12 @@ columns_to_idx = {}
 
 puts conf.input_file_name
 
-#puts conf.for_structs
-
 $workbook_data = { :origin_file => File.basename(conf.input_file_name) }
 $last_struct   = {}
+$udp_structs   = {}
 
-conf.for_structs.each do |key|
-  cmd = "$#{key}_struct = []"
-  eval(cmd)
+conf.structs.each do |key,value|
+  $udp_structs[key] = []
 end
 
 workbook = RubyXL::Parser.parse(conf.input_file_name+".xlsx")
@@ -55,7 +53,7 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
     version    = data_row[0].value
     main_topic = data_row[1].value
     $workbook_data[:main_topic] = main_topic;
-    puts "MAIN TOPIC=#{main_topic} #{version}"
+    puts "\nHEADER '#{main_topic}' #{version}".yellow
   when 1
     #  _  _             _
     # | || |___ __ _ __| |___ _ _
@@ -108,6 +106,7 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
       puts "skipping unmappable row `#{e}`".red
       # skipping unmappable row
     end
+
     begin
       data1 = data.dup
       case data1[:yes_no_x]
@@ -143,18 +142,17 @@ workbook.worksheets[0].each_with_index do |data_row,lineNumber|
         $last_struct[:fields] << data1.dup;
       end
     rescue => e
-      puts "(1) skipping row `#{lineNumber}` due to `#{e}`".yellow
+      puts "skipping row `#{lineNumber}` due to `#{e}`".yellow
     end
 
-    conf.for_structs.each do |key_struct|
- #      puts "parsing key = #{key_struct}"
+    conf.structs.each do |key,value|
       begin
         data1 = data.dup
-        if data1[key_struct] == 'x' then
+        if data1[key] == 'x' then
           # dalla riga seleziono le colonne da salvare
           data1.delete_if { |key, value| !conf.for_structs.include? key }
-          #puts "add to #{value_struct} #{data1}".blue
-          eval( "$#{key_struct}_struct << data1.dup");
+          #puts "add to #{value} #{key.to_s}".blue
+          $udp_structs[key] << data1.dup;
         end
       rescue => e
         # puts "key #{key_struct} = #{value_struct}"
@@ -183,29 +181,18 @@ File.open( conf.yaml_file_name_MQTT + ".yaml", 'w' ) do |f|
   f.write($workbook_data.to_yaml(:Indent => 8))
 end
 
-puts "File #{conf.yaml_file_name_MQTT}.yaml generated"
-puts "--------------------------------------"
+puts "--------------------------------------".yellow
+puts "File #{conf.yaml_file_name_MQTT}.yaml generated".green
+puts "--------------------------------------".yellow
 
-## puts "--------------------------------------"
-## pp $scenario_struct
-## puts "--------------------------------------"
-## pp $manoeuvre_struct
-## puts "--------------------------------------"
-## pp $sim_graphics_struct
-## puts "--------------------------------------"
 
-# # Write yaml file
-# $workbook_data = {
-#   :origin_file => File.basename(conf.input_file_name),
-#   :Scenario => $scenario_struct,
-#   :Maneuvre => $manoeuvre_struct
-# }
+# Write yaml file
+# Delete old files in temporary folder (if present)
+FileUtils.rm_f conf.yaml_file_name_UDP
+File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
+  f.write($udp_structs.to_yaml(:Indent => 8))
+end
 
-# # Delete old files in temporary folder (if present)
-# FileUtils.rm_f conf.yaml_file_name_UDP
-# File.open( conf.yaml_file_name_UDP + ".yaml", 'w' ) do |f|
-#   f.write($workbook_data.to_yaml(:Indent => 8))
-# end
-
-# puts "File #{conf.yaml_file_name_UDP}.yaml generated"
-# puts "--------------------------------------"
+puts "--------------------------------------".yellow
+puts "File #{conf.yaml_file_name_UDP}.yaml generated".green
+puts "--------------------------------------".yellow
