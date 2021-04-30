@@ -13,7 +13,7 @@ uncomment to have multicast support
 #define UDP_HAVE_STRERROR_R
 \*/
 
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -113,26 +113,6 @@ extern void sleep_100ns( uint32_t time_sleep_100ns );
 
 #ifdef __cplusplus
 }
-#endif
-
-#ifdef UDP_ON_WINDOWS
-  #include <Winsock2.h>
-  typedef int socklen_t;
-#else
-  #include <unistd.h>
-  #include <arpa/inet.h>
-  #include <netinet/in.h>
-  /*
-  DA INGARE SE SERVE
-  #if ! ( defined(__APPLE__) || defined(__MACH__) )
-    #include <linux/in.h>
-  #endif
-  */
-  #include <sys/socket.h>
-  #include <sys/types.h>
-  #include <sys/time.h>
-  #include <unistd.h>
-  #include <time.h>
 #endif
 
 /* -------------------------------------------------- */

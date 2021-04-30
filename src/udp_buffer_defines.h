@@ -11,6 +11,39 @@
   #define UDP_ON_WINDOWS
 #endif
 
+#ifdef UDP_ON_WINDOWS
+  #ifdef __cplusplus
+  extern "C" {
+  #endif
+  #include <Winsock2.h>
+  #include <Ws2tcpip.h>
+  #include <iptypes.h>
+  #include <Iphlpapi.h>
+  #include <signal.h>
+  //#include <Assert.h>
+  //#include <sys/stat.h>
+  #ifdef __cplusplus
+  };
+  #endif
+  typedef int socklen_t;
+#else
+  #include <unistd.h>
+  #include <arpa/inet.h>
+  #include <netinet/in.h>
+  /*
+  DA INGARE SE SERVE
+  #if ! ( defined(__APPLE__) || defined(__MACH__) )
+    #include <linux/in.h>
+  #endif
+  */
+  #include <sys/socket.h>
+  #include <sys/types.h>
+  #include <sys/time.h>
+  #include <unistd.h>
+  #include <time.h>
+  #include <signal.h>
+#endif
+
 #ifdef __cplusplus
   #include <cstdint>
   using std::int32_t;

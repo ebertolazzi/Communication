@@ -1,15 +1,13 @@
 
-/* ============================================================================
- UDP communication with limited packed size
- ============================================================================ */
+/* 
+============================================================================
+UDP communication with limited packed size
+============================================================================
+*/
 
 #include "udp_class.hh"
 
 #ifdef _MSC_VER
-  #include <Winsock2.h>
-  #include <Ws2tcpip.h>
-  #include <signal.h>
-
   BOOL
   WINAPI
   ConsoleHandler(DWORD CEvent) {
@@ -32,8 +30,6 @@
     }
     return UDP_TRUE;
   }
-#else
-  #include <signal.h>
 #endif
 
 Socket::Socket()

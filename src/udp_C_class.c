@@ -10,7 +10,6 @@ extern "C" {
 
 #ifdef UDP_ON_WINDOWS
   #include "udp_C_win_code.h"
-  #include <Ws2tcpip.h>
   typedef int ssize_t;
 #else
   #include "udp_C_unix_code.h"

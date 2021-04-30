@@ -1,13 +1,7 @@
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wunreachable-code-return"
-#endif
-
-#ifdef UDP_ON_WINDOWS
-  #include <Winsock.h>
-#else
-  #include <arpa/inet.h>
 #endif
 
 static
