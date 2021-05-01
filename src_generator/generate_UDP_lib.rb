@@ -106,7 +106,7 @@ def generate_c_body( tag, value )
   Automatically generated
 \*/
 
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 #include "<%= @tag %>.h"
 #include <stdio.h>
 #include <string.h>
@@ -233,7 +233,7 @@ def generate_simulink_body( tag, value )
 \*/
 
 #include "simstruc.h"
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 #include "<%= @tag %>_simulink.h"
 #include <stdio.h>
 #include <string.h>

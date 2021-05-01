@@ -11,7 +11,7 @@ base = "../src_udp/"
 out  = unitn_sim_package+"/src_udp"
 FileUtils.mkdir_p out
 
-FileUtils.cp base+"buffer_defines.h",                    out
+FileUtils.cp base+"udp_buffer_defines.h",                out
 FileUtils.cp base+"codriver_interfaces_data_structs.h",  out
 FileUtils.cp base+"udp_C_class.h",                       out
 FileUtils.cp base+"udp_defines.h",                       out

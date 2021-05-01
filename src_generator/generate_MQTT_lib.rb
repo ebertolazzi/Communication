@@ -109,7 +109,7 @@ def generate_c_body( tag, data )
   Automatically generated
 \*/
 
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 #include "<%= @tag %>.h"
 #include <stdio.h>
 #include <string.h>
@@ -182,7 +182,7 @@ def generate_cpp_header( data )
 #ifndef <%= @main_topic.upcase %>_HH
 #define <%= @main_topic.upcase %>_HH
 
-#include "buffer_defines.h"
+#include "udp_buffer_defines.h"
 #include <mosquitto.h>
 #include <mosquittopp.h>
 #include <string>
