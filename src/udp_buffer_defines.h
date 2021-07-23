@@ -4,8 +4,8 @@
  Author: Enrico Bertolazzi, Francesco Biral
  ============================================================================ */
 
-#ifndef __BUFFER_DEFINES_HH
-#define __BUFFER_DEFINES_HH
+#ifndef __UDP_BUFFER_DEFINES_HH
+#define __UDP_BUFFER_DEFINES_HH
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
   #define UDP_ON_WINDOWS
@@ -20,8 +20,10 @@
   #include <iptypes.h>
   #include <Iphlpapi.h>
   #include <signal.h>
-  //#include <Assert.h>
-  //#include <sys/stat.h>
+  /*
+  #include <Assert.h>
+  #include <sys/stat.h>
+  */
   #ifdef __cplusplus
   };
   #endif
@@ -53,16 +55,6 @@
   extern "C" {
 #else
   #include <stdint.h>
-  #if 0
-    #define int8_t   int8_T
-    #define int16_t  int16_T
-    #define int32_t  int32_T
-    #define int64_t  int64_T
-    #define uint8_t  uint0_T
-    #define uint16_t uint16_T
-    #define uint32_t uint32_T
-    #define uint64_t uint64_T
-  #endif
 #endif
 
 #include <stdlib.h>
@@ -96,11 +88,13 @@ extern uint32_t buffer_to_double( uint8_t const buffer[8], double   * out );
 }
 #endif
 
-#ifdef MATLAB_MEX_FILE
-  #include "simstruc.h"
-  #ifdef SS_STDIO_AVAILABLE
-    #ifndef UDP_printf
-      #define UDP_printf ssPrintf
+#ifdef UDP_MATLAB_MEX_FILE_USE_SIMULINK
+  #ifdef MATLAB_MEX_FILE
+    #include <simulink/include/simstruc.h>
+    #ifdef SS_STDIO_AVAILABLE
+      #ifndef UDP_printf
+        #define UDP_printf ssPrintf
+      #endif
     #endif
   #endif
 #endif
