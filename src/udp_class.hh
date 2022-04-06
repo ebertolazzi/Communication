@@ -121,6 +121,15 @@ public:
     return Socket_send( &data, buffer_id, buffer, buffer_size );
   }
 
+  /* Send message function */
+  int
+  send_raw(
+    uint8_t  buffer[],
+    uint32_t buffer_size
+  ) {
+    return Socket_send_raw( &data, buffer, buffer_size );
+  }
+
   /* Receive message function */
   int
   receive(
@@ -136,6 +145,17 @@ public:
                            buffer,
                            buffer_size,
                            start_time );
+  }
+
+  /* Receive message function */
+  int
+  receive_raw(
+    int32_t & buffer_len,
+    uint8_t   buffer[],
+    uint32_t  buffer_size
+  ) {
+    buffer_len = Socket_receive_raw( &data, buffer, buffer_size );
+    return buffer_len < 0 ? -1 : 0;
   }
 
 };
