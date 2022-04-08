@@ -179,3 +179,23 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
   }
 
 #endif
+
+void
+buffer_to_string(
+  uint8_t const buffer[],
+  uint32_t      buffer_size,
+  char          out[],
+  uint32_t      out_max_size
+) {
+  char hex[] = {
+     '0', '1', '2', '3', '4', '5', '6', '7',
+     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+  };
+  int n = buffer_size;
+  if ( 2*n > out_max_size-1 ) n = out_max_size/2;
+  for ( uint32_t i = 0; i < n; ++i ) {
+    out[2*i]   = hex[buffer[i]&0x0F];
+    out[2*i+1] = hex[buffer[i]>>4];
+  }
+  out[2*n] = '\n';
+}

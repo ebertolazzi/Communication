@@ -90,6 +90,8 @@ extern uint32_t buffer_to_double( uint8_t const buffer[8], double   * out );
 extern uint32_t buffer_to_float_portable ( uint8_t const buffer[4+2], float  * out );
 extern uint32_t buffer_to_double_portable( uint8_t const buffer[8+2], double * out );
 
+extern void buffer_to_string( uint8_t const buffer[], uint32_t buffer_size, char out[], uint32_t out_max_size );
+
 #ifdef __cplusplus
 }
 #endif
