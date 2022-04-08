@@ -6,17 +6,12 @@
 
 using namespace std;
 
-#define MSG_ERROR \
-"Usage:\n" \
-"  server_client_test [wait for data]\n" \
-"  server_client_test data1 data2 [send data]\n"
-
 static
 int
 send( char const address[], int port, double a, double b ) {
 
-  uint32_t buffer_size = sizeof(double) * 2;
-  uint8_t buffer[sizeof(double) * 2];
+  uint32_t buffer_size = 2*10; // 10 byte per double
+  uint8_t buffer[2*10];
 
   /*\
    |   ___ ___ _  _ ___
@@ -31,8 +26,8 @@ send( char const address[], int port, double a, double b ) {
   socket.check();
 
   // serialize data
-  double_to_buffer(a, buffer);
-  double_to_buffer(b, buffer + sizeof(a));
+  double_to_buffer_portable(a, buffer);
+  double_to_buffer_portable(b, buffer + 10 );
 
   int ret = socket.send_raw( buffer, buffer_size );
   // check if send is OK
@@ -52,8 +47,8 @@ static
 int
 receive( int port ) {
 
-  uint32_t buffer_size = sizeof(double) * 2;
-  uint8_t buffer[sizeof(double) * 2];
+  uint32_t buffer_size = 2*10; // 10 byte per double
+  uint8_t  buffer[2*10];
 
   /*\
    |   ___ ___ ___ ___ _____   _____
@@ -90,8 +85,8 @@ receive( int port ) {
 
     // de-serialize data
     double a, b;
-    buffer_to_double(buffer, &a);
-    buffer_to_double(buffer+sizeof(a), &b);
+    buffer_to_double_portable(buffer, &a);
+    buffer_to_double_portable(buffer+10, &b);
     cout << "Received: a = " << a << " b = " << b << '\n';
   }
   cout << "Stopping server..\n";
@@ -103,8 +98,8 @@ static
 int
 receive_send( int port_in, char const address[], int port_out ) {
 
-  uint32_t buffer_size = sizeof(double) * 2;
-  uint8_t buffer[sizeof(double) * 2];
+  uint32_t buffer_size = 2*10;
+  uint8_t  buffer[2*10];
 
   /* Create and set UDP socket */
   Socket socket;
@@ -134,8 +129,8 @@ receive_send( int port_in, char const address[], int port_out ) {
 
     // de-serialize data
     double a, b;
-    buffer_to_double(buffer, &a);
-    buffer_to_double(buffer+sizeof(a), &b);
+    buffer_to_double_portable(buffer, &a);
+    buffer_to_double_portable(buffer+10, &b);
     cout << "Received: a = " << a << " b = " << b << '\n';
 
     // resend data
@@ -146,6 +141,11 @@ receive_send( int port_in, char const address[], int port_out ) {
   return 0;
 }
 
+#define MSG_ERROR \
+"Usage:\n" \
+"  server_client_test [wait for data]\n" \
+"  server_client_test data1 data2 [send data]\n"
+
 int
 main( int argc, char const * argv[] ) {
 
@@ -153,9 +153,16 @@ main( int argc, char const * argv[] ) {
   char const address[] = "127.0.0.1";
   int  const port_out  = 25001;
 
-  if (argc != 1 && argc != 3) {
+  if ( argc == 3) {
+    double a = atof(argv[1]);
+    double b = atof(argv[2]);
+    send( address, port_in, a, b );
+    return 0;
+  }
+
+  if (argc != 1 ) {
     cerr << MSG_ERROR;
-    exit(0);
+    return 0;
   }
 
   std::thread t1 = std::thread([]{ receive( port_out );});

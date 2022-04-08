@@ -4,6 +4,8 @@
 #pragma clang diagnostic ignored "-Wunreachable-code-return"
 #endif
 
+#include <math.h>
+
 static
 uint64_t
 ntohll_local( uint64_t n ) {
@@ -149,6 +151,30 @@ buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
     } tmp;
     uint32_t res = buffer_to_uint64( buffer, &tmp.i );
     *out = tmp.d;
+    return res;
+  }
+
+  uint32_t
+  buffer_to_float_portable( uint8_t const buffer[4+2], float *out ) {
+    int32_t m;
+    int16_t e;
+    uint32_t res = buffer_to_int32( buffer,   &m )+
+                   buffer_to_int16( buffer+4, &e );
+    uint32_t one = 1;
+    float    x   = (float)(m)/(float)(one<<30);
+    *out = ldexpf(x, (int)e );
+    return res;
+  }
+
+  uint32_t
+  buffer_to_double_portable( uint8_t const buffer[8+2], double *out ) {
+    int64_t m;
+    int16_t e;
+    uint32_t res = buffer_to_int64( buffer,   &m )+
+                   buffer_to_int16( buffer+8, &e );
+    int64_t one = 1;
+    double  x   = (double)(m)/(double)(one<<62);
+    *out = ldexp(x, (int)e );
     return res;
   }
 

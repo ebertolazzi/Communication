@@ -16,3 +16,6 @@ Icon?
 *.exe
 *.ilk
 *.pdb
+.idea
+cmake-build-debug/.cmake
+cmake-build-debug

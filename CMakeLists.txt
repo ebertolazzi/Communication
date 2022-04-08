@@ -106,6 +106,7 @@ if( BUILD_EXECUTABLE )
     server_client_test2
     server_client_test3
     server_client_test4
+    server_client_test5
   )
   foreach( EXE ${EXECUTABLE} )
     add_executable( ${EXE} test/${EXE}.cc test/codriver_interfaces_data_structs.c ${HEADERS} )

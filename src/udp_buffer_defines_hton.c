@@ -4,6 +4,8 @@
 #pragma clang diagnostic ignored "-Wunreachable-code-return"
 #endif
 
+#include <math.h>
+
 static
 uint64_t
 htonll_local( uint64_t n ) {
@@ -146,6 +148,28 @@ uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
     } tmp;
     tmp.d = in;
     return uint64_to_buffer( tmp.i, buffer );
+  }
+
+  uint32_t
+  float_to_buffer_portable( float in, uint8_t buffer[4+2] ) {
+    int   i;
+    float f = frexpf(in, &i);
+    int32_t one = 1;
+    int32_t m   = (int32_t)(f*(one<<30));
+    int16_t e   = (int16_t)i;
+    return int32_to_buffer( m, buffer ) +
+           int16_to_buffer( e, buffer+4 );
+  }
+
+  uint32_t
+  double_to_buffer_portable( double in, uint8_t buffer[8+2] ) {
+    int i;
+    double f = frexp(in, &i);
+    int64_t one = 1;
+    int64_t m   = (int64_t)(f*(one<<62));
+    int16_t e = (int16_t)i;
+    return int64_to_buffer( m, buffer ) +
+           int16_to_buffer( e, buffer+8 );
   }
 
 #endif
