@@ -100,6 +100,7 @@ receive_send( int port_in, char const address[], int port_out ) {
 
   uint32_t buffer_size = 2*10;
   uint8_t  buffer[2*10];
+  char     str[2*buffer_size+1];
 
   /* Create and set UDP socket */
   Socket socket;
@@ -131,7 +132,10 @@ receive_send( int port_in, char const address[], int port_out ) {
     double a, b;
     buffer_to_double_portable(buffer, &a);
     buffer_to_double_portable(buffer+10, &b);
-    cout << "Received: a = " << a << " b = " << b << '\n';
+    buffer_to_string( buffer, buffer_size, str, 2*buffer_size+1 );
+    cout
+      << "Received: a = " << a << " b = " << b << '\n'
+      << "Raw buffer = " << str << '\n';
 
     // resend data
     ret = send( address, port_out, a, b );
