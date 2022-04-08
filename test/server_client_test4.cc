@@ -149,16 +149,31 @@ receive_send( int port_in, char const address[], int port_out ) {
 int
 main( int argc, char const * argv[] ) {
 
-  int  const port_in   = 25000;
-  char const address[] = "127.0.0.1";
-  int  const port_out  = 25001;
+  //int  const port_in   = 25000;
+  //char const address[] = "127.0.0.1";
+  //int  const  port_out  = 25001;
+  char  address[] = "127.0.0.1";
+  int   port_in   = 25000;
+  int   port_out  = 25001;
 
-  if (argc != 1 && argc != 3) {
+  std::cout << argc << '\n';
+
+  if (argc == 4){
+     strcpy(address, argv[1]);
+     port_in  = std::atoi(argv[2]);
+     port_out = std::atoi(argv[3]);
+     std::cout << "Input argument received:\n";
+     std::cout << "address  = " << address  << '\n';
+     std::cout << "port_in  = " << port_in  << '\n';
+     std::cout << "port_out = " << port_out << '\n';
+  } 
+
+  if (argc != 1 && argc != 3 && argc != 4 ) {
     cerr << MSG_ERROR;
     exit(0);
   }
 
-  std::thread t1 = std::thread([]{ receive( port_out );});
+  std::thread t1 = std::thread([port_out]{ receive( port_out );});
   receive_send( port_in, address, port_out );
   t1.join();
 
