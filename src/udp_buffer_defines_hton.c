@@ -6,16 +6,6 @@
 
 #include <math.h>
 
-static
-uint64_t
-htonll_local( uint64_t n ) {
-  uint64_t lo, hi;
-  if ( 1 == htonl(1) ) return n;
-  hi = (uint64_t)htonl( *((uint32_t*)&n) );
-  n = n>>32;
-  lo = (uint64_t)htonl( *((uint32_t*)&n) );
-  return (hi << 32) + lo;
-}
 
 /* -------------------------------------------------- */
 
@@ -32,144 +22,88 @@ uint8_to_buffer( uint8_t in, uint8_t buffer[1] ) {
 }
 
 uint32_t
-int16_to_buffer( int16_t in, uint8_t buffer[2] ) {
-  uint16_t tmp = htons( (uint16_t) in );
-  memcpy( buffer, &tmp, sizeof(int16_t) );
-  return sizeof(int16_t);
-}
-
-uint32_t
 uint16_to_buffer( uint16_t in, uint8_t buffer[2] ) {
-  uint16_t tmp = htons( in );
-  memcpy( buffer, &tmp, sizeof(uint16_t)  );
-  return sizeof(uint16_t);
+  buffer[0] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[1] = (uint8_t)(in & 0xFF);
+  return 2;
 }
 
 uint32_t
-int32_to_buffer( int32_t in, uint8_t buffer[4] ) {
-  uint32_t tmp = htonl( (uint32_t) in );
-  memcpy( buffer, &tmp, sizeof(int32_t) );
-  return sizeof(int32_t);
+int16_to_buffer( int16_t in, uint8_t buffer[2] ) {
+  return uint16_to_buffer( *((uint16_t*)&in), buffer );
 }
 
 uint32_t
 uint32_to_buffer( uint32_t in, uint8_t buffer[4] ) {
-  uint32_t tmp = htonl( in );
-  memcpy( buffer, &tmp, sizeof(uint32_t) );
-  return sizeof(uint32_t);
+  buffer[0] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[1] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[2] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[3] = (uint8_t)(in & 0xFF);
+  return 4;
 }
 
 uint32_t
-int64_to_buffer( int64_t in, uint8_t buffer[8] ) {
-  uint64_t tmp = htonll_local( (uint64_t) in );
-  memcpy( buffer, &tmp, sizeof(int64_t) );
-  return sizeof(int64_t);
+int32_to_buffer( int32_t in, uint8_t buffer[4] ) {
+  return uint32_to_buffer( (*(uint32_t*)&in), buffer );
 }
 
 uint32_t
 uint64_to_buffer( uint64_t in, uint8_t buffer[8] ) {
-  uint64_t tmp = htonll_local( in );
-  memcpy( buffer, &tmp, sizeof(uint64_t)  );
-  return sizeof(uint64_t);
+  buffer[0] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[1] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[2] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[3] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[4] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[5] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[6] = (uint8_t)(in & 0xFF); in >>= 8;
+  buffer[7] = (uint8_t)(in & 0xFF);
+  return 8;
 }
 
-#ifdef PACK_FLOAT
+uint32_t
+int64_to_buffer( int64_t in, uint8_t buffer[8] ) {
+  return uint64_to_buffer( (*(uint64_t*)&in), buffer );
+}
 
-  static
-  uint64_t
-  maskOfBits( uint32_t NBITS ) {
-    uint64_t one = 1;
-    return (one<<NBITS)-one;
-  }
+uint32_t
+float_to_buffer( float in, uint8_t buffer[4] ) {
+  union FloatInt {
+    float    f;
+    uint32_t i;
+  } tmp;
+  tmp.f = in;
+  return uint32_to_buffer( tmp.i, buffer );
+}
 
-  static
-  uint64_t
-  pack754( double f, uint32_t bits, uint32_t expbits ) {
-    double   fnorm;
-    uint64_t sign, exp, significand, res, zero, one;
-    uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
-    zero = 0;
-    one  = 1;
-    /* special case NaN and INF */
-    if ( f != f ) return ~zero; /* NaN */
-    if ( f*0.0 != 0.0 ) return maskOfBits(expbits)<<significandbits; /* INF */
-    if ( f == 0.0 ) return zero; /* get this special case out of the way */
-    /* check sign and begin normalization */
-    fnorm = f;
-    sign  = 0;
-    if ( f < 0 ) { sign = one<<(bits-1); fnorm = -f; }
+uint32_t
+double_to_buffer( double in, uint8_t buffer[8] ) {
+  union DoubleInt {
+    double   d;
+    uint64_t i;
+  } tmp;
+  tmp.d = in;
+  return uint64_to_buffer( tmp.i, buffer );
+}
 
-    /* get the normalized form of f and track the exponent
-       get the biased exponent */
-    exp = maskOfBits(expbits-1); /* bias */
-    while ( fnorm >= 2.0 ) { fnorm /= 2.0; ++exp; }
-    while ( fnorm <  1.0 ) { fnorm *= 2.0; --exp; }
-    fnorm -= 1.0;
-    /* calculate the binary form (non-float) of the significand data */
-    significand = fnorm * ((one<<significandbits) + 0.5);
-    /* return the final answer */
-    res = sign | (exp<<significandbits) | significand;
-    return res;
-  }
+uint32_t
+float_to_buffer_portable( float in, uint8_t buffer[4+2] ) {
+  int   i;
+  float f = frexpf(in, &i);
+  int32_t one = 1;
+  int32_t m   = (int32_t)(f*(one<<30));
+  int16_t e   = (int16_t)i;
+  return int32_to_buffer( m, buffer ) +
+         int16_to_buffer( e, buffer+4 );
+}
 
-  uint32_t
-  float_to_buffer( float in, uint8_t buffer[4] ) {
-    uint64_t res64 = pack754( in, 32, 8 );
-    uint32_t res32 = (uint32_t)res64;
-    uint32_to_buffer( res32, buffer );
-    return sizeof(float);
-  }
+uint32_t
+double_to_buffer_portable( double in, uint8_t buffer[8+2] ) {
+  int i;
+  double f = frexp(in, &i);
+  int64_t one = 1;
+  int64_t m   = (int64_t)(f*(one<<62));
+  int16_t e = (int16_t)i;
+  return int64_to_buffer( m, buffer ) +
+         int16_to_buffer( e, buffer+8 );
+}
 
-  uint32_t
-  double_to_buffer( double in, uint8_t buffer[8] ) {
-    uint64_t res64 = pack754( in, 64, 11 );
-    uint32_t res32 = (uint32_t)res64;
-    uint32_to_buffer( res32, buffer );
-    return sizeof(double);
-  }
-
-#else
-
-  uint32_t
-  float_to_buffer( float in, uint8_t buffer[4] ) {
-    union FloatInt {
-      float    f;
-      uint32_t i;
-    } tmp;
-    tmp.f = in;
-    return uint32_to_buffer( tmp.i, buffer );
-  }
-
-  uint32_t
-  double_to_buffer( double in, uint8_t buffer[8] ) {
-    union DoubleInt {
-      double   d;
-      uint64_t i;
-    } tmp;
-    tmp.d = in;
-    return uint64_to_buffer( tmp.i, buffer );
-  }
-
-  uint32_t
-  float_to_buffer_portable( float in, uint8_t buffer[4+2] ) {
-    int   i;
-    float f = frexpf(in, &i);
-    int32_t one = 1;
-    int32_t m   = (int32_t)(f*(one<<30));
-    int16_t e   = (int16_t)i;
-    return int32_to_buffer( m, buffer ) +
-           int16_to_buffer( e, buffer+4 );
-  }
-
-  uint32_t
-  double_to_buffer_portable( double in, uint8_t buffer[8+2] ) {
-    int i;
-    double f = frexp(in, &i);
-    int64_t one = 1;
-    int64_t m   = (int64_t)(f*(one<<62));
-    int16_t e = (int16_t)i;
-    return int64_to_buffer( m, buffer ) +
-           int16_to_buffer( e, buffer+8 );
-  }
-
-#endif

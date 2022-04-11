@@ -6,17 +6,6 @@
 
 #include <math.h>
 
-static
-uint64_t
-ntohll_local( uint64_t n ) {
-  uint64_t lo, hi;
-  if ( 1 == ntohl(1) ) return n;
-  hi = (uint64_t)ntohl( *((uint32_t*)&n) );
-  n = n>>32;
-  lo = (uint64_t)ntohl( *((uint32_t*)&n) );
-  return (hi << 32) + lo;
-}
-
 /* ---------------------------------------------------------------------------- */
 
 uint32_t
@@ -33,152 +22,96 @@ buffer_to_int8( uint8_t const buffer[1], int8_t * out ) {
 
 uint32_t
 buffer_to_uint16( uint8_t const buffer[2], uint16_t * out ) {
-  uint16_t tmp;
-  memcpy( &tmp, buffer, sizeof(uint16_t) );
-  *out = ntohs( tmp );
-  return sizeof(uint16_t);
+  uint16_t lo = (uint16_t)buffer[0];
+  uint16_t hi = (uint16_t)buffer[1];
+  *out = lo|(hi<<8);
+  return 2;
 }
 
 uint32_t
 buffer_to_int16( uint8_t const buffer[2], int16_t * out ) {
-  uint16_t tmp;
-  memcpy( &tmp, buffer, sizeof(int16_t) );
-  *((uint16_t*)out) = ntohs( tmp );
-  return sizeof(int16_t);
+  return buffer_to_uint16( buffer, (uint16_t*)out);
 }
 
 uint32_t
 buffer_to_uint32( uint8_t const buffer[4], uint32_t * out ) {
-  uint32_t tmp;
-  memcpy( &tmp, buffer, sizeof(uint32_t) );
-  *out = ntohl( tmp );
-  return sizeof(uint32_t);
+  uint32_t b0 = (uint32_t)buffer[0];
+  uint32_t b1 = (uint32_t)buffer[1];
+  uint32_t b2 = (uint32_t)buffer[2];
+  uint32_t b3 = (uint32_t)buffer[3];
+  *out = b0|(b1<<8)|(b2<<16)|(b3<<24);
+  return 4;
 }
 
 uint32_t
 buffer_to_int32( uint8_t const buffer[4], int32_t * out ) {
-  uint32_t tmp;
-  memcpy( &tmp, buffer, sizeof(int32_t) );
-  *((uint32_t*)out) = ntohl( tmp );
-  return sizeof(int32_t);
+  return buffer_to_uint32( buffer, (uint32_t*)out);
 }
 
 uint32_t
 buffer_to_uint64( uint8_t const buffer[8], uint64_t * out ) {
-  uint64_t tmp;
-  memcpy( &tmp, buffer, sizeof(uint64_t) );
-  *out = ntohll_local( tmp );
-  return sizeof(uint64_t);
+  uint64_t b0 = (uint64_t)buffer[0];
+  uint64_t b1 = (uint64_t)buffer[1];
+  uint64_t b2 = (uint64_t)buffer[2];
+  uint64_t b3 = (uint64_t)buffer[3];
+  uint64_t b4 = (uint64_t)buffer[4];
+  uint64_t b5 = (uint64_t)buffer[5];
+  uint64_t b6 = (uint64_t)buffer[6];
+  uint64_t b7 = (uint64_t)buffer[7];
+  *out = b0|(b1<<8)|(b2<<16)|(b3<<24)|(b4<<32)|(b5<<40)|(b6<<48)|(b7<<56);
+  return 8;
 }
 
 uint32_t
 buffer_to_int64( uint8_t const buffer[8], int64_t * out ) {
-  uint64_t tmp;
-  memcpy( &tmp, buffer, sizeof(int64_t) );
-  *((uint64_t*)out) = ntohll_local( tmp );
-  return sizeof(int64_t);
+  return buffer_to_uint64( buffer, (uint64_t*)out);
 }
 
-#ifdef PACK_FLOAT
+uint32_t
+buffer_to_float( uint8_t const buffer[8], float *out) {
+  union FloatInt {
+    float    f;
+    uint32_t i;
+  } tmp;
+  uint32_t res = buffer_to_uint32( buffer, &tmp.i );
+  *out = tmp.f;
+  return res;
+}
 
-  static
-  uint64_t
-  maskOfBits( uint32_t NBITS ) {
-    uint64_t one = 1;
-    return (one<<NBITS)-one;
-  }
+uint32_t
+buffer_to_double( uint8_t const buffer[8], double *out ) {
+  union DoubleInt {
+    double   d;
+    uint64_t i;
+  } tmp;
+  uint32_t res = buffer_to_uint64( buffer, &tmp.i );
+  *out = tmp.d;
+  return res;
+}
 
-  static
-  double
-  unpack754( uint64_t i, uint32_t bits, uint32_t expbits ) {
-    double   res;
-    uint64_t bias;
-    uint64_t shift;
-    uint32_t significandbits = bits - expbits - 1; /* -1 for sign bit */
-    if ( i == 0 ) return 0;
-    /* pull the significand */
-    res = (double)(i & maskOfBits(bits-expbits-1));
-    res /= (double)(1<<significandbits); /* mask */
-    res += 1.0; /* add the one back on */
-    /* deal with the exponent */
-    bias  = maskOfBits(expbits-1);
-    shift = (i>>significandbits) & maskOfBits(expbits);
-    while ( shift > bias ) { res *= 2.0; --shift; }
-    while ( shift < bias ) { res /= 2.0; ++shift; }
-    /* sign it */
-    if ( i & (((uint64_t)1)<<(bits-1)) ) res = -res;
-    return res;
-  }
+uint32_t
+buffer_to_float_portable( uint8_t const buffer[4+2], float *out ) {
+  int32_t m;
+  int16_t e;
+  uint32_t res = buffer_to_int32( buffer,   &m )+
+                 buffer_to_int16( buffer+4, &e );
+  uint32_t one = 1;
+  float    x   = (float)(m)/(float)(one<<30);
+  *out = ldexpf(x, (int)e );
+  return res;
+}
 
-  uint32_t
-  buffer_to_float( uint8_t const buffer[4], float *out) {
-    uint32_t tmp32;
-    uint64_t tmp64;
-    double   tmpd;
-    buffer_to_uint32( buffer, &tmp32 );
-    tmp64 = (uint64_t)tmp32;
-    tmpd = unpack754( tmp64, 32, 8 );
-    *out = (float)tmpd;
-    return sizeof(float);
-  }
-
-  uint32_t
-  buffer_to_double( uint8_t const buffer[8], double *out ) {
-    uint64_t tmp64;
-    buffer_to_uint64( buffer, &tmp64 );
-    *out = unpack754( tmp64, 32, 8 );
-    return sizeof(double);
-  }
-
-#else
-
-  uint32_t
-  buffer_to_float( uint8_t const buffer[8], float *out) {
-    union FloatInt {
-      float    f;
-      uint32_t i;
-    } tmp;
-    uint32_t res = buffer_to_uint32( buffer, &tmp.i );
-    *out = tmp.f;
-    return res;
-  }
-
-  uint32_t
-  buffer_to_double( uint8_t const buffer[8], double *out ) {
-    union DoubleInt {
-      double   d;
-      uint64_t i;
-    } tmp;
-    uint32_t res = buffer_to_uint64( buffer, &tmp.i );
-    *out = tmp.d;
-    return res;
-  }
-
-  uint32_t
-  buffer_to_float_portable( uint8_t const buffer[4+2], float *out ) {
-    int32_t m;
-    int16_t e;
-    uint32_t res = buffer_to_int32( buffer,   &m )+
-                   buffer_to_int16( buffer+4, &e );
-    uint32_t one = 1;
-    float    x   = (float)(m)/(float)(one<<30);
-    *out = ldexpf(x, (int)e );
-    return res;
-  }
-
-  uint32_t
-  buffer_to_double_portable( uint8_t const buffer[8+2], double *out ) {
-    int64_t m;
-    int16_t e;
-    uint32_t res = buffer_to_int64( buffer,   &m )+
-                   buffer_to_int16( buffer+8, &e );
-    int64_t one = 1;
-    double  x   = (double)(m)/(double)(one<<62);
-    *out = ldexp(x, (int)e );
-    return res;
-  }
-
-#endif
+uint32_t
+buffer_to_double_portable( uint8_t const buffer[8+2], double *out ) {
+  int64_t m;
+  int16_t e;
+  uint32_t res = buffer_to_int64( buffer,   &m )+
+                 buffer_to_int16( buffer+8, &e );
+  int64_t one = 1;
+  double  x   = (double)(m)/(double)(one<<62);
+  *out = ldexp(x, (int)e );
+  return res;
+}
 
 void
 buffer_to_string(
@@ -192,10 +125,11 @@ buffer_to_string(
      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
   int n = buffer_size;
-  if ( 2*n > out_max_size-1 ) n = out_max_size/2;
+  if ( 3*n >= out_max_size ) n = out_max_size/3; // NO CONTROLS
   for ( uint32_t i = 0; i < n; ++i ) {
-    out[2*i]   = hex[buffer[i]&0x0F];
-    out[2*i+1] = hex[buffer[i]>>4];
+    out[3*i+1] = hex[buffer[i]&0x0F];
+    out[3*i]   = hex[buffer[i]>>4];
+    out[3*i+2] = '-';
   }
-  out[2*n] = '\n';
+  out[3*n-1] = '\0'; // fine stringa
 }

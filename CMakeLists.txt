@@ -108,6 +108,8 @@ if( BUILD_EXECUTABLE )
     server_client_test4
     server_client_test5
     server_client_test_dspace
+    dspace_server_test
+    dspace_send_test
   )
   foreach( EXE ${EXECUTABLE} )
     add_executable( ${EXE} test/${EXE}.cc test/codriver_interfaces_data_structs.c ${HEADERS} )

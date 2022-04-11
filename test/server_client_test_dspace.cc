@@ -9,7 +9,7 @@ using namespace std;
 #define MSG_ERROR \
 "Usage:\n" \
 "  server_client_test [wait for data]\n" \
-"  server_client_test data_int8 data_double [send data]\n"
+"  server_client_test data_int32 data_double [send data]\n"
 
 static
 int
@@ -19,8 +19,8 @@ send( char const address[], int port, int32_t a, double b ) {
 //uint32_t buffer_size = sizeof(double) * 2;
   //uint8_t buffer[sizeof(double) * 2];
   uint32_t buffer_size = sizeof(double) + sizeof(int32_t);
-  uint8_t buffer[sizeof(double) +sizeof(int32_t)];
-  
+  uint8_t  buffer[sizeof(double) +sizeof(int32_t)];
+
   /*\
    |   ___ ___ _  _ ___
    |  / __| __| \| |   \
@@ -34,7 +34,7 @@ send( char const address[], int port, int32_t a, double b ) {
   socket.check();
 
   // serialize data
-  int32_t off =int32_to_buffer(a, buffer);
+  int32_t off = int32_to_buffer(a, buffer);
   double_to_buffer(b, buffer + off);
 
   int ret = socket.send_raw( buffer, buffer_size );
@@ -59,7 +59,7 @@ receive( int port ) {
   //uint8_t buffer[sizeof(double) * 2];
   uint32_t buffer_size = sizeof(double) + sizeof(int32_t);
   uint8_t buffer[sizeof(double) +sizeof(int32_t)];
-  
+
   /*\
    |   ___ ___ ___ ___ _____   _____
    |  | _ \ __/ __| __|_ _\ \ / / __|
@@ -98,7 +98,7 @@ receive( int port ) {
     //buffer_to_double(buffer, &a);
     int32_t a;
     double b;
-    int32_t off =buffer_to_int32(buffer, &a);
+    int32_t off = buffer_to_int32(buffer, &a);
     buffer_to_double(buffer+off, &b);
     cout << "Received: a = " << ((int)a) << " b = " << b << '\n';
   }
@@ -116,7 +116,7 @@ receive_send( int port_in, char const address[], int port_out ) {
   uint32_t buffer_size = sizeof(double) + sizeof(int32_t);
   uint8_t buffer[sizeof(double) +sizeof(int32_t)];
   char  str[2*buffer_size+1];
-  
+
   /* Create and set UDP socket */
   Socket socket;
   socket.open_as_server(port_in);
@@ -172,7 +172,7 @@ main( int argc, char const * argv[] ) {
   char  address[] = "127.0.0.1";
   int   port_in   = 25000;
   int   port_out  = 25001;
-  
+
 
   std::cout << argc << '\n';
 
@@ -184,7 +184,7 @@ main( int argc, char const * argv[] ) {
      std::cout << "address  = " << address  << '\n';
      std::cout << "port_in  = " << port_in  << '\n';
      std::cout << "port_out = " << port_out << '\n';
-  } 
+  }
 
   if (argc != 1 && argc != 3 && argc != 4 ) {
     cerr << MSG_ERROR;
