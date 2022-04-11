@@ -12,10 +12,10 @@ using namespace std;
 
 static
 int
-send( char const address[], int port, double a, double b ) {
+send( char const address[], int port, int32_t a, double b ) {
 
-  uint32_t buffer_size = sizeof(double) * 2;
-  uint8_t buffer[sizeof(double) * 2];
+  uint32_t buffer_size = sizeof(double) +sizeof(int32_t);
+  uint8_t buffer[sizeof(double) +sizeof(int32_t)];
 
   /*\
    |   ___ ___ _  _ ___
@@ -30,8 +30,8 @@ send( char const address[], int port, double a, double b ) {
   socket.check();
 
   // serialize data
-  double_to_buffer(a, buffer);
-  double_to_buffer(b, buffer + sizeof(a));
+  int32_t off =int32_to_buffer(a, buffer);
+  double_to_buffer(b, buffer + off);
 
   int ret = socket.send_raw( buffer, buffer_size );
   // check if send is OK
@@ -51,8 +51,9 @@ static
 int
 receive( int port ) {
 
-  uint32_t buffer_size = sizeof(double) * 2;
-  uint8_t buffer[sizeof(double) * 2];
+ uint32_t buffer_size = sizeof(double) +sizeof(int32_t);
+  uint8_t buffer[sizeof(double) +sizeof(int32_t)];
+  char  str[2*buffer_size+1];
 
   /*\
    |   ___ ___ ___ ___ _____   _____
@@ -88,10 +89,14 @@ receive( int port ) {
     }
 
     // de-serialize data
-    double a, b;
-    buffer_to_double(buffer, &a);
+    int32_t a;
+    double b;
+    buffer_to_int32(buffer, &a);
     buffer_to_double(buffer+sizeof(a), &b);
-    cout << "Received: a = " << a << " b = " << b << '\n';
+    buffer_to_string( buffer, buffer_size, str, 2*buffer_size+1 );
+    cout
+      << "Received: a = " << ((int)a) << " b = " << b << '\n'
+      << "Raw buffer = " << str << '\n';
   }
   cout << "Stopping server..\n";
   if (socket.close()) return -1;
@@ -116,8 +121,8 @@ main( int argc, char const * argv[] ) {
      |  \__ \ _|| .` | |) |
      |  |___/___|_|\_|___/
     \*/
-    double a = std::atof(argv[1]);
-    double b = std::atof(argv[2]);
+    int32_t a = std::atoi(argv[1]);
+    double  b = std::atof(argv[2]);
     send( address, port, a, b );
 
   } else {
