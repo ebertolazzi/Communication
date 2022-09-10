@@ -11,7 +11,7 @@
   #define UDP_ON_WINDOWS
 #endif
 
-#ifdef UDP_ON_WINDOWS
+#if defined(UDP_ON_WINDOWS)
   #ifdef __cplusplus
   extern "C" {
   #endif

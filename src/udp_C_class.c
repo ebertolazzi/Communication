@@ -8,9 +8,11 @@
 extern "C" {
 #endif
 
-#ifdef UDP_ON_WINDOWS
+#if defined(UDP_ON_WINDOWS)
   #include "udp_C_win_code.h"
-  typedef int ssize_t;
+  #ifndef __MINGW32__
+    typedef int ssize_t;
+  #endif
 #else
   #include "udp_C_unix_code.h"
 #endif
@@ -55,7 +57,7 @@ Socket_send(
   uint32_t        n_packets;
   datagram_part_t packet;
   uint16_t        ipos;
-  #ifdef UDP_ON_WINDOWS
+  #if defined(UDP_ON_WINDOWS) && !defined(__MINGW32__)
   int             isend;
   #else
   ssize_t         isend;
@@ -71,25 +73,18 @@ Socket_send(
   /* Send packets */
   for ( ipos = 0; ipos < n_packets; ++ipos ) {
     uint8_t data_buffer[UDP_MTU_MAX_BYTES];
-    #ifdef UDP_ON_WINDOWS
+    #if defined(UDP_ON_WINDOWS) && !defined(__MINGW32__)
     int nbytes;
     #else
     size_t nbytes;
     #endif
 
     /* estrae pacchetto */
-    Packet_Build_from_buffer(
-      message, message_size, ipos, message_id, &packet
-    );
+    Packet_Build_from_buffer( message, message_size, ipos, message_id, &packet );
 
     /* serializza pacchetto */
     datagram_part_to_buffer( &packet, data_buffer );
-
-    #ifdef UDP_ON_WINDOWS
     nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
-    #else
-    nbytes = (size_t) (UDP_DATAGRAM_PART_HEADER_SIZE+packet.sub_message_size);
-    #endif
 
     #if defined(WIN_NONBLOCK)
     socket_start_time = get_time_ms();
@@ -113,7 +108,7 @@ Socket_send(
     }
     #elif defined(UDP_ON_WINDOWS)
     isend = sendto(
-      socket_id,
+      pS->socket_id,
       data_buffer, nbytes,
       0,
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
@@ -130,16 +125,12 @@ Socket_send(
       (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
     );
     if ( isend < 0 ) {
-      #ifdef UDP_ON_WINDOWS
-      UDP_CheckError( "error sendto" );
+      #ifdef UDP_HAVE_STRERROR_R
+      char error_str[1024];
+      strerror_r( errno, error_str, 1024 );
+      UDP_printf("error sendto: %s\n",error_str);
       #else
-        #ifdef UDP_HAVE_STRERROR_R
-        char error_str[1024];
-        strerror_r( errno, error_str, 1024 );
-        UDP_printf("error sendto: %s\n",error_str);
-        #else
-        UDP_printf("error sendto: %s\n",strerror(errno));
-        #endif
+      UDP_printf("error sendto: %s\n",strerror(errno));
       #endif
       return UDP_FALSE;
     }

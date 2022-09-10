@@ -104,7 +104,11 @@ public:
 
   void
   check() {
+    #ifdef UDP_ON_WINDOWS
+    if ( data.socket_id == INVALID_SOCKET ) {
+    #else
     if ( data.socket_id == -1 ) {
+    #endif
       exit(-1);
     } else {
       std::cerr << "Opened socket id = " << data.socket_id << '\n';

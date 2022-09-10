@@ -1,5 +1,5 @@
 
-/* 
+/*
 ============================================================================
 UDP communication with limited packed size
 ============================================================================
@@ -7,7 +7,7 @@ UDP communication with limited packed size
 
 #include "udp_class.hh"
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
   BOOL
   WINAPI
   ConsoleHandler(DWORD CEvent) {
@@ -36,7 +36,7 @@ Socket::Socket()
 {
   Socket_new( &data );
   /* Taken from answer to "How can I catch a ctrl-c event? (C++)" */
-  #ifdef _MSC_VER
+  #if defined(_MSC_VER) || defined(__MINGW32__)
   if ( SetConsoleCtrlHandler(
          (PHANDLER_ROUTINE)ConsoleHandler,
          UDP_TRUE

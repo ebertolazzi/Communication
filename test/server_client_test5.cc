@@ -157,8 +157,8 @@ main( int argc, char const * argv[] ) {
   int  const port_in   = 25000;
   char const address[] = "127.0.0.1";
   int  const port_out  = 25001;
-  
-   if ( argc == 3) {
+
+  if ( argc == 3) {
     double a = atof(argv[1]);
     double b = atof(argv[2]);
     send( address, port_in, a, b );

@@ -43,7 +43,7 @@ main() {
   }
 
   UDP_printf("Stopping server..\n");
-  if ( Socket_close( &socket ) == -1 ) return -1;
+  if ( Socket_close( &socket ) == UDP_FALSE ) return -1;
   UDP_printf("Done\n");
   return 0;
 }

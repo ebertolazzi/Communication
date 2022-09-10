@@ -46,7 +46,7 @@ main() {
   buffer[7] = '6';
   buffer[8] = '7';
   buffer[9] = '9';
-  
+
   /* Create and set UDP */
   Socket socket;
   socket.open_as_client( "127.0.0.1", 25000, false );
@@ -102,7 +102,7 @@ main() {
     }
     cout << "\n\nsocket.receive done\n";
   }
-  
+
   /* Close socket */
   if( socket.close() ) return -1;
   std::cout << "Done\n";

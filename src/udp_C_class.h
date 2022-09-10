@@ -35,7 +35,7 @@ extern "C" {
 \*/
 
 typedef struct  {
-#ifdef UDP_ON_WINDOWS
+#if defined(UDP_ON_WINDOWS)
   SOCKET             socket_id;
 #else
   int                socket_id;

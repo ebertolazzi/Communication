@@ -12,7 +12,7 @@
   extern "C" {
 #endif
 
-#ifdef UDP_ON_WINDOWS
+#if defined(UDP_ON_WINDOWS)
 
   uint64_t
   get_time_ms() {
@@ -28,8 +28,9 @@
   }
 
   // Windows sleep in 100ns units
+  static
   BOOLEAN
-  nanosleep( long ns ){
+  win_nanosleep( long ns ){
     LARGE_INTEGER li;   // Time definition
     // Create timer
     HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL); // Timer handle
@@ -51,10 +52,12 @@
   void
   sleep_100ns( uint32_t time_sleep_100ns ) {
     long ns100 = time_sleep_100ns;
-    nanosleep( time_sleep_100ns );
+    win_nanosleep( time_sleep_100ns );
   }
 
-  typedef int ssize_t;
+  #ifndef __MINGW32__
+    typedef int ssize_t;
+  #endif
 
 #else
 

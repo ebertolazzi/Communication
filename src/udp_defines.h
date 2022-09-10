@@ -37,8 +37,10 @@ extern "C" {
 #define UDP_RECV_SND_TIMEOUT_MS  5  /* Warning: windows has an undocumented minimum limit of about 500 ms */
 
 /* If the timeout is less than 400 ms it creates a non-blocking socket */
-#ifdef UDP_ON_WINDOWS
-  #pragma warning (disable : 4820)
+#if defined(UDP_ON_WINDOWS)
+  #ifndef __MINGW32__
+    #pragma warning (disable : 4820)
+  #endif
   #if UDP_RECV_SND_TIMEOUT_MS <= 400
     #define WIN_NONBLOCK
   #endif
