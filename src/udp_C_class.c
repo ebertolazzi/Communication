@@ -27,14 +27,22 @@ extern "C" {
 
 void
 Socket_new( SocketData * pS ) {
+  #if defined(UDP_ON_WINDOWS)
   pS->socket_id  = INVALID_SOCKET;
+  #else
+  pS->socket_id  = -1;
+  #endif
   pS->connected  = UDP_FALSE;
   pS->timeout_ms = UDP_APP_TIMEOUT_MS;
 }
 
 void
 Socket_check( SocketData * pS ) {
+  #if defined(UDP_ON_WINDOWS)
+  if ( pS->socket_id != INVALID_SOCKET ) {
+  #else
   if ( pS->socket_id >= 0 ) {
+  #endif
     UDP_printf( "Opened socket id = %d\n", (int)pS->socket_id );
   } else {
     UDP_printf( "Socket not opened\n" );
@@ -186,7 +194,7 @@ Socket_receive(
     while ( 1 ) {
       pS->sock_addr_len = sizeof(pS->sock_addr);
       recv_bytes = recvfrom(
-        pS->socket_id, 
+        pS->socket_id,
         (char *)data_buffer,
         (size_t) UDP_MTU_MAX_BYTES,
         0, NULL, NULL
