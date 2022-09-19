@@ -51,7 +51,7 @@
 
   void
   sleep_100ns( uint32_t time_sleep_100ns ) {
-    long ns100 = time_sleep_100ns;
+    //long ns100 = time_sleep_100ns;
     win_nanosleep( time_sleep_100ns );
   }
 

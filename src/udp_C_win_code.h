@@ -137,7 +137,7 @@ Socket_open_as_client(
     if ( ret < 0 ) {
       UDP_CheckError( "Socket_open_as_client::connect" );
       closesocket(pS->socket_id);
-      pS->socket_id = -1;
+      pS->socket_id = INVALID_SOCKET;
       exit(1);
     }
   }
@@ -163,8 +163,9 @@ Socket_open_as_client(
 int
 Socket_open_as_server( SocketData * pS, int bind_port ) {
 
-  int     ret, yes;
-  char    ipAddress[INET_ADDRSTRLEN];
+  int   ret, yes;
+  char  ipAddress[INET_ADDRSTRLEN];
+  short bp = (short) bind_port;
 
   pS->socket_id = INVALID_SOCKET;
 
@@ -207,7 +208,7 @@ Socket_open_as_server( SocketData * pS, int bind_port ) {
   memset((char *)&pS->sock_addr, 0, sizeof(pS->sock_addr));
   pS->sock_addr.sin_family      = AF_INET;
   pS->sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  pS->sock_addr.sin_port        = htons(bind_port);
+  pS->sock_addr.sin_port        = htons(bp);
   pS->sock_addr_len             = sizeof(pS->sock_addr);
 
   ret = bind( pS->socket_id, (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len );
@@ -265,12 +266,12 @@ Socket_send_raw(
   int n_byte_sent;
   if ( pS->connected == UDP_TRUE ) {
     /* UDP_printf("Socket_send_raw::send\n"); */
-    n_byte_sent = send( pS->socket_id, message, (size_t) message_size, 0 );
+    n_byte_sent = send( pS->socket_id, (char *)message, (size_t) message_size, 0 );
   } else {
     /* UDP_printf("Socket_send_raw::sendto\n"); */
     n_byte_sent = sendto(
       pS->socket_id,
-      message,
+      (char *)message,
       (size_t) message_size,
       0,
       (struct sockaddr *) &pS->sock_addr,
@@ -302,7 +303,7 @@ Socket_receive_raw(
 ) {
   int ret = recvfrom(
     pS->socket_id,
-    message,
+    (char *)message,
     (int) message_size,
     0,
     (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
@@ -327,8 +328,8 @@ Socket_peek_raw(
 ) {
   int ret = recvfrom(
     pS->socket_id,
-    message,
-    (int) message_size,
+    (char *)message,
+    (int)message_size,
     MSG_PEEK,
     (struct sockaddr *) &pS->sock_addr, &pS->sock_addr_len
   );

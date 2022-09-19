@@ -48,23 +48,24 @@ send( char const address[], int port, int32_t a, double b ) {
 int
 main( int argc, char const * argv[] ) {
 
-  int  port         = 25000;
-  char address[100] = "127.0.0.1";
+  int          port         = 25000;
+  char         address[100] = "127.0.0.1";
+  char const * paddress     = address;
 
   if ( argc < 3 ) { cerr << MSG_ERROR; exit(0); }
 
   int32_t a = std::atoi(argv[1]);
   double  b = std::atof(argv[2]);
-  if ( argc >= 4 ) port = std::atoi(argv[3]);
-  if ( argc >= 5 ) strcpy(address, argv[4]);
+  if ( argc >= 4 ) port     = std::atoi(argv[3]);
+  if ( argc >= 5 ) paddress = argv[4];
 
   std::cout << "Sending:\n";
-  std::cout << "address  = " << address  << '\n';
+  std::cout << "address  = " << paddress << '\n';
   std::cout << "port     = " << port     << '\n';
   std::cout << "a        = " << a        << '\n';
   std::cout << "b        = " << b        << '\n';
 
-  send( address, port, a, b );
+  send( paddress, port, a, b );
 
   cout << "All Done Folks\n";
   return 0;

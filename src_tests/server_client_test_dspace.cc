@@ -171,16 +171,17 @@ main( int argc, char const * argv[] ) {
   char  address[] = "127.0.0.1";
   int   port_in   = 25000;
   int   port_out  = 25001;
+  char const * paddress = address;
 
 
   std::cout << argc << '\n';
 
   if (argc == 4){
-     strcpy(address, argv[1]);
+     paddress = argv[1];
      port_in  = std::atoi(argv[2]);
      port_out = std::atoi(argv[3]);
      std::cout << "Input argument received:\n";
-     std::cout << "address  = " << address  << '\n';
+     std::cout << "address  = " << paddress << '\n';
      std::cout << "port_in  = " << port_in  << '\n';
      std::cout << "port_out = " << port_out << '\n';
   }
@@ -190,8 +191,8 @@ main( int argc, char const * argv[] ) {
     exit(0);
   }
 
-  std::thread t1 = std::thread([port_out]{ receive( port_out );});
-  receive_send( port_in, address, port_out );
+  std::thread t1 = std::thread([&port_out]{ receive( port_out );});
+  receive_send( port_in, paddress, port_out );
   t1.join();
 
   cout << "All Done Folks\n";

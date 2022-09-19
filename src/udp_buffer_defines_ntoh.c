@@ -124,7 +124,7 @@ buffer_to_string(
      '0', '1', '2', '3', '4', '5', '6', '7',
      '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
-  int n = buffer_size;
+  uint32_t n = buffer_size;
   if ( 3*n >= out_max_size ) n = out_max_size/3; // NO CONTROLS
   for ( uint32_t i = 0; i < n; ++i ) {
     out[3*i+1] = hex[buffer[i]&0x0F];

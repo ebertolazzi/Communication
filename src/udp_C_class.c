@@ -27,7 +27,7 @@ extern "C" {
 
 void
 Socket_new( SocketData * pS ) {
-  pS->socket_id  = -1;
+  pS->socket_id  = INVALID_SOCKET;
   pS->connected  = UDP_FALSE;
   pS->timeout_ms = UDP_APP_TIMEOUT_MS;
 }
@@ -91,7 +91,8 @@ Socket_send(
     while ( 1 ) {
       isend = sendto(
         pS->socket_id,
-        data_buffer, nbytes,
+        (char *)data_buffer,
+        nbytes,
         0,
         (struct sockaddr *) &pS->sock_addr, pS->sock_addr_len
       );
@@ -185,7 +186,9 @@ Socket_receive(
     while ( 1 ) {
       pS->sock_addr_len = sizeof(pS->sock_addr);
       recv_bytes = recvfrom(
-        pS->socket_id, data_buffer, (size_t) UDP_MTU_MAX_BYTES,
+        pS->socket_id, 
+        (char *)data_buffer,
+        (size_t) UDP_MTU_MAX_BYTES,
         0, NULL, NULL
       );
       socket_elapsed_time = get_time_ms() - socket_start_time;

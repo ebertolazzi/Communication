@@ -169,7 +169,7 @@ main( int argc, char const * argv[] ) {
     return 0;
   }
 
-  std::thread t1 = std::thread([]{ receive( port_out );});
+  std::thread t1 = std::thread([&port_out]{ receive( port_out );});
   receive_send( port_in, address, port_out );
   t1.join();
 
