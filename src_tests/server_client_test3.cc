@@ -38,12 +38,11 @@ send( char const address[], int port, int32_t a, double b ) {
   if (ret == UDP_FALSE) {
     perror("error send_message()");
     exit(EXIT_FAILURE);
-    return -1;
+    //return -1;
   }
 
   /* Close socket */
-  if (socket.close())
-    return -1;
+  if (socket.close()) return -1;
   return 0;
 }
 
@@ -51,9 +50,9 @@ static
 int
 receive( int port ) {
 
- uint32_t buffer_size = sizeof(double) +sizeof(int32_t);
-  uint8_t buffer[sizeof(double) +sizeof(int32_t)];
-  char  str[2*buffer_size+1];
+  uint32_t const buffer_size = sizeof(double)+sizeof(int32_t);
+  uint8_t        buffer[buffer_size];
+  char           str[2*buffer_size+1];
 
   /*\
    |   ___ ___ ___ ___ _____   _____
@@ -80,12 +79,12 @@ receive( int port ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
     if (received_bytes != buffer_size) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data
@@ -95,7 +94,7 @@ receive( int port ) {
     buffer_to_double(buffer+sizeof(a), &b);
     buffer_to_string( buffer, buffer_size, str, 2*buffer_size+1 );
     cout
-      << "Received: a = " << ((int)a) << " b = " << b << '\n'
+      << "Received: a = " << a << " b = " << b << '\n'
       << "Raw buffer = " << str << '\n';
   }
   cout << "Stopping server..\n";

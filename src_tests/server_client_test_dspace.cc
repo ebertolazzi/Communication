@@ -42,12 +42,11 @@ send( char const address[], int port, int32_t a, double b ) {
   if (ret == UDP_FALSE) {
     perror("error send_message()");
     exit(EXIT_FAILURE);
-    return -1;
+    //return -1;
   }
 
   /* Close socket */
-  if (socket.close())
-    return -1;
+  if (socket.close()) return -1;
   return 0;
 }
 
@@ -85,12 +84,12 @@ receive( int port ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
-    if (received_bytes != buffer_size) {
+    if ( received_bytes != int32_t(buffer_size) ) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data
@@ -100,7 +99,7 @@ receive( int port ) {
     double b;
     int32_t off = buffer_to_int32(buffer, &a);
     buffer_to_double(buffer+off, &b);
-    cout << "Received: a = " << ((int)a) << " b = " << b << '\n';
+    cout << "Received: a = " << a << " b = " << b << '\n';
   }
   cout << "Stopping server..\n";
   if (socket.close()) return -1;
@@ -113,9 +112,9 @@ receive_send( int port_in, char const address[], int port_out ) {
 
   //uint32_t buffer_size = sizeof(double) * 2;
   //uint8_t buffer[sizeof(double) * 2];
-  uint32_t buffer_size = sizeof(double) + sizeof(int32_t);
-  uint8_t buffer[sizeof(double) +sizeof(int32_t)];
-  char  str[2*buffer_size+1];
+  uint32_t const buffer_size = sizeof(double) + sizeof(int32_t);
+  uint8_t        buffer[buffer_size];
+  char           str[2*buffer_size+1];
 
   /* Create and set UDP socket */
   Socket socket;
@@ -135,24 +134,24 @@ receive_send( int port_in, char const address[], int port_out ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
-    if (received_bytes != buffer_size) {
+    if ( received_bytes != int32_t(buffer_size) ) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data
     //double a, b;
     //buffer_to_double(buffer, &a);
     int32_t a;
-    double b;
-    int32_t off =buffer_to_int32(buffer, &a);
+    double  b;
+    int32_t off = buffer_to_int32(buffer, &a);
     buffer_to_double(buffer+off, &b);
     buffer_to_string( buffer, buffer_size, str, 2*buffer_size+1 );
     cout
-      << "Received: a = " << ((int)a) << " b = " << b << '\n'
+      << "Received: a = " << a << " b = " << b << '\n'
       << "Raw buffer = " << str << '\n';
 
     // resend data

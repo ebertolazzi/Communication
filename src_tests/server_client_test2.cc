@@ -40,7 +40,7 @@ send( char const address[], int port, double a, double b ) {
   if (ret == UDP_FALSE) {
     perror("error send_message()");
     exit(EXIT_FAILURE);
-    return -1;
+    //return -1;
   }
 
   /* Close socket */
@@ -83,12 +83,12 @@ receive( int port ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
-    if (received_bytes != buffer_size) {
+    if ( received_bytes != int32_t(buffer_size) ) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data

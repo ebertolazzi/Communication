@@ -137,7 +137,11 @@ if ( UTILS_ENABLE_TESTS )
   add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
 
   foreach( S ${EXELISTCPP} )
-    add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
+    add_executable(
+      ${S}
+      ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc
+      ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/codriver_interfaces_data_structs.c
+    )
     set_target_properties( ${S} PROPERTIES SUFFIX ".exe" )
     target_link_libraries( ${S} ${LIBS} )
     add_test( NAME "${S}" COMMAND ./bin/${S}.exe WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )

@@ -31,7 +31,7 @@ task :build_common, [:bits] do |t, args|
     FileUtils.mkdir_p "../lib/bin/"+args.bits
     sh "cmake -G Ninja -DBITS:VAR=#{args.bits} " + cmd_cmake_build() + ' ..'
   end
-  puts "compile with CMAKE for UTILS".yellow
+  puts "compile with CMAKE for COMMUNICATIONS".yellow
   if COMPILE_DEBUG then
     sh 'cmake --build . --config Debug --target install '+PARALLEL
   else

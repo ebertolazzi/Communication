@@ -37,12 +37,11 @@ send( char const address[], int port, int32_t a, double b ) {
   if (ret == UDP_FALSE) {
     perror("error send_message()");
     exit(EXIT_FAILURE);
-    return -1;
+    //return -1;
   }
 
   /* Close socket */
-  if (socket.close())
-    return -1;
+  if (socket.close()) return -1;
   return 0;
 }
 

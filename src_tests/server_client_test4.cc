@@ -39,12 +39,11 @@ send( char const address[], int port, double a, double b ) {
   if (ret == UDP_FALSE) {
     perror("error send_message()");
     exit(EXIT_FAILURE);
-    return -1;
+    //return -1;
   }
 
   /* Close socket */
-  if (socket.close())
-    return -1;
+  if (socket.close()) return -1;
   return 0;
 }
 
@@ -80,12 +79,12 @@ receive( int port ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
-    if (received_bytes != buffer_size) {
+    if ( received_bytes != int32_t(buffer_size) ) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data
@@ -124,12 +123,12 @@ receive_send( int port_in, char const address[], int port_out ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
-    if (received_bytes != buffer_size) {
+    if ( received_bytes != int32_t(buffer_size) ) {
       cerr << "received " << received_bytes << " expected " << buffer_size << "\n";
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
 
     // de-serialize data
@@ -166,7 +165,7 @@ main( int argc, char const * argv[] ) {
      std::cout << "address  = " << address  << '\n';
      std::cout << "port_in  = " << port_in  << '\n';
      std::cout << "port_out = " << port_out << '\n';
-  } 
+  }
 
   if (argc != 1 && argc != 3 && argc != 4 ) {
     cerr << MSG_ERROR;

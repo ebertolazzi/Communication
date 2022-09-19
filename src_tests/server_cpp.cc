@@ -13,19 +13,19 @@ main(void) {
   uint32_t buffer_size = sizeof(buffer)/sizeof(buffer[0]);
   int32_t  message_id = 0;
   int      ret;
-  
+
   /* Create and set UDP socket */
 
   Socket socket;
   socket.open_as_server( 25000 );
   socket.check();
-  
+
   /* Start server */
   cout << "Server ready\n";
 
   socket.server_start();
   while( socket.server_running() ) {
-    
+
     /* Clear the buffer */
     memset(buffer, '\0', buffer_size);
     uint8_t input_data_buffer[input_data_struct_size];
@@ -48,7 +48,7 @@ main(void) {
       if ( ret == UDP_FALSE ) {
         perror("error send_message()");
         exit(EXIT_FAILURE);
-        return -1;
+        //return -1;
       }
 
       buffer_to_input_data_struct( input_data_buffer, &input_msg );
@@ -80,7 +80,7 @@ main(void) {
       cout << "socket.receive failed\n\n";
     }
   }
-  
+
   cout << "Stopping server..\n";
   if ( socket.close() ) return -1;
   cout << "Done\n";

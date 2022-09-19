@@ -43,7 +43,7 @@ receive( int port ) {
     if (ret == UDP_FALSE) {
       perror("error send_message()");
       exit(EXIT_FAILURE);
-      return -1;
+      //return -1;
     }
     cerr << "received " << received_bytes << "\n";
     buffer_to_string( buffer, received_bytes, str, 3*received_bytes );
