@@ -76,10 +76,10 @@ task :clean do
   end
 end
 
-task :mkl, [:year, :bits] do |t, args|
-  args.with_defaults(:year => "2017", :bits => "x64" )
-  sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
-end
+#task :mkl, [:year, :bits] do |t, args|
+#  args.with_defaults(:year => "2017", :bits => "x64" )
+#  sh "'C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/bin/compilervars.bat' -arch #{args.bits} vs#{args.year}shell"
+#end
 
 TESTS = [
   "testBiarc",
@@ -115,20 +115,29 @@ task :run_win_debug do
   end
 end
 
-desc "compile for Visual Studio [default year=2017, bits=x64]"
-task :build_win, [:year, :bits] do |t, args|
+desc "compile for Visual Studio"
+task :build_win do
+
+  # check architecture
+  case `where cl.exe`.chop
+  when /x64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /amd64\\cl\.exe/
+    VS_ARCH = 'x64'
+  when /bin\\cl\.exe/
+    VS_ARCH = 'x86'
+  else
+    raise RuntimeError, "Cannot determine architecture for Visual Studio".red
+  end
+
   FileUtils.rm_rf 'lib'
   FileUtils.rm_rf 'lib3rd'
 
-  args.with_defaults( :year => "2017", :bits => "x64" )
+  FileUtils.rm_rf   "build"
+  FileUtils.mkdir_p "build"
+  FileUtils.cd      "build"
 
-  dir = "vs_#{args.year}_#{args.bits}"
-
-  FileUtils.rm_rf   dir
-  FileUtils.mkdir_p dir
-  FileUtils.cd      dir
-
-  cmake_cmd = win_vs(args.bits,args.year)
+  cmake_cmd =   sh "cmake -G Ninja -DBITS:VAR=#{VS_ARCH} "
   if COMPILE_EXECUTABLE then
     cmake_cmd += ' -DBUILD_EXECUTABLE:VAR=true '
   else
@@ -142,17 +151,17 @@ task :build_win, [:year, :bits] do |t, args|
 
   FileUtils.mkdir_p "../lib/lib"
   FileUtils.mkdir_p "../lib/bin"
-  FileUtils.mkdir_p "../lib/bin/"+args.bits
+  FileUtils.mkdir_p "../lib/bin/"+VS_ARCH
   FileUtils.mkdir_p "../lib/dll"
   FileUtils.mkdir_p "../lib/include"
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
     FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
   else
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake  --build . --config Release --target install '+PARALLEL+QUIET
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
+    sh 'cmake  --build . --config Release --target install '+PARALLEL
     FileUtils.cp_r './lib/dll', '../lib/' if Dir.exist?('./lib/dll')
   end
 
@@ -196,11 +205,11 @@ task :build_osx do
   end
 
   if COMPILE_DEBUG then
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=WARNING ..'
-    sh 'cmake --build . --config Debug --target install '+PARALLEL+QUIET
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Debug --loglevel=STATUS ..'
+    sh 'cmake --build . --config Debug --target install '+PARALLEL
   else
-    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=WARNING ..'
-    sh 'cmake --build . --config Release --target install '+PARALLEL+QUIET
+    sh cmake_cmd + ' -DCMAKE_BUILD_TYPE:VAR=Release --loglevel=STATUS ..'
+    sh 'cmake --build . --config Release --target install '+PARALLEL
   end
   FileUtils.cd '..'
 end
