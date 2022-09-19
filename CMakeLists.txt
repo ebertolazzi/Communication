@@ -9,131 +9,164 @@
 #                                                                          #
 ############################################################################
 
-cmake_minimum_required(VERSION 2.8.13)
-set( CMAKE_VERBOSE_MAKEFILE OFF )
-set( CMAKE_INSTALL_MESSAGE NEVER )
+cmake_minimum_required(VERSION 3.14)
 
-if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-  set( DEBUG_SUFFIX "_debug" )
-else()
-  set( DEBUG_SUFFIX )
+project( Communication )
+include(./cmake_utils/CMakeLists-common.txt)
+
+project(
+  ${PROJECT_NAME}
+  VERSION ${UTILS_PROJECT_VERSION}
+)
+
+include(./cmake_utils/CMakeLists-cflags.txt)
+include(./cmake_utils/CMakeLists-utilities.txt)
+
+# Evaluating the suffix to append to target built by this CMake file
+utils_artifacts_suffix(ARTIFACTS_STATIC_SUFFIX TRUE)
+if( UTILS_BUILD_SHARED )
+  utils_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
 endif()
 
-if( BUILD_SHARED )
-  if( APPLE )
-    set( TARGET Communication_osx${DEBUG_SUFFIX} )
-  elseif( LINUX OR UNIX )
-    set( TARGET Communication_linux${DEBUG_SUFFIX} )
-  else()
-    set( TARGET Communication_win_${BITS}${DEBUG_SUFFIX} )
-    set( CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON )
-  endif()
-endif()
+message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}" )
+message( STATUS "BASE SUFFIXES = ${ARTIFACTS_STATIC_SUFFIX} ${ARTIFACTS_DYNAMIC_SUFFIX}" )
 
-if( APPLE )
-  set( TARGETS Communication_osx_static${DEBUG_SUFFIX} )
-elseif( LINUX OR UNIX )
-  set( TARGETS Communication_linux_static${DEBUG_SUFFIX} )
-else()
-  set( TARGETS Communication_win_${BITS}_static${DEBUG_SUFFIX} )
-endif()
-
-project( Communication CXX C )
-
-include( ./CMakeLists-cflags.txt )
-message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}")
-
-set( CMAKE_C_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} )
-set( CMAKE_C_FLAGS_DEBUG   ${CMAKE_CXX_FLAGS_DEBUG} )
+#   ___
+#  / __| ___ _  _ _ _ __ ___ ___
+#  \__ \/ _ \ || | '_/ _/ -_|_-<
+#  |___/\___/\_,_|_| \__\___/__/
+#
+set( SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src" )
 
 set( SOURCES )
-file( GLOB S ./src/*.c )
+file(
+  GLOB S
+  ${SOURCE_DIR}/*.cc
+  ${SOURCE_DIR}/*.c
+)
 foreach(F ${S})
-  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
+  # build relative path respect to source directory
+  file( RELATIVE_PATH RF ${SOURCE_DIR} "${F}" )
   list( APPEND SOURCES ${RF} )
-endforeach()
-file( GLOB S ./src/*.cc )
-foreach (F ${S})
-  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  list( APPEND SOURCES ${RF} )
-endforeach()
+endforeach(F ${S})
 
-set( HEADERS )
-file( GLOB S ./src/*.h* )
+#   _  _             _
+#  | || |___ __ _ __| |___ _ _ ___
+#  | __ / -_) _` / _` / -_) '_(_-<
+#  |_||_\___\__,_\__,_\___|_| /__/
+#
+set( PUBLIC_HEADERS )
+file(
+  GLOB_RECURSE S
+  ${SOURCE_DIR}/*.h*
+)
 foreach (F ${S})
-  file( RELATIVE_PATH RF ${CMAKE_CURRENT_SOURCE_DIR} "${F}" )
-  list( APPEND HEADERS ${RF} )
-endforeach()
+  # build relative path respect to source directory
+  file( RELATIVE_PATH RF "${SOURCE_DIR}" "${F}" )
+  list( APPEND PUBLIC_HEADERS ${RF} )
+endforeach(F ${S})
+
+list(FILTER PUBLIC_HEADERS EXCLUDE REGEX "\.DS")
 
 include_directories( src )
 
-set( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/lib )
-
-if( BUILD_SHARED )
-  add_library( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
-  add_library( ${TARGET}  SHARED ${SOURCES} ${HEADERS} )
-  install(
-    TARGETS ${TARGET} ${TARGETS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
-  )
-else()
-  add_library( ${TARGETS} STATIC ${SOURCES} ${HEADERS} )
-  install(
-    TARGETS ${TARGETS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
-    LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/dll
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
+#   _____                  _
+#  |_   _|_ _ _ _ __ _ ___| |_ ___
+#    | |/ _` | '_/ _` / -_)  _(_-<
+#    |_|\__,_|_| \__, \___|\__/__/
+#                |___/
+#
+# define target
+utils_setup_target(
+  ${PROJECT_NAME}
+  TRUE # build static
+  "${SOURCE_DIR}"
+  "${SOURCES}"
+  "${SOURCE_DIR}"
+  "${PUBLIC_HEADERS}"
+)
+if ( UTILS_BUILD_SHARED )
+  utils_setup_target(
+    ${PROJECT_NAME}
+    FALSE # build dynamic
+    "${SOURCE_DIR}"
+    "${SOURCES}"
+    "${SOURCE_DIR}"
+    "${PUBLIC_HEADERS}"
   )
 endif()
 
-if( BUILD_EXECUTABLE )
-  set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
-  set( EXECUTABLE client_c server_c )
-  foreach( EXE ${EXECUTABLE} )
-    add_executable( ${EXE} test/${EXE}.c test/codriver_interfaces_data_structs.c ${HEADERS} )
-    target_link_libraries( ${EXE} ${TARGETS} )
-    if( NOT APPLE AND NOT UNIX AND NOT LINUX )
-      target_link_libraries( ${EXE} Ws2_32.lib )
+#   _____       _
+#  |_   _|__ __| |_ ___
+#    | |/ -_|_-<  _(_-<
+#    |_|\___/__/\__/__/
+#
+
+if ( UTILS_ENABLE_TESTS )
+
+  enable_testing()
+
+  set( EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin )
+  set( LIBS ${UTILS_NAMESPACE}_${PROJECT_NAME}_Static ${CMAKE_DL_LIBS} )
+
+  if( UNIX )
+    if ( NOT APPLE )
+      set( THREADS_PREFER_PTHREAD_FLAG ON )
+      find_package( Threads REQUIRED )
+      set( LIBS ${LIBS} Threads::Threads )
     endif()
-  endforeach()
-  set(
-    EXECUTABLE
-    client_cpp
-    server_cpp
-    server_client_test
-    server_client_test2
-    server_client_test3
-    server_client_test4
-    server_client_test5
-    server_client_test_dspace
-    dspace_server_test
-    dspace_send_test
-  )
-  foreach( EXE ${EXECUTABLE} )
-    add_executable( ${EXE} test/${EXE}.cc test/codriver_interfaces_data_structs.c ${HEADERS} )
-    target_link_libraries( ${EXE} ${TARGETS} )
-    IF ( NOT APPLE AND NOT UNIX AND NOT LINUX )
-      target_link_libraries( ${EXE} Ws2_32.lib )
+  else()
+    set( LIBS ${LIBS} ws2_32 iphlpapi kernel32 )
+    if (UTILS_BUILD_SHARED)
+      target_link_libraries( ${UTILS_NAMESPACE}_${PROJECT_NAME} ${LIBS} ${ZLIB_LIBRARIES} ${CMAKE_DL_LIBS} )
     endif()
+  endif()
+
+  set( EXELISTCPP )
+  file(
+    GLOB S
+    ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/*.cc
+  )
+  list(FILTER S EXCLUDE REGEX "eigen")
+  foreach(F ${S})
+    file( RELATIVE_PATH RF "${CMAKE_CURRENT_SOURCE_DIR}/src_tests/" "${F}" )
+    get_filename_component( RFF ${RF} NAME_WLE )
+    list( APPEND EXELISTCPP ${RFF} )
+  endforeach(F ${S})
+
+  add_custom_target( "${PROJECT_NAME}_all_tests" ALL )
+
+  foreach( S ${EXELISTCPP} )
+    add_executable( ${S} ${CMAKE_CURRENT_SOURCE_DIR}/src_tests/${S}.cc )
+    set_target_properties( ${S} PROPERTIES SUFFIX ".exe" )
+    target_link_libraries( ${S} ${LIBS} )
+    add_test( NAME "${S}" COMMAND ./bin/${S}.exe WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} )
+    add_dependencies( "${PROJECT_NAME}_all_tests" ${S} )
   endforeach()
+
 endif()
 
-install( FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/include )
+#   ___         _        _ _
+#  |_ _|_ _  __| |_ __ _| | |
+#   | || ' \(_-<  _/ _` | | |
+#  |___|_||_/__/\__\__,_|_|_|
+#
+install(
+  TARGETS ${TARGETS_TO_BE_INSTALLED}
+  # EXPORT (da definire)
+  LIBRARY DESTINATION ${INSTALL_PREFIX}/dll
+  ARCHIVE DESTINATION ${INSTALL_PREFIX}/lib
+  RUNTIME DESTINATION ${INSTALL_PREFIX}/bin
+  PUBLIC_HEADER DESTINATION ${PROJECT_PUBLIC_HEADER_DESTINATION}
+)
 
-message( STATUS "Using ${SSE_FLAGS} extensions")
-message( STATUS "C compiler                  = ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER}" )
-message( STATUS "C++ compiler                = ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER}" )
-message( STATUS "CMAKE_CXX_FLAGS_RELEASE     = ${CMAKE_CXX_FLAGS_RELEASE}" )
-message( STATUS "CMAKE_CXX_FLAGS             = ${CMAKE_CXX_FLAGS}" )
-message( STATUS "CMAKE_C_FLAGS_RELEASE       = ${CMAKE_C_FLAGS_RELEASE}" )
-message( STATUS "CMAKE_C_FLAGS               = ${CMAKE_C_FLAGS}" )
-message( STATUS "CMAKE_SYSTEM_NAME           = ${CMAKE_SYSTEM_NAME}" )
-message( STATUS "CMAKE_SYSTEM_PROCESSOR      = ${CMAKE_SYSTEM_PROCESSOR}" )
-if(APPLE)
-  message( STATUS "CMAKE_OSX_SYSROOT           = ${CMAKE_OSX_SYSROOT}" )
-  message( STATUS "CMAKE_OSX_ARCHITECTURES     = ${CMAKE_OSX_ARCHITECTURES}" )
-  message( STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}" )
-endif()
-message( STATUS "BUILD_EXECUTABLE            = ${BUILD_EXECUTABLE}" )
+#   ___         _
+#  | _ \__ _ __| |____ _ __ _ ___
+#  |  _/ _` / _| / / _` / _` / -_)
+#  |_| \__,_\__|_\_\__,_\__, \___|
+#                       |___/
+#
+
+include( ./cmake_utils/CMakeLists-cpack.txt )
+
+utils_final_messages()
