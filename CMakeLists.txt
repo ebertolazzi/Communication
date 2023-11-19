@@ -28,6 +28,10 @@ if( UTILS_BUILD_SHARED )
   utils_artifacts_suffix(ARTIFACTS_DYNAMIC_SUFFIX FALSE)
 endif()
 
+if( EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../CMakeLists-customize.txt" )
+  include(../CMakeLists-customize.txt)
+endif()
+
 message( STATUS "Compiler used: ${CMAKE_CXX_COMPILER_ID}" )
 message( STATUS "BASE SUFFIXES = ${ARTIFACTS_STATIC_SUFFIX} ${ARTIFACTS_DYNAMIC_SUFFIX}" )
 
